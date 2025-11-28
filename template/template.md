@@ -67,18 +67,18 @@ Now generate the filled template below.
 # 📘 Universal Experiment Report Template
 ---------------------------------------------
 
-# 0. Meta Information
-- **Experiment Name:** TODO
-- **Author:** TODO
-- **Date:** TODO  
-- **Data Version:** TODO  
-- **Model Version:** TODO  
+---
+> **Experiment Name:** TODO  
+> **Author:** Viska Wei  
+> **Date:** TODO  
+> **Data Version:** TODO  
+> **Model Version:** TODO
 
 ---
 
 # 1. Objectives (目标)
 
-## 1.1 High-Level Objective (大目标)
+## 1.1 Background & Motivation (背景与动机)
 > Describe the *highest-level scientific or engineering goal*, typically:
 - Understanding spectral physics  
 - Guiding neural-network architecture design  
@@ -86,24 +86,23 @@ Now generate the filled template below.
 - Evaluating information content of wavelength regions  
 
 Example:
-- **Ultimate Goal:** Provide physical + statistical understanding to design an optimal neural architecture for predicting stellar parameters.
+- Provide physical + statistical understanding to design an optimal neural architecture for predicting stellar parameters.
 
-## 1.2 Experiment Objective (实验目标)
-> Describe the specific goal of this experimental batch.
+## 1.2 Hypothesis (核心假设)
+> Describe the core hypothesis this experiment tests.
 
 Typical examples:
-- Compare LR / Ridge / Lasso to estimate linearity of log g  
-- Understand noise robustness  
-- Evaluate benefit of heteroscedastic error features  
-- Test whether feature pruning improves generalization  
+- "log g is controlled by a low-dimensional linear direction in flux space"
+- "Error(σ) contains exploitable information about stellar parameters"
+- "Most of NN capacity is used for filtering irrelevant information"
 
-## 1.3 Sub-Goal (子目标)
-> Describe the *micro-level* target for this run.
+## 1.3 Questions to Verify (验证问题)
+> Describe the specific questions this experiment answers.
 
 Examples:
-- "Test if PCA(10) retains >98% R²"
-- "Verify if Error(σ) as input improves R²"
-- "Evaluate Top-K feature selection under noise=1.0"
+- "Does PCA(10) achieve R² ≥ 0.98?"
+- "Does Error(σ) as input improve R²?"
+- "How does optimal α change with noise level?"
 
 ---
 

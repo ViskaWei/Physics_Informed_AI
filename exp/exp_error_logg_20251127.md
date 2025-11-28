@@ -1,37 +1,37 @@
 # 📘 Error 特征预测 log_g 实验报告
 
 ---
-
-# 0. 元信息（Meta Information）
-- **实验名称：** Error-based log_g Prediction Experiment  
-- **作者：** TODO  
-- **日期：** 2025-11-27  
-- **数据版本：** HDF5 光谱数据（含 flux 和 error 列）  
-- **模型版本：** LightGBM (lgbm_error_nz0.pkl), Ridge Regression (lnreg_e_n32k_nz0.pkl)
+> **实验名称：** Error-based log_g Prediction Experiment  
+> **作者：** Viska Wei  
+> **日期：** 2025-11-27  
+> **数据版本：** HDF5 光谱数据（含 flux 和 error 列）  
+> **模型版本：** LightGBM (lgbm_error_nz0.pkl), Ridge Regression (lnreg_e_n32k_nz0.pkl)
 
 ---
 
-# 1. 目标
+# 1. 🎯 目标
 
-## 1.1 大目标
+## 1.1 背景与动机
 
-> 探索光谱数据中 **已知高斯噪声方差（error）** 是否包含恒星物理参数（log_g）的信息，从而：
+通过对比 flux-based 和 error-based 模型，理解不同特征类型对 log_g 估计的贡献，为后续神经网络设计提供特征工程依据。
+
+探索光谱数据中 **已知高斯噪声方差（error）** 是否包含恒星物理参数（log_g）的信息，从而：
 
 - 理解光谱测量误差与恒星物理参数之间的潜在关联
 - 评估 error 特征在神经网络架构设计中的价值
 - 揭示数据生成过程中可能存在的隐式信息结构或数据泄漏
 
-**最终目标：** 通过对比 flux-based 和 error-based 模型，理解不同特征类型对 log_g 估计的贡献，为后续神经网络设计提供特征工程依据。
+## 1.2 核心假设
 
-## 1.2 实验目标
+> **异方差误差（error σ）可能作为独立特征具有预测能力。**
 
-本次实验属于以下中层方向：
+本次实验验证：
 
-- **评估异方差误差（error σ）作为独立特征的预测能力**
+- 评估异方差误差（error σ）作为独立特征的预测能力
 - 对比线性模型与非线性模型（LightGBM）从 error 中提取信息的能力差异
 - 探究 error 与 log_g 之间是否存在物理或统计上的相关性
 
-## 1.3 子目标
+## 1.3 验证问题
 
 本次实验要验证的具体问题：
 
@@ -42,7 +42,7 @@
 
 ---
 
-# 2. 实验设计（Experiment Design）
+# 2. 🧪 实验设计（Experiment Design）
 
 ## 2.1 数据（Data）
 
@@ -99,7 +99,7 @@ $$
 
 ---
 
-# 3. 实验结果表（Results）
+# 3. 📊 实验结果表（Results）
 
 ## 3.1 Error-Based Models（本实验）
 
@@ -125,7 +125,7 @@ $$
 
 ---
 
-# 4. 关键洞见（Key Insights）
+# 4. 💡 关键洞见（Key Insights）
 
 ## 4.1 宏观层洞见（用于指导 Neural Network 架构设计）
 
@@ -214,7 +214,7 @@ $$
 
 ---
 
-# 5. 建议绘图（Plot Suggestions）
+# 5. 📉 建议绘图（Plot Suggestions）
 
 ### 5.1 LightGBM 特征重要性 vs 波长
 
@@ -254,7 +254,7 @@ plt.stem(wavelengths, importance)
 
 ---
 
-# 6. 结论（Conclusion）
+# 6. 📝 结论（Conclusion）
 
 ## 6.1 本实验验证了什么？
 
@@ -289,7 +289,7 @@ plt.stem(wavelengths, importance)
 
 ---
 
-# 7. 下一步（Next Steps）
+# 7. 🚀 下一步（Next Steps）
 
 ## 7.1 验证信息来源（Sanity Checks）
 
@@ -328,7 +328,7 @@ top_k_indices = np.argsort(importance)[-50:]  # Top 50 features
 
 ---
 
-# 8. 模型文件索引
+# 8. 📁 模型文件索引
 
 | Model | Path |
 |-------|------|
