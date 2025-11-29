@@ -9,6 +9,17 @@
 
 ---
 
+# 📑 目录
+
+- [1. 🎯 目标](#1--目标)
+- [2. 🧪 实验设计](#2--实验设计experiment-design)
+- [3. 📊 实验图表](#3--实验图表)
+- [4. 💡 关键洞见](#4--关键洞见key-insights)
+- [5. 📝 结论](#5--结论conclusion)
+- [6. 📎 附录](#6--附录)
+
+---
+
 # 1. 🎯 目标
 
 ## 1.1 背景与动机
@@ -33,12 +44,32 @@
 
 ## 1.3 验证问题
 
-本次实验要验证的具体问题：
+| # | 问题 | 验证目标 | 结果 |
+|---|------|---------|------|
+| Q1 | Error 单独作为特征能否预测 log_g？ | 验证 error 是否包含物理信息 | ✅ 是，LightGBM R²=0.392 |
+| Q2 | 线性模型 vs 非线性模型在 error 上表现差异？ | 理解 error-log_g 关系的性质 | ✅ 非线性：Linear R²≈0, LightGBM R²=0.39 |
+| Q3 | Error-based vs Flux-based 性能差距？ | 量化 error 的信息量 | ✅ Error 约 39% 方差，Flux 约 99.8% |
+| Q4 | Error 中 log_g 信息的来源？ | 物理关联 vs 数据偏差 | ⚠️ 需进一步验证 |
 
-1. **验证 "error 单独作为特征能否预测 log_g"**
-2. **检验线性模型（Ridge）vs 非线性模型（LightGBM）在 error 特征上的表现差异**
-3. **对比 error-based 与 flux-based 模型的性能差距**
-4. **分析 error 中 log_g 信息的来源（物理关联 vs 数据偏差）**
+## 1.4 结论摘要
+
+### 1.4.1 实验结论
+
+| 结论 | 说明 |
+|------|------|
+| **Error 包含物理信息** | LightGBM 使用 error 特征达到 R²=0.392 |
+| **Error 信息是非线性的** | 线性模型 R²≈0，非线性模型 R²=0.39 |
+| **Error 信息量远低于 Flux** | Error R²=0.39 vs Flux R²=0.998 |
+
+### 1.4.2 设计启示
+
+| 设计原则 | 具体建议 |
+|---------|---------|
+| **Error 可作为辅助特征** | 需要非线性层来提取 error 信息 |
+| **组合方式** | 推荐 [flux, error] 拼接或 flux/error (SNR) |
+| **NN 设计** | 使用 error 需足够的非线性层 |
+
+> **一句话总结**：Error 包含约 39% 的 log_g 可解释方差，但信息是高度非线性的，需要非线性模型（如 LightGBM）才能提取。
 
 ---
 
@@ -99,29 +130,28 @@ $$
 
 ---
 
-# 3. 📊 实验结果表（Results）
+# 3. 📊 实验图表
 
-## 3.1 Error-Based Models（本实验）
+## 📊 建议图 1：模型性能对比柱状图
 
-| Model | test_R² | test_MAE | test_RMSE | train_R² | Notes |
-|-------|---------|----------|-----------|----------|-------|
-| **LightGBM** | **0.3920** | **0.1872** | **0.2277** | 0.7896 | 1000 trees, 18min |
-| Linear (Ridge α=100) | -0.0009 | 0.2509 | 0.2921 | 0.0013 | 无预测能力 |
+**目的**：直观展示特征类型和模型类型的交互效应
 
-## 3.2 Flux-Based Models（对照组）
+| 内容 | 说明 |
+|------|------|
+| 四组柱状图 | Flux+LightGBM, Flux+Linear, Error+LightGBM, Error+Linear |
+| 指标 | R², MAE, RMSE |
 
-| Model | test_R² | test_MAE | test_RMSE | Notes |
-|-------|---------|----------|-----------|-------|
-| **LightGBM** | **0.9981** | **0.0082** | **0.0128** | Best performance |
-| LinearRegression (OLS) | 0.9694 | 0.0380 | 0.0511 | 无正则化 |
-| Ridge α=100 | 0.7943 | 0.1014 | 0.1324 | 过度正则化 |
+---
 
-## 3.3 对比分析
+## 📊 建议图 2：LightGBM 特征重要性 vs 波长
 
-| 对比项 | Flux-based | Error-based | Δ (差异) |
-|--------|------------|-------------|----------|
-| LightGBM R² | 0.998 | 0.392 | **-0.606** |
-| Linear R² | 0.969 | ~0 | **-0.969** |
+**目的**：验证重要的 error 像素是否对应 log_g 敏感的谱线区域
+
+| 内容 | 说明 |
+|------|------|
+| X 轴 | 波长（4096 个点） |
+| Y 轴 | LightGBM feature_importance |
+| 标注 | Top 50 最重要的波长位置 |
 
 ---
 
@@ -196,7 +226,104 @@ $$
 
 如果不同 log_g 区间的星在模拟/观测时被赋予了不同的噪声策略或 SNR 分布，error 就会成为"隐式编码 log_g 的 side channel"，这是需要警惕的数据泄漏风险。
 
-## 4.4 统计自洽性验证
+---
+
+# 5. 📝 结论（Conclusion）
+
+## 5.1 核心发现
+
+> **Error 包含约 39% 的 log_g 可解释方差，但信息是高度非线性的，需要非线性模型才能提取。**
+
+假设验证：
+- ✅ Error 包含 log_g 的可利用信息：LightGBM test_R² = 0.392
+- ✅ Error 与 log_g 的关系是非线性的：Linear R² ≈ 0, LightGBM R² = 0.39
+- ⚠️ Error 信息量远低于 Flux：Error R² = 0.39 vs Flux R² = 0.998
+
+## 5.2 关键结论（3 条）
+
+| # | 结论 | 证据 |
+|---|------|------|
+| 1 | **Error 包含物理信息** | LightGBM R²=0.392 >> 随机水平 |
+| 2 | **Error-log_g 关系非线性** | Linear R²≈0, LightGBM R²=0.39 |
+| 3 | **存在过拟合风险** | train_R²=0.79 >> test_R²=0.39 |
+
+## 5.3 设计启示
+
+### 架构原则
+
+| 原则 | 建议 | 原因 |
+|------|------|------|
+| Error 可作辅助特征 | 需非线性层 | Error 信息是非线性的 |
+| 组合方式 | [flux, error] 或 flux/error | 充分利用 error 信息 |
+| 模型容量 | 足够的非线性层 | 线性组合无法利用 error |
+
+### 推荐组合方式
+
+| 方案 | 公式 | 维度 |
+|------|------|------|
+| 直接拼接 | $X = [\text{flux}, \text{error}]$ | 8192 |
+| SNR 特征 | $X_\text{SNR} = \text{flux} / \text{error}$ | 4096 |
+| 逆方差加权 | $X_\text{weighted} = \text{flux} / \text{error}^2$ | 4096 |
+
+### ⚠️ 常见陷阱
+
+| 常见做法 | 实验证据 |
+|----------|----------|
+| "线性组合 flux+error 就够了" | Linear 无法提取 error 信息 (R²≈0) |
+| "Error 是纯噪声，没用" | LightGBM R²=0.392 说明包含物理信息 |
+
+## 5.4 物理解释
+
+- Error σ 通过光子计数统计与恒星亮度（因此与 log_g）物理关联
+- $\sigma_i \approx \sqrt{F_i + N_{\text{sky}} + N_{\text{read}}^2}$
+- 不同 log_g 的恒星有不同的亮度分布 → 不同的噪声模式
+
+## 5.5 关键数字速查
+
+| 指标 | 值 |
+|------|-----|
+| Error-only LightGBM R² | 0.392 |
+| Error-only Linear R² | ≈0 |
+| Flux-only LightGBM R² | 0.998 |
+| Error 过拟合程度 | train_R²=0.79 vs test_R²=0.39 |
+
+## 5.6 下一步工作
+
+| 方向 | 具体任务 |
+|------|----------|
+| 验证信息来源 | Shuffle test 排除虚假相关 |
+| 组合特征实验 | 测试 [flux, error], flux/error 等方案 |
+| 特征重要性分析 | 分析 LightGBM 最重要的波长是否对应 log_g 敏感谱线 |
+
+---
+
+# 6. 📎 附录
+
+## 6.1 数值结果表（Results）
+
+### 6.1.1 Error-Based Models（本实验）
+
+| Model | test_R² | test_MAE | test_RMSE | train_R² | Notes |
+|-------|---------|----------|-----------|----------|-------|
+| **LightGBM** | **0.3920** | **0.1872** | **0.2277** | 0.7896 | 1000 trees, 18min |
+| Linear (Ridge α=100) | -0.0009 | 0.2509 | 0.2921 | 0.0013 | 无预测能力 |
+
+### 6.1.2 Flux-Based Models（对照组）
+
+| Model | test_R² | test_MAE | test_RMSE | Notes |
+|-------|---------|----------|-----------|-------|
+| **LightGBM** | **0.9981** | **0.0082** | **0.0128** | Best performance |
+| LinearRegression (OLS) | 0.9694 | 0.0380 | 0.0511 | 无正则化 |
+| Ridge α=100 | 0.7943 | 0.1014 | 0.1324 | 过度正则化 |
+
+### 6.1.3 对比分析
+
+| 对比项 | Flux-based | Error-based | Δ (差异) |
+|--------|------------|-------------|----------|
+| LightGBM R² | 0.998 | 0.392 | **-0.606** |
+| Linear R² | 0.969 | ~0 | **-0.969** |
+
+### 6.1.4 统计自洽性验证
 
 **R² 与 RMSE 的一致性检验：**
 
@@ -212,130 +339,33 @@ $$
 
 实际值 0.2277，与理论计算一致 ✓
 
----
+## 6.2 建议绘图（Plot Suggestions）
 
-# 5. 📉 建议绘图（Plot Suggestions）
+### 6.2.1 LightGBM 特征重要性 vs 波长
+- **目的**：验证重要的 error 像素是否对应 log_g 敏感的谱线区域
+- **X 轴**：波长（4096 个点）
+- **Y 轴**：feature_importance
+- **标注**：Top 50 最重要的波长位置
 
-### 5.1 LightGBM 特征重要性 vs 波长
+### 6.2.2 Error vs log_g 标量相关性
+- **目的**：验证 error 的全局统计量是否与 log_g 有简单相关性
+- **X 轴**：mean(error) / std(error) / norm(error)
+- **Y 轴**：log_g
+- **指标**：Pearson/Spearman 相关系数
 
-- **内容**: 横轴为波长（4096 个点），纵轴为 LightGBM feature_importance
-- **标注**: Top 50 最重要的波长位置
-- **目的**: 验证重要的 error 像素是否对应 log_g 敏感的谱线区域（Balmer wings、Ca II triplet 等）
+### 6.2.3 Error 热力图（按 log_g 分组）
+- **目的**：可视化不同 log_g 区间的 error 模式差异
+- **X 轴**：波长
+- **Y 轴**：log_g 区间
+- **颜色**：平均 error 值
 
-```python
-# 代码建议（不执行）
-importance = model.feature_importances_
-top_k_indices = np.argsort(importance)[-50:]
-plt.stem(wavelengths, importance)
-```
+## 6.3 相关文件
 
-### 5.2 Error vs log_g 标量相关性
-
-- **内容**: 计算 mean(error)、std(error)、norm(error) 等标量指标
-- **展示**: 散点图 + Pearson/Spearman 相关系数
-- **目的**: 验证 error 的全局统计量是否与 log_g 有简单相关性
-
-### 5.3 模型性能对比柱状图
-
-- **内容**: 四组柱状图 (Flux+LightGBM, Flux+Linear, Error+LightGBM, Error+Linear)
-- **指标**: R², MAE, RMSE
-- **目的**: 直观展示特征类型和模型类型的交互效应
-
-### 5.4 Train vs Test R² 对比（过拟合诊断）
-
-- **内容**: Error-based LightGBM 的 train_R²=0.79 vs test_R²=0.39
-- **展示**: 双柱状图或差异指标
-- **目的**: 量化过拟合程度
-
-### 5.5 Error 热力图（按 log_g 分组）
-
-- **内容**: 横轴为波长，纵轴为 log_g 区间，颜色为平均 error 值
-- **目的**: 可视化不同 log_g 区间的 error 模式差异
-
----
-
-# 6. 📝 结论（Conclusion）
-
-## 6.1 本实验验证了什么？
-
-| 结论 | 证据 |
+| 类型 | 路径 |
 |------|------|
-| ✅ Error 包含 log_g 的可利用信息 | LightGBM test_R² = 0.392 |
-| ✅ Error 与 log_g 的关系是非线性的 | Linear R² ≈ 0, LightGBM R² = 0.39 |
-| ⚠️ Error 信息量远低于 Flux | Error R² = 0.39 vs Flux R² = 0.998 |
-| ⚠️ 存在过拟合风险 | train_R² = 0.79 >> test_R² = 0.39 |
-
-## 6.2 对模型设计的启示
-
-1. **Error 可作为辅助特征**，但需要非线性模型来提取信息
-2. **推荐组合方式**：
-   - 直接拼接：$X = [\text{flux}, \text{error}]$（8192 维）
-   - SNR 特征：$X_\text{SNR} = \text{flux} / \text{error}$
-   - 加权特征：$X_\text{weighted} = \text{flux} / \text{error}^2$（逆方差加权）
-
-3. **神经网络设计**：如果使用 error 特征，需要足够的非线性层
-
-## 6.3 对光谱物理的贡献
-
-- 证实了 **观测噪声模式与恒星演化阶段存在统计关联**
-- 这种关联源于：恒星亮度 → 光子数 → 噪声特性的物理链条
-- 为理解天文数据中的"隐式信息结构"提供了实证
-
-## 6.4 仍不确定的问题
-
-- Error 中的 log_g 信息是"真物理"还是"数据偏差/采样偏差"？
-- 在更多样化的数据集上，R² = 0.39 是否可复现？
-- 组合 flux + error 能否超越单独使用 flux 的性能？
-
----
-
-# 7. 🚀 下一步（Next Steps）
-
-## 7.1 验证信息来源（Sanity Checks）
-
-| 实验 | 目的 |
-|------|------|
-| 计算 error 标量统计量与 log_g 的相关系数 | 验证是否存在简单线性相关 |
-| 随机打乱 error（shuffle test） | 验证 R²=0.39 是否来自真实相关 |
-| 检查 train/test 划分是否按物理对象划分 | 排除数据泄漏 |
-
-## 7.2 组合特征实验
-
-```python
-# 方案 1: 拼接
-X_combined = np.concatenate([flux, error], axis=1)  # 8192 维
-
-# 方案 2: SNR
-X_snr = flux / error
-
-# 方案 3: 逆方差加权
-X_weighted = flux / (error ** 2)
-```
-
-## 7.3 特征重要性分析
-
-```python
-# 分析 LightGBM 的特征重要性
-model = pickle.load(open('models/lgbm_error_test/lgbm_error_nz0.pkl', 'rb'))['model']
-importance = model.feature_importances_
-top_k_indices = np.argsort(importance)[-50:]  # Top 50 features
-```
-
-## 7.4 物理验证
-
-- 检查最重要的 error 波长位置是否对应 log_g 敏感的谱线区域
-- 对比 error 热力图与已知的 log_g 诊断谱线位置
-
----
-
-# 8. 📁 模型文件索引
-
-| Model | Path |
-|-------|------|
 | LightGBM (error) | `models/lgbm_error_test/lgbm_error_nz0.pkl` |
 | Linear (error) | `models/lnreg_e_n32k_test/lnreg_e_n32k/lnreg_e_n32k_nz0.pkl` |
 
 ---
 
 *Generated: 2025-11-27*
-

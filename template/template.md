@@ -76,9 +76,20 @@ Now generate the filled template below.
 
 ---
 
-# 1. Objectives (目标)
+# 📑 Table of Contents
 
-## 1.1 Background & Motivation (背景与动机)
+- [1. 🎯 Objectives](#1--objectives)
+- [2. 🧪 Experimental Design](#2--experimental-design)
+- [3. 📊 Figures](#3--figures)
+- [4. 💡 Key Insights](#4--key-insights)
+- [5. 📝 Conclusion](#5--conclusion)
+- [6. 📎 Appendix](#6--appendix)
+
+---
+
+# 1. 🎯 Objectives
+
+## 1.1 Background & Motivation
 > Describe the *highest-level scientific or engineering goal*, typically:
 - Understanding spectral physics  
 - Guiding neural-network architecture design  
@@ -88,138 +99,245 @@ Now generate the filled template below.
 Example:
 - Provide physical + statistical understanding to design an optimal neural architecture for predicting stellar parameters.
 
-## 1.2 Hypothesis (核心假设)
+## 1.2 Core Hypothesis
 > Describe the core hypothesis this experiment tests.
+
+**Format**:
+```
+> **[One-sentence hypothesis statement]**
+
+If the hypothesis holds:
+- [Implication 1]
+- [Implication 2]
+
+If the hypothesis does not hold:
+- [Alternative understanding/direction]
+```
 
 Typical examples:
 - "log g is controlled by a low-dimensional linear direction in flux space"
 - "Error(σ) contains exploitable information about stellar parameters"
 - "Most of NN capacity is used for filtering irrelevant information"
 
-## 1.3 Questions to Verify (验证问题)
-> Describe the specific questions this experiment answers.
+## 1.3 Verification Questions
 
-Examples:
-- "Does PCA(10) achieve R² ≥ 0.98?"
-- "Does Error(σ) as input improve R²?"
-- "How does optimal α change with noise level?"
+> Use a **table** to list 3-5 specific questions, each with a verification target. Fill in results after the experiment.
+
+| # | Question | Verification Target | Result |
+|---|----------|---------------------|--------|
+| Q1 | [Specific, quantifiable question?] | [Which aspect of the hypothesis does this verify?] | [❌/✅ + value] |
+| Q2 | ... | ... | ... |
+| Q3 | ... | ... | ... |
+
+**Writing tips**:
+- Questions must be **specific and quantifiable** (e.g., "Can we achieve $R^2 \geq 0.98$?" not "Is it good?")
+- Verification target explains **which hypothesis/design decision this links to**
+- Results start with ❌/✅, followed by key values
+
+## 1.4 Summary of Conclusions (fill after experiment)
+
+### 1.4.1 Experimental Conclusions
+
+| Conclusion | Explanation |
+|------------|-------------|
+| **[Conclusion keyword]** | [One-sentence explanation] |
+| **[Conclusion keyword]** | [One-sentence explanation] |
+
+### 1.4.2 Design Implications
+
+| Design Principle | Specific Recommendation |
+|------------------|-------------------------|
+| **[Principle name]** | [Specific action] |
+| **[Principle name]** | [Specific action] |
+
+> **One-sentence summary**: [Summarize the core finding and implication of the entire experiment in one sentence]
 
 ---
 
-# 2. Experimental Design (实验设计)
-Provide detailed but concise method:
+# 2. 🧪 Experimental Design
 
-### 2.1 Data
-- Samples:  
-- Dimensions:  
-- Parameters:  
-- Noise Model:  
-  \[
-  \text{noisy\_flux} = \text{flux} + \mathcal{N}(0, \sigma^2)
-  \]
+## 2.1 Data
+- Training samples:  
+- Test samples:  
+- Feature dimensions:  
+- Label parameters:  
+- Noise model:  
 
-### 2.2 Features Used
+$$
+\text{noisy\_flux} = \text{flux} + \mathcal{N}(0, \sigma^2)
+$$
+
+## 2.2 Features Used
 - flux / error / concatenated  
 - PCA components  
 - Top-K selected wavelengths  
-- etc.
+- Patch-based features
+- Other:
 
-### 2.3 Model / Algorithm
+## 2.3 Model / Algorithm
 Include equations if linear:
 
-#### If Linear Regression:
-\[
+### If Linear Regression / Ridge:
+
+$$
 \hat{y} = X w + b
-\]
-\[
+$$
+
+$$
 w = (X^\top X + \alpha I)^{-1} X^\top y
-\]
+$$
 
-#### If LightGBM:
-- (Explain depth, leaves, feature fraction…)
+### If LightGBM:
+- num_leaves, max_depth, feature_fraction, etc.
 
-### 2.4 Sweep / Hyperparameters
-- alpha = …  
-- noise levels = …  
-- PCA dims = …
+### If PCA:
+Explained variance curve:
+
+$$
+\lambda_i / \sum_j \lambda_j
+$$
+
+## 2.4 Hyperparameters
+- alpha:  
+- PCA dimensions:  
+- noise levels:  
+- LightGBM parameters:  
+- etc.
 
 ---
 
-# 3. Results Table (核心结果表)
+# 3. 📊 Figures
 
-> Include all important metrics: R², MAE, RMSE, coverage, etc.
+> Display existing experiment figures. Each figure should have a title, description, and key observations.
 
-Example template:
+### Figure 1: [Figure Title]
+![Image](path/to/image.png)
+
+**Figure 1. [Figure description]**
+
+**Key observations**:
+- Observation 1
+- Observation 2
+
+---
+
+# 4. 💡 Key Insights
+
+## 4.1 High-Level Insights (for guiding Neural Network architecture design)
+Examples:
+- log g is primarily in a low-dimensional linear subspace (1–10 dims)  
+- log g information mainly comes from Balmer wings / CaT / continuum slope  
+- PCA>5 recovers >98% R² → NN doesn't need high-dimensional input  
+- Heteroscedastic error σ provides additional discriminative power  
+
+## 4.2 Model-Level Insights (for optimizing models)
+Examples:
+- Ridge α too large causes over-smoothing  
+- Top-K single-point method unstable → need local window structure  
+- Noise=1.0, PCA still maintains high R² → intrinsic dimensionality is low  
+
+## 4.3 Experiment-Level Details
+Examples:
+- Top 50 points effective at low noise, completely fail at high noise  
+- error σ changes model's decision behavior at high noise  
+- PCA component 1 corresponds to equivalent width variation, strongly correlated with log g  
+
+---
+
+# 5. 📝 Conclusion
+
+> **Writing principle**: Conclusion should follow the logic of **"Core Finding → Key Conclusions → Design Implications → Physical Explanation → Quick Reference Numbers → Next Steps"**.
+
+## 5.1 Core Finding
+
+> Use one sentence to summarize the most important finding (punch line), highlighted in quote format.
+
+Then use ❌/✅ contrast format to show hypothesis verification results:
+- ❌ Original hypothesis: [What we originally thought]
+- ✅ Experimental result: [What we actually found]
+
+## 5.2 Key Conclusions (2-4 items)
+
+> Use numbered table, each conclusion with evidence, limit to 2-4 items.
+
+| # | Conclusion | Evidence |
+|---|------------|----------|
+| 1 | **[Conclusion keyword]** | [Supporting data/observation] |
+| 2 | **[Conclusion keyword]** | [Supporting data/observation] |
+| 3 | **[Conclusion keyword]** | [Supporting data/observation] |
+
+## 5.3 Design Implications
+
+> Organize by category: Architecture principles, Regularization strategies, Common pitfalls.
+
+### Architecture Principles
+
+| Principle | Recommendation | Reason |
+|-----------|----------------|--------|
+| [Principle name] | [Specific action] | [Why] |
+
+### ⚠️ Common Pitfalls
+
+| Common Practice | Experimental Evidence |
+|-----------------|----------------------|
+| "[Wrong practice]" | [Why it's wrong] |
+
+## 5.4 Physical Explanation (optional)
+
+> Use 1-3 bullet points to explain **why** we see these results, linking to domain knowledge.
+
+## 5.5 Quick Reference Numbers
+
+> Extract 3-5 most important numbers for quick review.
+
+| Metric | Value |
+|--------|-------|
+| Best performance | [Value + configuration] |
+| Minimum condition to reach target | [Value] |
+| Performance ceiling | [Value] |
+
+## 5.6 Next Steps
+
+> Use table to list 2-3 specific directions.
+
+| Direction | Specific Task |
+|-----------|---------------|
+| [Direction name] | [What to do specifically] |
+
+---
+
+# 6. 📎 Appendix
+
+## 6.1 Numerical Results Tables
+
+> Organize input results into the following table format.
+
+Example format:
 
 | Setting | R² | MAE | RMSE | Notes |
-|--------|----|-----|------|-------|
-| PCA=5  |    |     |      |       |
-| PCA=10 |    |     |      |       |
-| Full   |    |     |      |       |
+|---------|-----|------|-------|-------|
+| PCA=5 |     |      |       |       |
+| PCA=10 |    |      |       |       |
+| Full |     |      |       |       |
 
-(Agent should fill using provided results.)
+If there are Top-K / Patch / Noise Sweep results, organize into similar tables.
 
----
+## 6.2 Plot Suggestions
 
-# 4. Key Insights (最重要的发现)
+> Describe what plots to make, not code.
 
-Write bullet points:
+### 6.2.1 [Plot Title]
+- **Purpose**: What to show
+- **X-axis**:
+- **Y-axis**:
+- **Annotations**:
 
-### 4.1 High-Level Insight (指导 Neural Network 的物理规律)
-- e.g., “log g dominated by 1D linear direction in feature space”
-- e.g., “Error(σ) provides meaningful robustness improvement”
+## 6.3 Related Files
 
-### 4.2 Model-Level Insight (指导模型设计)
-- e.g., PCA(10) → R²=0.99 means network only needs <10 effective DoF  
-- e.g., Ridge α too large introduces spectral oversmoothing  
-
-### 4.3 Micro-Level Findings (此实验细节)
-- e.g., “Most discriminative wavelengths cluster around CaT and Balmer wings”
-- e.g., “Top-50 pixels fail under noise=1.0 → structure required”  
-
----
-
-# 5. Recommended Figures (建议绘图)
-Write down *what plots to make*, not the code:
-
-### 5.1 PCA Reconstruction Plot
-- Plot eigenvector shapes
-- Highlight correspondence to Balmer wings  
-- Show variance explained curve  
-
-### 5.2 R² vs PCA Dimension
-- Sweep D from 1 → 50
-- Expect monotonic curve showing intrinsic dimensionality  
-
-### 5.3 Top-K Feature Stability Plot
-- Importance vs wavelength  
-- Vertical lines for selected top-k  
-
-### 5.4 Noise Robustness Curve
-\[
-\text{R}^2(\text{noise})
-\]
-across models  
-
-### 5.5 Error(σ) Contribution Heatmap
-- If using heteroscedastic error inputs  
-
----
-
-# 6. Conclusion (结论)
-A concise synthesis of:
-- What this experiment proves  
-- How it supports next-step model design  
-- What physics it reveals  
-- Remaining uncertainties  
-
----
-
-# 7. Next Steps (下一步)
-- Hyperparameter sweeps  
-- Neural architecture modifications  
-- Additional physical diagnostics  
-- Ablation experiments  
+| Type | Path |
+|------|------|
+| Figures | `path` |
+| Results | `path` |
 
 ---------------------------------------------
 (End of Template)
