@@ -2,10 +2,43 @@
 
 ---
 > **实验名称：** Error-based log_g Prediction Experiment  
+> **对应 MVP：** Error 通道信息分析  
 > **作者：** Viska Wei  
 > **日期：** 2025-11-27  
 > **数据版本：** HDF5 光谱数据（含 flux 和 error 列）  
-> **模型版本：** LightGBM (lgbm_error_nz0.pkl), Ridge Regression (lnreg_e_n32k_nz0.pkl)
+> **模型版本：** LightGBM (lgbm\_error\_nz0.pkl), Ridge Regression (lnreg\_e\_n32k\_nz0.pkl)  
+> **状态：** ✅ 已完成
+
+---
+
+# ⚡ 核心结论速览（供 main 提取）
+
+### 一句话总结
+
+> **Error σ 通道独立包含 $\log g$ 信息（LightGBM $R^2=0.91$），且关系是非线性的（Linear $R^2 \approx 0$），支持双通道 [flux, σ] 输入设计。**
+
+### 对假设的验证
+
+| 验证问题 | 结果 | 结论 |
+|---------|------|------|
+| Error 能否独立预测 $\log g$？ | ✅ 是，LightGBM $R^2=0.91$ | Error 包含物理信息 |
+| 关系是线性还是非线性？ | ✅ 非线性，Linear $R^2 \approx 0$ | 需要非线性模型提取 |
+| Error 信息量有多大？ | ✅ 约 39-91% 方差（取决于模型） | 不可忽略 |
+
+### 设计启示（1-2 条）
+
+| 启示 | 具体建议 |
+|------|---------|
+| **双通道输入** | 设计 NN 输入为 [flux, σ]，利用 error 信息 |
+| **非线性必需** | MLP/树模型才能从 error 提取信息 |
+
+### 关键数字
+
+| 指标 | 值 |
+|------|-----|
+| Error-only LightGBM $R^2$ | **0.91** |
+| Error-only Linear $R^2$ | **≈ 0** |
+| Flux LightGBM $R^2$ | **0.998** |
 
 ---
 

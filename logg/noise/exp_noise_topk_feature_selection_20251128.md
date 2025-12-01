@@ -2,10 +2,44 @@
 
 ---
 > **实验名称：** Noise Robustness & Top-K Feature Selection for log\_g Prediction  
+> **对应 MVP：** 噪声鲁棒性与稀疏化分析  
 > **作者：** Viska Wei  
 > **日期：** 2025-11-28  
 > **数据版本：** VIT Synthetic Spectra (4096-D)  
-> **模型版本：** LightGBM / Ridge / LinearRegression
+> **模型版本：** LightGBM / Ridge / LinearRegression  
+> **状态：** ✅ 已完成
+
+---
+
+# ⚡ 核心结论速览（供 main 提取）
+
+### 一句话总结
+
+> **$\log g$ 信息高度稀疏（K=1000 即匹配全谱），噪声增强训练效果是 Top-K 的 20 倍（$\Delta R^2 = 0.49$ vs 0.025）。**
+
+### 对假设的验证
+
+| 验证问题 | 结果 | 结论 |
+|---------|------|------|
+| 稀疏信息假设成立吗？ | ✅ 是，K=1000 (24%) 即可匹配全谱 | Learnable attention 可行 |
+| 噪声增强训练有效吗？ | ✅ 是，train_noise 0→1: $\Delta R^2 \approx 0.49$ | 是 Top-K 效果的 20 倍 |
+| TopK 在高噪声下更优吗？ | ✅ 是，noise=1.0 时 TopK vs Full: +0.58 | 显式稀疏化有效 |
+
+### 设计启示（1-2 条）
+
+| 启示 | 具体建议 |
+|------|---------|
+| **噪声训练优先** | 噪声增强训练效果 >> Top-K 特征选择 |
+| **Attention 可替代显式 TopK** | 网络可自动学习类似的稀疏分布 |
+
+### 关键数字
+
+| 指标 | 值 |
+|------|-----|
+| TopK vs Full (noise=1.0) | **+0.58 $R^2$** |
+| 最优 K | **1000** (24% 像素) |
+| 噪声训练增益 (0→1.0) | **+0.49 $R^2$** |
+| 噪声训练 / TopK 效果比 | **~20x** |
 
 ---
 

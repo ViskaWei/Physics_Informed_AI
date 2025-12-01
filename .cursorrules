@@ -1,0 +1,387 @@
+# Physics Informed AI - Project Rules
+
+## 📁 Project Structure Memory
+
+This is a physics-informed AI experiment logging repository. When working in this project:
+
+### Report Output Location
+All experiment reports MUST be saved to: `/home/swei20/Physics_Informed_AI/logg/`
+
+### Directory Structure
+```
+logg/
+├── noise/          # Noise-related experiments (noise injection, SNR, etc.)
+│   ├── img/        # Figures for noise experiments
+├── pca/            # PCA dimension reduction experiments  
+│   ├── img/        # Figures for PCA experiments
+├── ridge/          # Ridge regression experiments
+│   ├── img/        # Figures for ridge experiments
+├── lightgbm/       # LightGBM experiments
+│   ├── img/        # Figures for lightgbm experiments
+```
+
+### File Naming Convention
+- **Main framework files**: `[topic]_main_[YYYYMMDD].md`
+- **Sub-experiment reports**: `exp_[topic_name]_[YYYYMMDD].md`
+- **Image files**: `[descriptive_name].png` in the corresponding `img/` subfolder
+
+Examples:
+- `logg/gta/gta_main_20251130.md` (Main framework)
+- `logg/gta/exp_gta_baseline_20251130.md` (Sub-experiment)
+- `logg/noise/exp_topk_feature_selection_20251129.md`
+
+### Report Templates (⚠️ MANDATORY)
+
+**根据文档类型选择对应的模板**：
+
+---
+
+#### 📘 主实验框架（Main Experiment Framework）
+
+**模板文件**: `template/main.md`
+
+**适用场景**：
+- 开启一个新的研究主题/实验系列
+- 需要规划多个 MVP 实验的框架文档
+- 记录整体研究问题、假设、路线图
+
+**必需章节**：
+1. **Header**: 主题名称、作者、创建日期、最后更新、状态
+2. **0. 📋 问题重述与意义澄清**: 核心研究问题、多维度分析、实验定位
+3. **1. 🎯 目标**: 背景与动机、核心假设、验证问题、结论摘要
+4. **2. 🗺️ MVP 实验路线图**: 整体规划、MVP 详细设计、实验配置总览
+5. **3. 📋 子实验追踪**: 实验总览、进度看板、结论提取记录
+6. **4. 🔗 跨实验分析**: 结果对比矩阵、假设验证进度、发现汇总
+7. **5. 📝 总结与展望**: 核心结论、设计原则、遗留问题、下一步计划
+8. **6. 📎 附录**: 决策树、数值结果汇总、相关文件索引、变更日志
+
+---
+
+#### 📗 子实验报告（Sub-Experiment Report）
+
+**模板文件**: `template/exp.md`
+
+**适用场景**：
+- 执行单个 MVP 实验
+- 记录具体实验的设计、结果和结论
+- 为 main.md 提供详细数据支撑
+
+**必需章节**：
+1. **Header**: 实验名称、对应 MVP、作者、日期、数据版本、模型版本、状态
+2. **⚡ 核心结论速览**: 一句话总结、假设验证、设计启示、关键数字（供 main 提取）
+3. **1. 🎯 目标**: 实验目的、预期结果
+4. **2. 🧪 实验设计**: 数据、特征设计、模型与算法、超参数配置、评价指标
+5. **3. 📊 实验图表**: 每张图配有标题、描述和关键观察
+6. **4. 💡 关键洞见**: 宏观层、模型层、实验层细节洞见
+7. **5. 📝 结论**: 核心发现、关键结论、设计启示、物理解释、关键数字速查、下一步工作
+8. **6. 📎 附录**: 数值结果表、建议绘图、相关文件、实验日志
+
+---
+
+#### Formatting Requirements (通用格式要求):
+- Use proper LaTeX syntax for math: `$R^2$`, `$\alpha$`, `$$...$$` for block formulas
+- Use `$\log g$` or `log\_g` for variable names with underscores
+- Tables should use standard Markdown format
+- Mark missing info with `TODO`
+- Use ❌/✅ for hypothesis verification results
+- Include physical/scientific explanations where applicable
+
+#### Before Submitting a Report, Verify:
+- [ ] 选择了正确的模板（main vs exp）
+- [ ] 所有必需章节都已填写
+- [ ] LaTeX formulas render correctly
+- [ ] Figures have descriptions and observations
+- [ ] Verification questions have results filled in
+- [ ] Conclusions include design implications
+- [ ] （如果是 exp）核心结论速览已填写，便于同步到 main
+
+### Author
+- Default author: Viska Wei
+
+## 🔬 Domain Context
+
+This project focuses on:
+- Stellar parameter prediction (log g, Teff, etc.) from spectra
+- Linear regression baselines (Ridge, PCA)
+- Feature selection (Top-K wavelength, importance analysis)
+- Noise modeling and robustness
+- Neural network architecture guidance
+
+### Common Metrics
+- R² (coefficient of determination)
+- MAE (mean absolute error)
+- RMSE (root mean squared error)
+- Feature importance stability
+
+### Typical Experimental Variables
+- Noise levels (σ): 0.0, 0.1, 0.5, 1.0
+- PCA dimensions: 5, 10, 50, 100, 200, 500
+- Ridge alpha: 0.001 to 100
+- Top-K features: 10, 50, 100, 200
+
+## 📝 Writing Style
+- Professional academic writing
+- Concise and quantitative
+- Use ❌/✅ for hypothesis verification
+- Include physical explanations where applicable
+
+---
+
+## 🚀 快速归档系统 (Quick Archive System)
+
+### 触发词（极简）
+当用户输入以下任意内容时，执行归档流程：
+- `a` / `A` / `归档` / `archive`
+- `a 1` / `归档 1` - 归档第 N 个
+- `a all` / `归档 all` - 全部归档
+- `s` / `归档状态` - 查看队列
+
+---
+
+## 🆕 新建实验计划 (New Experiment)
+
+### 触发词
+- `n` / `N` / `new` / `新建`
+- 后面跟着实验的思考/计划/coding prompt
+
+### 工作流程
+
+#### Step 1: 解析用户输入
+从用户的描述中提取：
+- **实验主题** → 决定目标文件夹 (logg/[topic]/)
+- **研究问题** → §1.1 实验目的
+- **实验设计思路** → §2 实验设计
+- **预期结果** → §1.2 预期结果
+
+#### Step 2: 创建 exp.md（只填写实验前部分）
+
+**✅ 填写的章节**：
+- Header（实验名称、日期、状态=🔄进行中）
+- §1 目标（实验目的、预期结果）
+- §2 实验设计（数据、特征、模型、超参数、评价指标）
+
+**⏳ 留空的章节**（等实验完成后填写）：
+- ⚡ 核心结论速览
+- §3 实验图表
+- §4 关键洞见
+- §5 结论
+- §6.1 数值结果表
+
+#### Step 3: 更新 main.md
+在对应的 `[topic]_main.md` 的 §3.1 实验总览中添加：
+```
+| MVP-X.X | [实验名称] | 🔄 进行中 | [链接](./exp_xxx.md) | - |
+```
+
+### 文件命名
+```
+用户: n 测试不同 dilation rate 对 CNN 的影响
+↓
+创建: logg/cnn/exp_cnn_dilation_rate_20251201.md
+更新: logg/cnn/cnn_main_20251201.md §3.1
+```
+
+### 后续流程
+```
+n [实验计划]  →  创建 exp.md 框架
+     ↓
+   跑实验
+     ↓
+实验结果同步到 raw/[结果文件].md
+     ↓
+a  →  归档：将结果填入 exp.md 的空白章节
+```
+
+### 示例
+```
+用户: n 测试 MLP 隐藏层数量对 log g 预测的影响，
+      计划测试 1/2/3/4 层，每层 256 units
+
+AI: 📝 创建实验计划...
+    ✅ 已创建: logg/NN/exp_mlp_hidden_layers_20251201.md
+    ✅ 已更新: logg/NN/NN_main_20251130.md §3.1
+    
+    已填写:
+    - §1 目标: 测试隐藏层数量影响
+    - §2 实验设计: 1/2/3/4 层, 256 units
+    
+    待填写 (实验后):
+    - §3-6 实验结果相关章节
+    
+    💡 实验完成后，将结果放入 raw/，然后输入 `a` 归档
+```
+
+---
+
+## 📝 更新文档 (Update)
+
+### 触发词
+- `u` / `U` / `update` / `更新`
+- 后面跟着要补充的信息/想法/发现
+
+### 工作流程
+
+#### Step 1: 智能匹配目标文件
+根据用户输入的内容，自动匹配最相关的文件：
+- 关键词匹配 → 找到对应 `logg/[topic]/` 目录
+- 内容类型判断 → 决定更新 exp.md 还是 main.md
+- 如果找不到匹配 → 按 `n` 流程创建新文件
+
+#### Step 2: 找到合适的章节位置
+| 内容类型 | 目标位置 |
+|---------|---------|
+| 新发现/洞见 | exp.md §4 关键洞见 或 main.md §4.3 发现汇总 |
+| 设计建议 | exp.md §5.3 设计启示 或 main.md §5.2 设计原则 |
+| 数值结果 | exp.md §6.1 数值结果表 |
+| 假设验证 | main.md §4.2 假设验证进度 |
+| 遗留问题 | main.md §5.3 遗留问题 |
+| 下一步计划 | exp.md §5.6 或 main.md §5.4 |
+| 通用笔记 | 相关文件的附录或新建笔记 |
+
+#### Step 3: 更新文件
+- 在合适位置插入/追加新内容
+- 保持格式一致
+- 更新"最后更新"时间戳
+
+### 示例
+```
+用户: u CNN 实验发现 dilation=2 时感受野刚好覆盖典型吸收线宽度，
+      这可能是性能最优的物理原因
+
+AI: 📝 更新文档...
+    🔍 匹配到: logg/cnn/exp_cnn_dilated_kernel_sweep_20251201.md
+    ✅ 已添加到 §4.1 宏观层洞见:
+       "dilation=2 时感受野覆盖典型吸收线宽度，物理解释性能最优"
+    ✅ 已添加到 §5.4 物理解释
+```
+
+```
+用户: u ridge 实验遗留问题：需要测试更大的 alpha 范围
+
+AI: 📝 更新文档...
+    🔍 匹配到: logg/ridge/ridge_main_20251130.md
+    ✅ 已添加到 §5.3 遗留问题:
+       "测试更大的 alpha 范围"
+```
+
+```
+用户: u 新想法：尝试用 attention 机制替代 pooling
+
+AI: 📝 未找到直接匹配的文件
+    🆕 按 `n` 流程创建: logg/NN/exp_attention_pooling_20251201.md
+```
+
+### 匹配优先级
+1. **精确匹配**：用户提到具体实验名/文件名
+2. **主题匹配**：关键词匹配 topic (cnn, ridge, pca...)
+3. **最近编辑**：同主题下最近修改的文件
+4. **创建新文件**：无匹配时
+
+### ⚠️ 核心理解：归档 ≠ 移动文件
+
+**归档的真正含义是：根据 raw 文件的实验结果，按 template/exp.md 模板重新撰写结构化实验报告**
+
+- ❌ 不是：简单复制/移动文件
+- ✅ 而是：阅读原始实验结果 → 提取关键信息 → 按模板重写报告
+
+### 归档流程
+
+#### Step 1: 检查归档队列
+```
+读取: status/archive_queue.md
+```
+
+#### Step 2: 撰写实验报告（核心步骤）
+1. **仔细阅读**源文件 (raw/ 中的原始实验结果)
+2. **按 template/exp.md 模板**撰写结构化报告：
+   - 提取核心结论 → §核心结论速览
+   - 提取实验设计 → §2 实验设计
+   - 提取数值结果 → §6.1 数值结果表
+   - 提取关键图表说明 → §3 实验图表
+   - 提取设计建议 → §5.3 设计启示
+   - 总结关键数字 → §5.5 关键数字速查
+3. **保存报告**到 `logg/[topic]/exp_[name]_YYYYMMDD.md`
+4. **更新 main.md**：
+   - 在 §3.1 实验总览 中添加新实验条目
+   - 在 §3.3 结论提取记录 中添加条目
+
+#### Step 3: 归档后检查（必须执行）
+完成报告后，必须进行以下检查：
+
+**📋 信息完整性检查清单**：
+- [ ] 核心结论是否提取？（一句话总结）
+- [ ] 最佳配置/参数是否记录？
+- [ ] 关键数值结果是否完整？（R², MAE, RMSE 等）
+- [ ] 实验设计细节是否清晰？
+- [ ] 设计启示/建议是否总结？
+- [ ] 与原文对比，是否有遗漏的重要发现？
+
+#### Step 4: 移动原始文件到 processed
+确认无遗漏后，**移动已归档的 raw 源文件到 processed 目录**：
+```
+移动: raw/[已归档文件].md → processed/raw/[已归档文件].md
+更新: status/archive_queue.md（移至已归档区域）
+```
+
+### 报告命名规则
+```
+源文件: raw/CNN_DILATED_EXPERIMENTS_FULL_REPORT.md
+↓
+归档到: logg/cnn/exp_cnn_dilated_experiments_20251201.md
+同步到: logg/cnn/cnn_main_20251201.md
+移动源: raw/... → processed/raw/... ✓
+```
+
+### 原始报告目录
+| 源目录 | 说明 |
+|--------|------|
+| `raw/` | 所有待归档的原始实验结果 |
+
+**归档目标自动推断**：根据文件名关键词判断归档到哪个 logg 子目录：
+- `cnn`, `dilated`, `conv` → `logg/cnn/`
+- `mlp`, `nn`, `residual` → `logg/NN/`
+- `ridge`, `topk` → `logg/ridge/`
+- `pca` → `logg/pca/`
+- `distill`, `latent`, `probe`, `pool` → `logg/distill/`
+- `train`, `val` → `logg/train/`
+- `gta`, `global` → `logg/gta/`
+
+### 关键提取项清单
+从原始报告中**必须提取**以下信息到 exp.md：
+
+| 提取项 | 目标位置 | 重要性 |
+|--------|----------|--------|
+| 核心结论一句话 | §核心结论速览 | 🔴 必须 |
+| 假设验证结果 | §核心结论速览 | 🔴 必须 |
+| 最佳配置/参数 | §5.5 关键数字速查 | 🔴 必须 |
+| 完整数值结果 | §6.1 数值结果表 | 🔴 必须 |
+| 实验设计细节 | §2 实验设计 | 🟡 重要 |
+| 关键图表说明 | §3 实验图表 | 🟡 重要 |
+| 设计建议/启示 | §5.3 设计启示 | 🟡 重要 |
+| 物理解释 | §5.4 物理解释 | 🟢 可选 |
+
+### 示例对话
+```
+用户: a
+AI: 📋 当前归档队列 (11个):
+    1. raw_vit/CNN_DILATED_EXPERIMENTS_FULL_REPORT.md → logg/cnn/
+    2. raw_vit/NN_RESULTS_SUMMARY.md → logg/NN/
+    ...
+    要归档哪个？(输入序号或 "all")
+
+用户: 1
+AI: 📖 正在阅读原始报告...
+    ✍️ 按 exp.md 模板撰写实验报告...
+    ✅ 已创建: logg/cnn/exp_cnn_dilated_experiments_20251201.md
+    ✅ 已更新: logg/cnn/cnn_main_20251201.md §3.1
+    
+    📋 信息完整性检查:
+    - [x] 核心结论: "Dilated CNN 在 K=3 时达到最佳 R²=0.987"
+    - [x] 最佳配置: dilation=2, kernel=5, layers=3
+    - [x] 数值结果: 完整记录 12 组实验
+    - [x] 设计启示: 2 条建议已提取
+    
+    📦 已移动源文件: raw_vit/... → processed/raw_vit/...
+    ✅ 归档完成！
+```
+
