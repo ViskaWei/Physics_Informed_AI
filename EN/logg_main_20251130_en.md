@@ -18,9 +18,9 @@
 | 🥇 | **Small-Kernel CNN** | k=9, 2L, lr=3e-3, AdaptiveAvgPool | **0.657** | Small receptive field + global pooling |
 | 🥈 | **Residual MLP** | [256,64], learns Ridge residuals | **0.498** | Linear shortcut is critical |
 | 🥉 | **Latent Probe** | enc\_pre\_latent + seg\_mean\_K8 | **0.55** | Extracted from Denoiser |
-| 🆕 | **Top-K Window CNN** | K=256/512, W=17, Residual on Ridge | target ≥0.70 | [MVP-Local-1 in progress](gta/exp_topk_window_cnn_transformer_20251201.md) |
-| 🆕 | **Global Feature Tower** | 158-dim (PCA+Ridge+TopK+Latent) | target ≥0.50 | [MVP-Global-1 in progress](gta/exp_global_feature_tower_mlp_20251201.md) |
-| 🆕 | **Swin-1D** | Tiny (1-2M), patch=8, window=8 | surpass LGBM @100k | [swin_main planned](swin/swin_main_20251201.md) |
+| 🆕 | **Top-K Window CNN** | K=256/512, W=17, Residual on Ridge | target ≥0.70 | [MVP-Local-1 in progress](../logg/gta/exp_topk_window_cnn_transformer_20251201.md) |
+| 🆕 | **Global Feature Tower** | 158-dim (PCA+Ridge+TopK+Latent) | target ≥0.50 | [MVP-Global-1 in progress](../logg/gta/exp_global_feature_tower_mlp_20251201.md) |
+| 🆕 | **Swin-1D** | Tiny (1-2M), patch=8, window=8 | surpass LGBM @100k | [swin_main planned](../logg/swin/swin_main_20251201.md) |
 
 ### Critical Design Principles
 
@@ -159,16 +159,16 @@ Core scientific questions:
 
 | Directory | Topic | Core Finding | Main File |
 |-----------|-------|--------------|-----------|
-| [ridge/](ridge/) | **Linear Baseline** | Mapping inherently linear, $R^2=0.999$ @ noise=0 | [ridge_main](ridge/ridge_main_20251130.md) |
-| [pca/](pca/) | **Dimensionality Reduction** | Requires k≥100 PCs for $R^2≥0.99$ | [pca_main](pca/pca_main_20251130.md) |
-| [lightgbm/](lightgbm/) | **Tree Model Baseline** | $R^2=0.9982$ @ noise=0, learning rate most critical | [lightgbm_main](lightgbm/lightgbm_main_20251130.md) |
-| [noise/](noise/) | **Noise & Feature Selection** | K=1000 (24%) matches full spectrum | [noise_main](noise/noise_main_20251130.md) |
-| [NN/](NN/) | **MLP Neural Networks** | Residual MLP exceeds Ridge by +8.7% | [NN_main](NN/NN_main_20251130.md) |
-| [cnn/](cnn/) | **CNN Neural Networks** | **Small kernel (k=9) achieves $R^2=0.657$** ⭐ | [cnn_main](cnn/cnn_main_20251201.md) |
-| [gta/](gta/) | **Global Tower Architecture** | Metadata cannot predict; **Dual-tower MVP in progress** | [gta_main](gta/gta_main_20251130.md) |
-| [distill/](distill/) | **Representation Learning** | Optimized extraction achieves $R^2=0.55$ (+150%) | [distill_main](distill/distill_main_20251130.md) |
-| [train/](train/) | **Training Strategy** | Optimal val_size depends on noise | [train_main](train/train_main_20251130.md) |
-| [swin/](swin/) | **Swin-1D Architecture** | 🆕 Validate hierarchical attention | [swin_main](swin/swin_main_20251201.md) |
+| [ridge/](../logg/ridge/) | **Linear Baseline** | Mapping inherently linear, $R^2=0.999$ @ noise=0 | [ridge_main](../logg/ridge/ridge_main_20251130.md) |
+| [pca/](../logg/pca/) | **Dimensionality Reduction** | Requires k≥100 PCs for $R^2≥0.99$ | [pca_main](../logg/pca/pca_main_20251130.md) |
+| [lightgbm/](../logg/lightgbm/) | **Tree Model Baseline** | $R^2=0.9982$ @ noise=0, learning rate most critical | [lightgbm_main](../logg/lightgbm/lightgbm_main_20251130.md) |
+| [noise/](../logg/noise/) | **Noise & Feature Selection** | K=1000 (24%) matches full spectrum | [noise_main](../logg/noise/noise_main_20251130.md) |
+| [NN/](../logg/NN/) | **MLP Neural Networks** | Residual MLP exceeds Ridge by +8.7% | [NN_main](../logg/NN/NN_main_20251130.md) |
+| [cnn/](../logg/cnn/) | **CNN Neural Networks** | **Small kernel (k=9) achieves $R^2=0.657$** ⭐ | [cnn_main](../logg/cnn/cnn_main_20251201.md) |
+| [gta/](../logg/gta/) | **Global Tower Architecture** | Metadata cannot predict; **Dual-tower MVP in progress** | [gta_main](../logg/gta/gta_main_20251130.md) |
+| [distill/](../logg/distill/) | **Representation Learning** | Optimized extraction achieves $R^2=0.55$ (+150%) | [distill_main](../logg/distill/distill_main_20251130.md) |
+| [train/](../logg/train/) | **Training Strategy** | Optimal val_size depends on noise | [train_main](../logg/train/train_main_20251130.md) |
+| [swin/](../logg/swin/) | **Swin-1D Architecture** | 🆕 Validate hierarchical attention | [swin_main](../logg/swin/swin_main_20251201.md) |
 
 ---
 
@@ -403,8 +403,8 @@ Parameters: ~11M
 
 | Direction | Task | Expected Benefit | Status |
 |-----------|------|------------------|--------|
-| **🆕 MVP-Local-1** | [Top-K Window + CNN/Transformer](gta/exp_topk_window_cnn_transformer_20251201.md) | Surpass full-spectrum CNN (0.657) @ noise=0.1 | 🔄 In progress |
-| **🆕 MVP-Global-1** | [Global Feature Tower + MLP](gta/exp_global_feature_tower_mlp_20251201.md) | Achieve R²≥0.50 @ noise=1.0 | 🔄 In progress |
+| **🆕 MVP-Local-1** | [Top-K Window + CNN/Transformer](../logg/gta/exp_topk_window_cnn_transformer_20251201.md) | Surpass full-spectrum CNN (0.657) @ noise=0.1 | 🔄 In progress |
+| **🆕 MVP-Global-1** | [Global Feature Tower + MLP](../logg/gta/exp_global_feature_tower_mlp_20251201.md) | Achieve R²≥0.50 @ noise=1.0 | 🔄 In progress |
 | **CNN noise=1.0 test** | Test optimal CNN config at noise=1.0 | Fair comparison with LightGBM/MLP | ⏳ Pending |
 | **100k fair comparison** | Retrain Ridge/LightGBM with 100k data | Fair comparison with NN | ⏳ Pending |
 | **Dilated CNN + lr=3e-3** | Retest dilated CNN with high learning rate | Validate dilation effectiveness | ⏳ Pending |
@@ -414,7 +414,7 @@ Parameters: ~11M
 
 | Direction | Task | Expected Benefit |
 |-----------|------|------------------|
-| **🆕 Swin-1D** | [Hierarchical local attention](swin/swin_main_20251201.md) | Surpass LightGBM with 100k data |
+| **🆕 Swin-1D** | [Hierarchical local attention](../logg/swin/swin_main_20251201.md) | Surpass LightGBM with 100k data |
 | **CNN + Residual** | Small-kernel CNN learns Ridge residuals | Potential +3-5% |
 | **TopK + window** | Extract TopK neighborhood windows (±8) | Preserve local context |
 | **Dual-channel CNN** | [flux, error] dual-channel input | Leverage error information |
@@ -432,9 +432,9 @@ Parameters: ~11M
 
 | Hypothesis | Validation Experiment | Current Status |
 |------------|-----------------------|----------------|
-| **🆕 Top-K Window surpasses full-spectrum CNN** | [MVP-Local-1](gta/exp_topk_window_cnn_transformer_20251201.md) | 🔄 In progress |
-| **🆕 158-dim Global Feature achieves R²≥0.50 @ noise=1.0** | [MVP-Global-1](gta/exp_global_feature_tower_mlp_20251201.md) | 🔄 In progress |
-| **🆕 Swin-1D surpasses LightGBM with 100k data** | [Swin MVP](swin/swin_main_20251201.md) | ⏳ Planned |
+| **🆕 Top-K Window surpasses full-spectrum CNN** | [MVP-Local-1](../logg/gta/exp_topk_window_cnn_transformer_20251201.md) | 🔄 In progress |
+| **🆕 158-dim Global Feature achieves R²≥0.50 @ noise=1.0** | [MVP-Global-1](../logg/gta/exp_global_feature_tower_mlp_20251201.md) | 🔄 In progress |
+| **🆕 Swin-1D surpasses LightGBM with 100k data** | [Swin MVP](../logg/swin/swin_main_20251201.md) | ⏳ Planned |
 | Small-kernel CNN remains superior to MLP at noise=1.0 | CNN @ noise=1.0 | ⏳ Pending |
 | Dilated CNN with high lr improves performance | Dilated + lr=3e-3 | ⏳ Pending |
 | CNN + Linear Shortcut further improves | CNN Residual | ⏳ Pending |
@@ -448,36 +448,36 @@ Parameters: ~11M
 
 | Model | Primary Directory | Core File | Best $R^2$ |
 |-------|------------------|-----------|------------|
-| **CNN (Small-Kernel)** ⭐ | cnn/ | [exp_cnn_dilated_kernel_sweep](cnn/exp_cnn_dilated_kernel_sweep_20251201.md) | **0.657** |
-| **Swin-1D** 🆕 | swin/ | [swin_main](swin/swin_main_20251201.md) | ⏳ Planned |
-| **MLP (Residual)** | NN/ | [exp_nn_comprehensive_analysis](NN/exp_nn_comprehensive_analysis_20251130.md) | 0.498 |
-| **Latent Probe** | distill/ | [exp_latent_extraction_logg](distill/exp_latent_extraction_logg_20251201.md) | 0.55 |
-| **LightGBM** | lightgbm/ | [exp_lightgbm_hyperparam_sweep](lightgbm/exp_lightgbm_hyperparam_sweep_20251129.md) | 0.536 |
-| **Ridge** | ridge/ | [exp_ridge_alpha_sweep](ridge/exp_ridge_alpha_sweep_20251127.md) | 0.458 |
+| **CNN (Small-Kernel)** ⭐ | cnn/ | [exp_cnn_dilated_kernel_sweep](../logg/cnn/exp_cnn_dilated_kernel_sweep_20251201.md) | **0.657** |
+| **Swin-1D** 🆕 | swin/ | [swin_main](../logg/swin/swin_main_20251201.md) | ⏳ Planned |
+| **MLP (Residual)** | NN/ | [exp_nn_comprehensive_analysis](../logg/NN/exp_nn_comprehensive_analysis_20251130.md) | 0.498 |
+| **Latent Probe** | distill/ | [exp_latent_extraction_logg](../logg/distill/exp_latent_extraction_logg_20251201.md) | 0.55 |
+| **LightGBM** | lightgbm/ | [exp_lightgbm_hyperparam_sweep](../logg/lightgbm/exp_lightgbm_hyperparam_sweep_20251129.md) | 0.536 |
+| **Ridge** | ridge/ | [exp_ridge_alpha_sweep](../logg/ridge/exp_ridge_alpha_sweep_20251127.md) | 0.458 |
 
 ## 8.2 By Research Topic
 
 | Topic | Directory | Core File | Core Finding |
 |-------|-----------|-----------|--------------|
-| **CNN Architecture** | cnn/ | [cnn_main](cnn/cnn_main_20251201.md) | Small kernel optimal |
-| **Swin-1D** 🆕 | swin/ | [swin_main](swin/swin_main_20251201.md) | Hierarchical attention |
-| **Dimensionality Reduction** | pca/ | [pca_main](pca/pca_main_20251130.md) | ~100 effective dims |
-| **Feature Selection** | noise/ | [noise_main](noise/noise_main_20251130.md) | 24% pixels sufficient |
-| **Representation Learning** | distill/ | [distill_main](distill/distill_main_20251130.md) | Optimized extraction +150% |
-| **Architecture Design** | gta/ | [gta_main](gta/gta_main_20251130.md) | Spectral data required |
+| **CNN Architecture** | cnn/ | [cnn_main](../logg/cnn/cnn_main_20251201.md) | Small kernel optimal |
+| **Swin-1D** 🆕 | swin/ | [swin_main](../logg/swin/swin_main_20251201.md) | Hierarchical attention |
+| **Dimensionality Reduction** | pca/ | [pca_main](../logg/pca/pca_main_20251130.md) | ~100 effective dims |
+| **Feature Selection** | noise/ | [noise_main](../logg/noise/noise_main_20251130.md) | 24% pixels sufficient |
+| **Representation Learning** | distill/ | [distill_main](../logg/distill/distill_main_20251130.md) | Optimized extraction +150% |
+| **Architecture Design** | gta/ | [gta_main](../logg/gta/gta_main_20251130.md) | Spectral data required |
 
 ## 8.3 Key Experiment Report Index
 
 | Experiment | Date | Core Finding | Link |
 |------------|------|--------------|------|
-| **🆕 Swin-1D Architecture** | 2025-12-01 | Hierarchical attention validation | [Report](swin/swin_main_20251201.md) |
-| **🆕 Top-K Window CNN/Transformer** | 2025-12-01 | MVP-Local-1 experiment plan | [Report](gta/exp_topk_window_cnn_transformer_20251201.md) |
-| **🆕 Global Feature Tower MLP** | 2025-12-01 | MVP-Global-1 experiment plan | [Report](gta/exp_global_feature_tower_mlp_20251201.md) |
-| CNN Kernel Sweep | 2025-12-01 | Small kernel (k=9) optimal | [Report](cnn/exp_cnn_dilated_kernel_sweep_20251201.md) |
-| NN Comprehensive Analysis | 2025-11-30 | Residual MLP optimal | [Report](NN/exp_nn_comprehensive_analysis_20251130.md) |
-| Latent Extraction Optimization | 2025-12-01 | Segmented pooling +77.6% | [Report](distill/exp_latent_extraction_logg_20251201.md) |
-| PCA Dimension Analysis | 2025-11-28 | Requires 100+ dims | [Report](pca/exp_pca_linear_regression_20251128.md) |
-| Ridge α Sweep | 2025-11-27 | $R^2=0.999$ @ noise=0 | [Report](ridge/exp_ridge_alpha_sweep_20251127.md) |
+| **🆕 Swin-1D Architecture** | 2025-12-01 | Hierarchical attention validation | [Report](../logg/swin/swin_main_20251201.md) |
+| **🆕 Top-K Window CNN/Transformer** | 2025-12-01 | MVP-Local-1 experiment plan | [Report](../logg/gta/exp_topk_window_cnn_transformer_20251201.md) |
+| **🆕 Global Feature Tower MLP** | 2025-12-01 | MVP-Global-1 experiment plan | [Report](../logg/gta/exp_global_feature_tower_mlp_20251201.md) |
+| CNN Kernel Sweep | 2025-12-01 | Small kernel (k=9) optimal | [Report](../logg/cnn/exp_cnn_dilated_kernel_sweep_20251201.md) |
+| NN Comprehensive Analysis | 2025-11-30 | Residual MLP optimal | [Report](../logg/NN/exp_nn_comprehensive_analysis_20251130.md) |
+| Latent Extraction Optimization | 2025-12-01 | Segmented pooling +77.6% | [Report](../logg/distill/exp_latent_extraction_logg_20251201.md) |
+| PCA Dimension Analysis | 2025-11-28 | Requires 100+ dims | [Report](../logg/pca/exp_pca_linear_regression_20251128.md) |
+| Ridge α Sweep | 2025-11-27 | $R^2=0.999$ @ noise=0 | [Report](../logg/ridge/exp_ridge_alpha_sweep_20251127.md) |
 
 ## 8.4 External Resources
 
