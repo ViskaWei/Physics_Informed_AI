@@ -71,4 +71,3 @@ echo "✅ Sync complete!"
 echo ""
 echo "📊 Index location: $PHYSICS_AI_ROOT/experiments_index/index.csv"
 echo "📝 Next steps: $PHYSICS_AI_ROOT/status/next_steps.md"
-
