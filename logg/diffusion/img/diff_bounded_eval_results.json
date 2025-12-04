@@ -1,0 +1,60 @@
+{
+  "experiment_id": "SD-20251204-diff-bounded-01",
+  "experiment_name": "Bounded Noise Multi-Level Denoiser",
+  "date": "2025-12-04T01:46:30.763206",
+  "model": {
+    "type": "ConditionalUNet1D",
+    "parameters": 6316833,
+    "prediction_target": "x0"
+  },
+  "training": {
+    "epochs": 50,
+    "batch_size": 32,
+    "learning_rate": 0.0001,
+    "final_loss": 0.0004315329803294168,
+    "best_loss": 0.0004315329803294168
+  },
+  "data": {
+    "num_samples": 10000,
+    "spectrum_length": 4096,
+    "lambda_values": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ]
+  },
+  "results": {
+    "0.1": {
+      "mse_noisy": 0.003261344230850227,
+      "mse_denoised": 0.03026988610625267,
+      "wmse": 0.2814980816282332,
+      "improvement": -8.281414031649568
+    },
+    "0.2": {
+      "mse_noisy": 0.013888449554797263,
+      "mse_denoised": 0.03434255801141262,
+      "wmse": 0.3155366490315646,
+      "improvement": -1.4727423947441438
+    },
+    "0.3": {
+      "mse_noisy": 0.02836838743183762,
+      "mse_denoised": 0.03133983105421066,
+      "wmse": 0.34400878704153004,
+      "improvement": -0.10474489004751164
+    },
+    "0.4": {
+      "mse_noisy": 0.04870272549800575,
+      "mse_denoised": 0.03482631071470678,
+      "wmse": 0.34278077284805475,
+      "improvement": 0.28492070292590044
+    },
+    "0.5": {
+      "mse_noisy": 0.08462442672811449,
+      "mse_denoised": 0.034235076513141394,
+      "wmse": 0.2999813831038773,
+      "improvement": 0.5954468722945264
+    }
+  }
+}

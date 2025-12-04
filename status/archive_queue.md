@@ -1,45 +1,83 @@
-# 📋 归档队列 (Archive Queue)
+# 📦 归档队列（Archive Queue）
 
-> **使用方法**: 在 Cursor 中输入 `a` 开始归档
+---
+> **最后更新：** 2025-12-01  
+> **待归档数量：** 0
 
 ---
 
-## ⏳ 待归档 (Pending)
+# ⏳ 待归档
 
-| 源文件 | 目标目录 | 优先级 |
-|--------|----------|--------|
-| - | - | - |
+> 等待按 `exp.md` 模板撰写报告的原始结果文件
 
-> 💡 `raw/` 目录当前为空，新实验结果放入后会自动出现在此
-
----
-
-## ✅ 已归档 (Archived)
-
-| 源文件 | 归档报告 | 归档日期 |
-|--------|----------|----------|
-| `raw_vit/CNN_DILATED_EXPERIMENTS_FULL_REPORT.md` | `logg/cnn/exp_cnn_dilated_kernel_sweep_20251201.md` | 2025-12-01 |
-| `raw_blindspot/layer_pooling_experiment_report.md` | `logg/distill/exp_error_info_decomposition_20251201.md` | 2025-12-01 |
-| `raw_blindspot/linear_probe_report.md` | `logg/distill/exp_linear_probe_latent_20251130.md` | 2025-11-30 |
+| # | 源文件 | 目标目录 | topic | 添加日期 | 优先级 | 备注 |
+|---|--------|---------|-------|---------|--------|------|
+| - | - | - | - | - | - | 当前无待归档文件 |
 
 ---
 
-## 📊 统计
+# 🔄 归档中
 
-- **待归档**: 0
-- **已归档**: 3+
-- **最后更新**: 2025-12-01
+> 正在撰写报告的文件
+
+| # | 源文件 | 目标 exp.md | 进度 | 备注 |
+|---|--------|------------|------|------|
+| - | - | - | - | 当前无正在归档文件 |
 
 ---
 
-## 📁 目录结构
+# ✅ 已归档
+
+> 归档完成，源文件已移动到 `processed/`
+
+| # | 源文件 | 目标 exp.md | 归档日期 | 备注 |
+|---|--------|------------|---------|------|
+| 1 | `raw_vit/gta_local_tower_results.md` | `logg/gta/exp_topk_window_cnn_transformer_20251201.md` | 2025-12-01 | ✅ |
+| 2 | `raw_vit/gta_global_tower_results.md` | `logg/gta/exp_global_feature_tower_mlp_20251201.md` | 2025-12-01 | ✅ |
+| 3 | `raw_vit/cnn_dilated_results.md` | `logg/cnn/exp_cnn_dilated_kernel_sweep_20251201.md` | 2025-12-01 | ✅ |
+
+---
+
+# 📋 归档流程说明
+
+## 归档步骤
 
 ```
-raw/                    ← 新实验结果放这里
-    ↓ 归档
-logg/[topic]/exp_*.md   ← 结构化报告
-    ↓ 原文件移动
-processed/raw/          ← 已处理的原始文件
+1. raw/ 中有新结果
+   ↓
+2. 添加到「待归档」
+   ↓
+3. 执行 `a [序号]` 开始归档
+   ↓
+4. 按 exp.md 模板撰写报告
+   ↓
+5. 信息完整性检查
+   ↓
+6. 移动源文件到 processed/
+   ↓
+7. 更新 kanban.md Archived 列
 ```
 
-> **快捷命令**: `a` 归档 | `s` 状态
+## 归档检查清单
+
+- [ ] 核心结论是否提取？
+- [ ] 最佳配置/参数是否记录？
+- [ ] 关键数值结果是否完整？
+- [ ] 设计启示是否总结？
+- [ ] 是否同步到 main.md？
+
+---
+
+# 📎 快捷命令
+
+| 命令 | 作用 |
+|------|------|
+| `a` / `归档` | 查看队列并开始归档 |
+| `a [序号]` | 归档第 N 个 |
+| `a all` | 全部归档 |
+| `s` / `归档状态` | 查看队列状态 |
+
+---
+
+*最后更新: 2025-12-01*
+

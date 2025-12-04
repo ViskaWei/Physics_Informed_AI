@@ -11,6 +11,28 @@
 
 ---
 
+## 🔗 上游追溯链接（Upstream Links）
+
+| 字段 | 值 |
+|------|-----|
+| **来源会话** | [session_20251130_distill_latent_probe.md](./sessions/session_20251130_distill_latent_probe.md) |
+| **队列入口** | `status/kanban.md` → `BS-20251130-distill-probe-01` |
+
+---
+
+## 🔗 跨仓库元数据（Cross-Repo Metadata）
+
+| 字段 | 值 |
+|------|-----|
+| **experiment_id** | `BS-20251130-distill-probe-01` |
+| **project** | `BlindSpot` |
+| **topic** | `distill` |
+| **source_repo_path** | `~/BlindSpotDenoiser/evals/` |
+| **config_path** | `-` |
+| **output_path** | `evals/latent_probe*.pt` |
+
+---
+
 # ⚡ 核心结论速览（供 main 提取）
 
 ### 一句话总结

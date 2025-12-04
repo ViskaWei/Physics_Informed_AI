@@ -1,9 +1,24 @@
-# Distill · log_g 实验主笔记（截至 2025-12-01）
+# 📘 Distill (知识蒸馏) · 实验主框架
 
-- 本目录：`logg/distill/`
-- 最近更新时间：2025-12-01（新增 Stage A：信息来源分解）
-- 写作风格参考：`/home/swei20/VIT/docs`
-- 说明：此文件是该子目录所有实验的主索引、核心结论与未来计划。
+---
+> **主题名称：** BlindSpot Latent 到 $\log g$ 预测的 Teacher-Student 蒸馏  
+> **作者：** Viska Wei  
+> **创建日期：** 2025-11-30  
+> **最后更新：** 2025-12-01  
+> **状态：** 🔄 进行中（Stage 1-2 已完成，Stage A 待做）
+
+---
+
+## 🔗 六层架构索引
+
+| 层级 | 文件 | 说明 |
+|------|------|------|
+| **Layer 1** | [sessions/](./sessions/) | GPT 会话归档 |
+| **Layer 2** | [本文件](./distill_main_20251130.md) | 项目主线 + 跨实验分析 |
+| **Layer 3** | [status/kanban.md](../../status/kanban.md) | 实验状态追踪 |
+| **Layer 4** | `exp_*.md` | 子实验报告 |
+| **Layer 5** | `card_*.md` | 知识卡片（待创建） |
+| **Layer 6** | [status/next_steps.md](../../status/next_steps.md) | 日常计划 |
 
 ---
 
@@ -970,12 +985,26 @@ y_pred_baseline = lgb_baseline.predict(X_test)
 
 ## 6.5 相关文件
 
+### 📑 实验报告
+
 | 类型 | 路径 | 状态 |
 |------|------|------|
-| **Stage A 报告** | `logg/distill/exp_error_info_decomposition_20251201.md` | 🔄 进行中 |
-| **MVP 1.1 报告** | `logg/distill/exp_linear_probe_latent_20251130.md` | ✅ 已完成（含 100k 扩展） |
-| **MVP 1.4 报告** | `logg/distill/exp_latent_extraction_logg_20251201.md` | ✅ 已完成（R²=0.55） |
-| **MVP 2.2 报告** | `logg/distill/exp_encoder_nn_logg_20251201.md` | 🔄 进行中（val R²=0.47） |
+| **Stage A 报告** | [exp_error_info_decomposition_20251201.md](./exp_error_info_decomposition_20251201.md) | 🔄 进行中 |
+| **MVP 1.1 报告** | [exp_linear_probe_latent_20251130.md](./exp_linear_probe_latent_20251130.md) | ✅ 已完成（含 100k 扩展） |
+| **MVP 1.4 报告** | [exp_latent_extraction_logg_20251201.md](./exp_latent_extraction_logg_20251201.md) | ✅ 已完成（R²=0.55） |
+| **MVP 2.2 报告** | [exp_encoder_nn_logg_20251201.md](./exp_encoder_nn_logg_20251201.md) | ✅ 完成 (Test R²=0.6117, +10.9% vs Ridge) |
+
+### 💬 GPT 会话归档
+
+| 会话 | 路径 | 产出 |
+|------|------|------|
+| 研究方向初始化 | [session_20251130_distill_latent_probe.md](./sessions/session_20251130_distill_latent_probe.md) | MVP 1.1-1.4 |
+| Encoder+NN 设计 | [session_20251201_distill_encoder_nn.md](./sessions/session_20251201_distill_encoder_nn.md) | MVP 2.2 |
+
+### 📦 数据与模型
+
+| 类型 | 路径 | 状态 |
+|------|------|------|
 | 原始实验数据 | `/home/swei20/Physics_Informed_AI/raw_blindspot/linear_probe_report.md` | ✅ |
 | 图表目录 | `logg/distill/img/` | - |
 | Denoiser 模型 | `evals/m215l9e48k25s1bn1d1ep5000.ckpt` | ✅ |
@@ -983,49 +1012,59 @@ y_pred_baseline = lgb_baseline.predict(X_test)
 | Latent 特征 (32k) | `evals/latent_probe_32k.pt` | ✅ |
 | Latent 特征 (100k train) | `evals/latent_probe_train_100k.pt` | ✅ |
 | Latent 特征 (1k test) | `evals/latent_probe_test_1k.pt` | ✅ |
-| 层激活 (train)** | `evals/layer_features_train_100k.pt` | ✅ 已生成 |
-| 层激活 (test)** | `evals/layer_features_test_1k.pt` | ✅ 已生成 |
+| 层激活 (train) | `evals/layer_features_train_100k.pt` | ✅ 已生成 |
+| 层激活 (test) | `evals/layer_features_test_1k.pt` | ✅ 已生成 |
 | 数据集 | `/datascope/.../bosz50000/mag215/` | ✅ |
 | **代码实现** | `/home/swei20/BlindSpotDenoiser/src/logg_from_encoder.py` | ✅ 已实现 |
 | **训练脚本** | `/home/swei20/BlindSpotDenoiser/experiments/train_logg_from_encoder.py` | ✅ 已实现 |
+
+### 🔗 跨系统链接
+
+| 类型 | 路径 | 说明 |
+|------|------|------|
+| 实验看板 | [status/kanban.md](../../status/kanban.md) | Distill 实验状态 |
+| 下一步计划 | [status/next_steps.md](../../status/next_steps.md) | 日常任务 |
+| GTA 联动 | [logg/gta/gta_main_20251130.md](../gta/gta_main_20251130.md) | Latent 特征给 GTA |
 
 ---
 
 ## 📋 实验进度追踪
 
+> **⚠️ 日常任务追踪**：请使用 [status/kanban.md](../../status/kanban.md)  
+> **本节仅记录**：实验总览 + 结果同步
+
 ### Stage A：信息来源分解（新增 2025-12-01）
 
-| MVP | 名称 | 状态 | 结果 |
-|-----|------|------|------|
-| A.1 | Error-only Baseline | 🔲 待做 | - |
-| A.2 | 残差定义与计算 | 🔲 待做 | - |
-| A.3 | Flux → 残差预测 | 🔲 待做 | - |
-| A.4 | Latent → 残差预测 | 🔲 待做 | - |
+| MVP | 名称 | experiment_id | 状态 | 结果 |
+|-----|------|---------------|------|------|
+| A.1 | Error-only Baseline | - | 🔲 待做 | - |
+| A.2 | 残差定义与计算 | - | 🔲 待做 | - |
+| A.3 | Flux → 残差预测 | - | 🔲 待做 | - |
+| A.4 | Latent → 残差预测 | - | 🔲 待做 | - |
 
 **报告**：[exp_error_info_decomposition_20251201.md](./exp_error_info_decomposition_20251201.md)
 
 ### Stage 1-4：原有实验
 
-| MVP | 名称 | 状态 | 结果 |
-|-----|------|------|------|
-| 1.1 | Linear Probe | ✅ 完成 | $\log g$ Ridge $R^2 = 0.22$ |
-| 1.1b | LightGBM Probe | ✅ 完成 | $\log g$ LGBM $R^2 = 0.28$（+29%） |
-| 1.2 | 噪声鲁棒性 | 🔲 待做 | - |
-| 1.3 | Latent 维度扫描 | 🔲 可选 | - |
-| 1.4 | Latent 提取优化 | ✅ 完成 | $\log g$ Test $R^2 = 0.5516$（+150%） |
-| 2.1 | Student 蒸馏 | 🔲 待做 | - |
-| **2.2** | **Encoder + NN for log_g** | 🔄 进行中 | val $R^2 = 0.47$（冻结 encoder） |
-| 2.3 | Fine-tune encoder | 🔲 待做 | - |
-| ... | ... | ... | ... |
+| MVP | 名称 | experiment_id | 状态 | 结果 | exp.md |
+|-----|------|---------------|------|------|--------|
+| 1.1 | Linear Probe | `BS-20251130-distill-probe-01` | ✅ 完成 | Ridge $R^2 = 0.22$ | [链接](./exp_linear_probe_latent_20251130.md) |
+| 1.1b | LightGBM Probe | `BS-20251130-distill-probe-01` | ✅ 完成 | LGBM $R^2 = 0.28$ (+29%) | [链接](./exp_linear_probe_latent_20251130.md) |
+| 1.2 | 噪声鲁棒性 | - | 🔲 待做 | - | - |
+| 1.3 | Latent 维度扫描 | - | 🔲 可选 | - | - |
+| 1.4 | Latent 提取优化 | `BS-20251201-distill-latent-01` | ✅ 完成 | **$R^2 = 0.5516$ (+150%)** | [链接](./exp_latent_extraction_logg_20251201.md) |
+| 2.1 | Student 蒸馏 | - | 🔲 待做 | - | - |
+| **2.2** | **Encoder + NN** | `BS-20251201-encoder-logg-01` | ✅ 完成 | **$R^2 = 0.6117$ (+10.9%)** | [链接](./exp_encoder_nn_logg_20251201.md) |
+| 2.3 | Fine-tune encoder | `BS-20251201-distill-finetune-01` | ⏳ TODO | - | - |
 
 ---
 
 > **下一步行动**（优先级排序，更新于 2025-12-01）：
 > 
 > 1. **🔥 MVP 2.2（进行中）**：Encoder + NN End-to-End Training
->    - **已完成**：完整训练框架实现（`LogGFromEncoderLightning`）
->    - **当前结果**：冻结 encoder + MLP head，val $R^2 = 0.47$
->    - **下一步**：测试 fine-tune encoder (MVP-2.3)
+>    - **已完成**：完整训练框架实现 + 端到端训练
+>    - **最终结果**：冻结 encoder + MLP head，**Test R² = 0.6117**（比 Ridge baseline 0.5516 提升 10.9%）
+>    - **结论**：MLP 能捕捉 encoder 特征与 log_g 之间的非线性关系
 >    - 详细报告：[exp_encoder_nn_logg_20251201.md](./exp_encoder_nn_logg_20251201.md)
 >
 > 2. **Stage A**：信息来源分解
