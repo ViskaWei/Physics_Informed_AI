@@ -1,9 +1,9 @@
 # 📌 实验看板（Experiment Kanban）
 
 ---
-> **最后更新：** 2025-12-03  
+> **最后更新：** 2025-12-05  
 > **活跃项目：** VIT / BlindSpot  
-> **本周重点：** **🆕 MoE Phase 7: 连续条件化（Gate 噪声敏感性 + Conditional++ + Noise 连续化）** + Diffusion 1D 光谱降噪
+> **本周重点：** **🔴 MoE Phase 12-13: 100k 稳态验证 + Coverage++ + 特征增强** — 目标：0.9310 变成 100k 稳态，full > 0.91
 
 ---
 
@@ -12,9 +12,9 @@
 | 状态 | 数量 | 说明 |
 |------|------|------|
 | 💡 Inbox | 11 | 待结构化的 idea |
-| ⏳ TODO | 10 | 已分配 ID，待启动 |
+| ⏳ TODO | **15** | 已分配 ID，待启动 **(+5 MoE Phase 12-13)** |
 | 🚀 Running | 0 | 正在运行 |
-| ✅ Done | 0 | 完成待写 exp.md |
+| ✅ Done | 1 | 完成待写 exp.md |
 | 📚 Archived | 19 | 已归档 |
 
 ---
@@ -45,17 +45,23 @@
 
 | experiment_id | MVP | project | topic | 优先级 | 预估时间 | session 来源 | 备注 |
 |---------------|-----|---------|-------|--------|---------|-------------|------|
+| **🆕 `SD-20251204-diff-wmae-01`** | **MVP-0.6** | SpecDiffusion | diffusion | **🔴 P0** | ~3h | MVP-0.5 后续 | **wMAE + residual 结构，s≤0.2 弱噪声降噪** |
 | **🆕 `VIT-20251203-moe-gate-noise-01`** | **MVP-7.1** | VIT | moe | **🔴🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Gate 噪声敏感性曲线 → 决定"硬 MoE 还能不能救"** |
 | **🆕 `VIT-20251203-moe-cond-pp-01`** | **MVP-7.2** | VIT | moe | **🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Conditional Ridge++ → 榨出剩余 20% MoE 差距** |
 | **🆕 `VIT-20251203-moe-noise-cont-01`** | **MVP-7.3** | VIT | moe | **🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Noise 连续条件化 → 修复 noise=0.5 翻车** |
-| `VIT-20251203-diff-baseline-01` | MVP-0.0 | VIT | diffusion | 🔴 P0 | ~3h | [session_diffusion_init](../logg/diffusion/sessions/session_20251203_diffusion_init.md) | 1D U-Net DDPM sanity check |
-| `VIT-20251203-diff-supervised-01` | MVP-1.0 | VIT | diffusion | 🔴 P0 | ~4h | [session_diffusion_init](../logg/diffusion/sessions/session_20251203_diffusion_init.md) | spec-DDPM 复现（监督式降噪） |
+| ~~`VIT-20251203-diff-baseline-01`~~ | ~~MVP-0.0~~ | ~~VIT~~ | ~~diffusion~~ | ~~🔴 P0~~ | ~~3h~~ | - | ❌ 失败 → Archived |
+| ~~`VIT-20251203-diff-supervised-01`~~ | ~~MVP-1.0~~ | ~~VIT~~ | ~~diffusion~~ | ~~🔴 P0~~ | ~~4h~~ | - | ⚠️ 待验证 |
 | ~~`VIT-20251203-moe-piecewise-01`~~ | ~~MVP-1.0~~ | ~~VIT~~ | ~~moe~~ | ~~🔴 P0~~ | ~~2h~~ | - | ✅ **已完成** → Archived |
 | `VIT-20251203-moe-pseudo-01` | MVP-3.1 | VIT | moe | 🟡 P1 | ~2h | MoE-1.1 后续规划 | Pseudo Gating：用 $\widehat{[M/H]}$ 做 gate |
 | `VIT-20251203-moe-logg-gate-01` | MVP-4.0 | VIT | moe | 🟡 P1 | ~2h | MoE-1.1 后续规划 | log g Oracle/Pseudo Gate 三件套 |
 | `VIT-20251201-gta-fusion-01` | MVP-Global-2 | VIT | gta | 🔴 P0 | ~3h | [session_gta_fusion](../logg/gta/sessions/session_20251201_gta_fusion.md) | 双塔融合 (Global + Local) |
 | `BS-20251201-latent-gta-01` | MVP-Global-2 | BlindSpot | distill | 🔴 P0 | ~2h | - | Latent 特征提取给 GTA |
 | `BS-20251201-distill-finetune-01` | MVP-2.3 | BlindSpot | distill | 🟡 P1 | ~4h | [session_distill](../logg/distill/sessions/session_20251130_distill_latent_probe.md) | Fine-tune encoder 测试 |
+| **🆕 `VIT-20251205-moe-100k-01`** | **MVP-12A** | VIT | moe | **🔴🔴 P0** | ~4h | Phase 12 | **100k 规模复刻 Next-A → 稳态结论** |
+| **🆕 `VIT-20251205-moe-coverage-plus-01`** | **MVP-12B** | VIT | moe | **🔴🔴 P0** | ~3h | Phase 12 | **Coverage++ → full-test > 0.91** |
+| **🆕 `VIT-20251205-moe-feature-mining-01`** | **MVP-13** | VIT | moe | **🟡 P1** | ~3h | Phase 13 | **Feature mining Bin3/Bin6 → ΔR² ≥ 0.02** |
+| **🆕 `VIT-20251205-moe-embedding-01`** | **MVP-14** | VIT | moe | **🟡 P1** | ~4h | Phase 13 | **1M embedding for gate** |
+| **🆕 `VIT-20251205-moe-lgbm-expert-01`** | **MVP-15** | VIT | moe | **🟡 P1** | ~3h | Phase 13 | **小 LGBM 替换 Bin3/Bin6 expert** |
 
 ---
 
@@ -75,6 +81,7 @@
 
 | experiment_id | 完成时间 | 主指标 | raw log 路径 | exp.md 状态 | 下一步 |
 |---------------|----------|--------|--------------|------------|--------|
+| **`VIT-20251205-lightgbm-100k-noise-01`** | **2025-12-05 19:37** | **🟢 R²↑1.85%~8.05%** | `results/lightgbm_100k/` | ✅ 已完成 | → Archived |
 | `VIT-20251203-moe-conditional-01` | 2025-12-03 18:09 | **R²=0.9018 (1st order)** | `results/moe_conditional_ridge/` | ✅ 已完成 | → Archived |
 | **`VIT-20251204-moe-phys-gate-01`** | **2025-12-04 23:15** | **🟢 ρ=1.00 (Soft)** | `results/moe/phys_gate_baseline/` | ✅ 已完成 | → Archived |
 | **`VIT-20251204-moe-nn-expert-01`** | **2025-12-04 01:32** | **ΔR²=+0.257, NN<Ridge** | `results/moe/nn_experts/` | ✅ 已完成 | → Archived |
@@ -141,16 +148,33 @@
 | Distill Fine-tune | 🟡 P1 | BS-20251201-distill-finetune-01 |
 | Diffusion DPS 后验采样 | 🟡 P1 | (Inbox, 依赖 MVP-0.0, MVP-1.0) |
 
-### 🆕 MoE Phase 7 执行顺序（决策树）
+### ~~MoE Phase 7 执行顺序~~ (已取消，Gate 已解决)
+
+~~Phase 7 已不需要，MVP-PG1 物理窗 Gate 已解决门控问题~~
+
+### 🔴🔴 MoE Phase 12-13 执行顺序（2025-12-05 立项）
+
+**总策略**：先把 0.9310 变成 100k 稳态结论 → 再拉 full > 0.91 → 所有创新只针对 Bin3/Bin6 做增量
 
 ```
-MVP-7.1 Gate 噪声敏感性 🔴
+🔴 P0 (先做，最稳、最能对齐 LGBM=0.91):
     │
-    ├─ Conditional 明显优于 Hard MoE → MVP-7.2 Conditional++ 🔴
-    │                                   │
-    │                                   └─ MVP-7.3 Noise 连续化
+    ├── MVP-12A: 100k 规模复刻 Next-A
+    │   └── 验收: covered R² ≥ 0.93, CI_low > 0, MoE > LGBM
     │
-    └─ 两者都崩 → MVP-7.4 物理窗门控（探索 latent gate）
+    └── MVP-12B: Coverage++ (第 10 个 oor expert)
+        └── 验收: full R² ≥ max(LGBM, global+0.05)
+
+🟡 P1 (之后做，特征/容量/分布改进):
+    │
+    ├── MVP-13: Feature mining Bin3/Bin6
+    │   └── 验收: Bin3 或 Bin6 ΔR² ≥ +0.02，否则止损
+    │
+    ├── MVP-14: 1M embedding for gate (只喂 gate，不动专家)
+    │   └── 验收: R² +0.003 或 Bin3/Bin6 改善
+    │
+    └── MVP-15: 小 LGBM 替换 Bin3/Bin6 expert (stacking-safe OOF)
+        └── 验收: full R² > 0.91, Bin3/Bin6 不拖后腿
 ```
 
 ---
@@ -167,19 +191,29 @@ MVP-7.1 Gate 噪声敏感性 🔴
 
 ---
 
-*最后更新: 2025-12-03*
+*最后更新: 2025-12-05*
 
 
 ### 🆕 新增完成 (2025-12-04)
 
 | experiment_id | 完成时间 | 主指标 | raw log 路径 | exp.md 状态 | 下一步 |
 |---------------|----------|--------|--------------|------------|--------|
+| **`VIT-20251205-lightgbm-100k-noise-01`** | **2025-12-05 19:37** | **🟢 R²↑1.85%~8.05%** | `results/lightgbm_100k/` | ✅ 已完成 | → Archived |
+|---------------|----------|--------|--------------|------------|--------|
 | **`VIT-20251204-moe-9expert-01`** | **2025-12-04 01:35** | **🟢 ρ=1.13, R²=0.9213** | `results/moe/9expert_phys_gate/` | ✅ 已完成 | → Archived |
 
 - [x] VIT-20251204-moe-calibration-01: Expert 校准 [H-C ❌ 偏差非主因]
 
-### 🔄 进行中 (2025-12-04)
+### 🔄 进行中 (2025-12-04 ~ 12-05)
 
 | experiment_id | 立项时间 | 主题 | 配置数 | exp.md 状态 |
 |---------------|----------|------|--------|-------------|
-| **`VIT-20251204-lightgbm-noise-sweep-01`** | 2025-12-04 | LightGBM Noise Sweep (lr 主轴) | 72 | 🔄 [立项中](../logg/lightgbm/exp_lightgbm_noise_sweep_lr_20251204.md) |
+| ~~`VIT-20251204-lightgbm-noise-sweep-01`~~ | 2025-12-04 | ~~LightGBM Noise Sweep (lr 主轴)~~ | ~~72~~ | ✅ 完成 |
+| **`VIT-20251205-lightgbm-100k-noise-01`** | **2025-12-05** | **LightGBM 100k Noise Sweep (n=500)** | **12** | 🔄 [立项中](../logg/lightgbm/exp_lightgbm_100k_noise_sweep_20251205.md) |
+
+
+### 🆕 新增完成 (2025-12-05)
+
+| experiment_id | 完成时间 | 主指标 | raw log 路径 | exp.md 状态 | 下一步 |
+|---------------|----------|--------|--------------|------------|--------|
+| **`BM-20251205-ridge-100k`** | **2025-12-05 20:12** | **🟢 H2.2 成立 (+2.71%平均增益)** | `results/benchmark_ridge_100k/` | ✅ 已完成 | → Archived |

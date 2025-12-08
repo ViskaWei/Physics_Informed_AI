@@ -17,6 +17,8 @@
 |---------------|---------|------|-------------|
 | `SD-20251203-diff-baseline-01` | SpecDiffusion | ❌ 失败 | [exp_diffusion_baseline_20251203.md](./exp_diffusion_baseline_20251203.md) |
 | `SD-20251203-diff-supervised-01` | SpecDiffusion | ⚠️ 待验证 | [exp_diffusion_supervised_20251203.md](./exp_diffusion_supervised_20251203.md) |
+| `SD-20251204-diff-bounded-01` | SpecDiffusion | ✅ 完成 | [exp_diffusion_bounded_noise_denoiser_20251204.md](./exp_diffusion_bounded_noise_denoiser_20251204.md) |
+| **`SD-20251204-diff-wmae-01`** | **SpecDiffusion** | **🔄 进行中** | **[exp_diffusion_wmae_residual_denoiser_20251204.md](./exp_diffusion_wmae_residual_denoiser_20251204.md)** |
 
 ### 仓库关联
 
@@ -621,4 +623,44 @@ $$x_{t-1} = \hat{x}_0^{(t)} + \lambda_{t-1} \cdot \sigma \odot \hat{\epsilon}_t$
 ---
 
 *最后更新: 2025-12-04*
+
+
+---
+
+## 📢 更新 (2025-12-04 19:25)
+
+### MVP-0.6 wMAE Residual Denoiser ✅ 已完成
+
+**实验ID**: SD-20251204-diff-wmae-01
+
+**结果摘要**:
+
+| noise_level (s) | wMAE (noisy) | wMAE (denoised) | Improvement |
+|-----------------|--------------|-----------------|-------------|
+| 0.00 | 0.0000 | 0.0000 | 0.0% (Identity) |
+| 0.05 | 0.0399 | 0.0320 | **19.8%** ↓ |
+| 0.10 | 0.0798 | 0.0527 | **33.9%** ↓ |
+| 0.20 | 0.1596 | 0.0854 | **46.5%** ↓ |
+
+**成功判据验证**:
+- ✅ s=0 identity: wMAE = 0.0000 (严格 identity)
+- ✅ s=0.2 improvement ≥10-20%: 实际 46.5%
+- ✅ s=0.05 no degradation: 实际 19.8% improvement
+- ✅ s=0.1 no degradation: 实际 33.9% improvement
+
+**关键发现**:
+1. Residual 结构 x̂₀ = y + s·g_θ(y, s, σ) 有效保证 s=0 时的 identity
+2. wMAE 损失对高 SNR 区域有更好的保护作用
+3. 在所有测试噪声水平上都实现了显著改善
+
+**详细报告**: [exp_diffusion_wmae_residual_denoiser_20251204.md](exp_diffusion_wmae_residual_denoiser_20251204.md)
+
+**生成的图表**: 
+- `img/diff_wmae_loss_curve.png`
+- `img/diff_wmae_comparison.png`
+- `img/diff_wmae_residual_dist.png`
+- `img/diff_wmae_spectra_s0p00.png`
+- `img/diff_wmae_spectra_s0p05.png`
+- `img/diff_wmae_spectra_s0p10.png`
+- `img/diff_wmae_spectra_s0p20.png`
 

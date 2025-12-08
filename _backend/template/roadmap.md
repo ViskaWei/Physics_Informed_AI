@@ -1,53 +1,55 @@
-# 🗺️ 实验路线图模板（Roadmap）
+# 🗺️ Experiment Roadmap
+
+> **Topic:** TODO  
+> **Author:** Viska Wei  
+> **Created:** TODO | **Updated:** TODO  
+> **Current Phase:** Phase X
+
+<!-- 
+📝 Language Convention:
+- Headers & section titles: English (keep as-is)
+- Content (objectives, conclusions, notes): Chinese OK
+- Table column headers: English (keep as-is)
+- Table cell content: Chinese OK
+-->
+
+## 🔗 Related Files
+
+| Type | File | Description |
+|------|------|-------------|
+| 🧠 Hub | [`[topic]_hub.md`](./[topic]_hub.md) | Knowledge navigation |
+| 📋 Kanban | [`kanban.md`](../../status/kanban.md) | Global task board |
+| 📗 Experiments | `exp_*.md` | Detailed reports |
+
+## 📑 Contents
+
+- [1. 🎯 Phase Overview](#1--phase-overview)
+- [2. 📋 MVP List](#2--mvp-list)
+- [3. 🔧 MVP Specifications](#3--mvp-specifications)
+- [4. 📊 Progress Tracking](#4--progress-tracking)
+- [5. 🔗 Cross-Repo Integration](#5--cross-repo-integration)
+- [6. 📎 Appendix](#6--appendix)
 
 ---
-> **主题名称：** TODO  
-> **作者：** Viska Wei  
-> **创建日期：** TODO  
-> **最后更新：** TODO  
-> **当前 Phase：** Phase X
 
----
+# 1. 🎯 Phase Overview
 
-## 🔗 相关文件
+> **Experiments organized by phase, each with clear objectives**
 
-| 类型 | 文件 | 说明 |
-|------|------|------|
-| 🧠 Hub | [`[topic]_hub.md`](./[topic]_hub.md) | 智库导航 |
-| 📋 Kanban | [`kanban.md`](../../status/kanban.md) | 全局看板 |
-| 📗 子实验 | `exp_*.md` | 单实验详情 |
+## 1.1 Phase List
 
----
+| Phase | Objective | MVPs | Status | Key Output |
+|-------|-----------|------|--------|------------|
+| **Phase 0: Baseline** | Establish baseline | MVP-0.x | ⏳ | Baseline metrics |
+| **Phase 1: [Topic]** | [Objective] | MVP-1.x | ⏳ | [Output] |
+| **Phase 2: [Topic]** | [Objective] | MVP-2.x | ⏳ | [Output] |
+| **Phase 3: [Topic]** | [Objective] | MVP-3.x | ⏳ | [Output] |
 
-# 📑 目录
-
-- [1. 🎯 Phase 总览](#1--phase-总览)
-- [2. 📋 MVP 实验列表](#2--mvp-实验列表)
-- [3. 🔧 MVP 详细设计](#3--mvp-详细设计)
-- [4. 📊 进度追踪](#4--进度追踪)
-- [5. 🔗 跨仓库集成](#5--跨仓库集成)
-- [6. 📎 附录](#6--附录)
-
----
-
-# 1. 🎯 Phase 总览
-
-> **按阶段组织实验，每个 Phase 有明确目标**
-
-## 1.1 Phase 列表
-
-| Phase | 目的 | 包含 MVP | 状态 | 关键产出 |
-|-------|------|---------|------|---------|
-| **Phase 0: Baseline** | 建立基准 | MVP-0.x | ⏳ | baseline 数值 |
-| **Phase 1: [主题]** | [目的] | MVP-1.x | ⏳ | [产出] |
-| **Phase 2: [主题]** | [目的] | MVP-2.x | ⏳ | [产出] |
-| **Phase 3: [主题]** | [目的] | MVP-3.x | ⏳ | [产出] |
-
-## 1.2 依赖关系图
+## 1.2 Dependency Graph
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      MVP 实验依赖图                          │
+│                   MVP Experiment Dependencies               │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │   [Phase 0: Baseline]                                       │
@@ -58,127 +60,122 @@
 │         │              │              │                     │
 │         └──────────────┼──────────────┘                     │
 │                        ▼                                    │
-│              [Phase Final: 综合验证]                         │
+│              [Phase Final: Integration]                     │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 1.3 决策点
+## 1.3 Decision Points
 
-> **关键分叉点：根据实验结果决定下一步方向**
+> **Key decision points based on experiment results**
 
-| 决策点 | 触发条件 | 选项 A | 选项 B |
-|--------|---------|--------|--------|
-| D1 | MVP-1.0 完成后 | 如果 ΔR² ≥ 0.03 → Phase 2 | 如果 < 0.03 → 终止 |
-| D2 | MVP-2.0 完成后 | 如果 [条件] → [行动] | 如果 [条件] → [行动] |
+| Point | Trigger | Option A | Option B |
+|-------|---------|----------|----------|
+| D1 | After MVP-1.0 | If ΔR² ≥ 0.03 → Phase 2 | If < 0.03 → Stop |
+| D2 | After MVP-2.0 | If [condition] → [action] | If [condition] → [action] |
 
 ---
 
-# 2. 📋 MVP 实验列表
+# 2. 📋 MVP List
 
-> **所有 MVP 的一览表，便于快速查找和追踪**
+> **Overview of all MVPs for quick lookup and tracking**
 
-## 2.1 实验总览
+## 2.1 Experiment Summary
 
-| MVP | 实验名称 | Phase | 状态 | experiment_id | 报告链接 |
-|-----|---------|-------|------|---------------|---------|
+| MVP | Name | Phase | Status | experiment_id | Report |
+|-----|------|-------|--------|---------------|--------|
 | MVP-0.0 | [Baseline] | 0 | ⏳ | - | - |
-| MVP-1.0 | [实验名] | 1 | ⏳ | `[ID]` | [链接](./exp_xxx.md) |
-| MVP-1.1 | [实验名] | 1 | ⏳ | `[ID]` | - |
-| MVP-2.0 | [实验名] | 2 | ⏳ | `[ID]` | - |
+| MVP-1.0 | [Exp name] | 1 | ⏳ | `[ID]` | [Link](./exp_xxx.md) |
+| MVP-1.1 | [Exp name] | 1 | ⏳ | `[ID]` | - |
+| MVP-2.0 | [Exp name] | 2 | ⏳ | `[ID]` | - |
 
-**状态图例**：
-- ⏳ 计划中（Planned）
-- 🔴 待执行（Ready）
-- 🚀 运行中（Running）
-- ✅ 已完成（Done）
-- ❌ 已取消（Cancelled）
-- ⏸️ 暂停（Paused）
+**Status Legend:**
+- ⏳ Planned | 🔴 Ready | 🚀 Running | ✅ Done | ❌ Cancelled | ⏸️ Paused
 
-## 2.2 配置速查表
+## 2.2 Configuration Reference
 
-> **所有 MVP 的关键配置对比**
+> **Key configurations across all MVPs**
 
-| MVP | 数据规模 | 特征维度 | 模型 | 关键变量 | 验收标准 |
-|-----|---------|---------|------|---------|---------|
-| MVP-0.0 | [train/test] | [维度] | [模型] | - | baseline |
-| MVP-1.0 | [train/test] | [维度] | [模型] | [变量] | [标准] |
-| MVP-1.1 | [train/test] | [维度] | [模型] | [变量] | [标准] |
+| MVP | Data Size | Features | Model | Key Variable | Acceptance |
+|-----|-----------|----------|-------|--------------|------------|
+| MVP-0.0 | [train/test] | [dim] | [model] | - | baseline |
+| MVP-1.0 | [train/test] | [dim] | [model] | [var] | [criteria] |
+| MVP-1.1 | [train/test] | [dim] | [model] | [var] | [criteria] |
 
 ---
 
-# 3. 🔧 MVP 详细设计
+# 3. 🔧 MVP Specifications
 
-> **每个 MVP 的详细规格，便于快速执行**
+> **Detailed specs for each MVP, ready for execution**
 
 ## Phase 0: Baseline
 
-### MVP-0.0: [Baseline 名称]
+### MVP-0.0: [Baseline Name]
 
-| 项目 | 配置 |
-|------|------|
-| **目标** | [一句话目标] |
-| **数据** | [数据配置] |
-| **模型** | [模型配置] |
-| **验收标准** | [预期结果范围] |
-| **早停条件** | [什么情况下停止并排查] |
+| Item | Config |
+|------|--------|
+| **Objective** | [One-line goal] |
+| **Data** | [Data config] |
+| **Model** | [Model config] |
+| **Acceptance** | [Expected range] |
+| **Early Stop** | [When to stop and debug] |
 
-**排查清单**（若未达验收标准）：
-- [ ] [检查项 1]
-- [ ] [检查项 2]
-
----
-
-## Phase 1: [Phase 名称]
-
-### MVP-1.0: [实验名称]
-
-| 项目 | 配置 |
-|------|------|
-| **目标** | [回答什么问题？] |
-| **验证假设** | H1.1 |
-| **数据** | [数据配置] |
-| **模型** | [模型配置] |
-| **特征** | [特征配置] |
-| **验收标准** | [预期结果范围] |
-| **异常处理** | [异常结果如何解读/处理] |
-
-**→ 对假设的影响**：若结果为 [X]，则 [对假设/设计的启示]
-
-**实验步骤**：
-1. [步骤 1]
-2. [步骤 2]
-3. [步骤 3]
+**Troubleshooting Checklist** (if not meeting criteria):
+- [ ] [Check item 1]
+- [ ] [Check item 2]
 
 ---
 
-### MVP-1.1: [实验名称]
+## Phase 1: [Phase Name]
 
-| 项目 | 配置 |
-|------|------|
-| **目标** | [一句话目标] |
-| **依赖** | MVP-1.0 |
-| **数据** | [数据配置] |
-| **模型** | [模型配置] |
-| **验收标准** | [预期结果范围] |
+### MVP-1.0: [Experiment Name]
+
+| Item | Config |
+|------|--------|
+| **Objective** | [What question to answer?] |
+| **Hypothesis** | H1.1 |
+| **Data** | [Data config] |
+| **Model** | [Model config] |
+| **Features** | [Feature config] |
+| **Acceptance** | [Expected range] |
+| **Exception** | [How to interpret anomalies] |
+
+**→ Hypothesis Impact:** If result is [X], then [implication for hypothesis/design]
+
+**Steps:**
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
 
 ---
 
-## Phase 2: [Phase 名称]
+### MVP-1.1: [Experiment Name]
 
-### MVP-2.0: [实验名称]
-
-（按照上述格式继续添加...）
+| Item | Config |
+|------|--------|
+| **Objective** | [One-line goal] |
+| **Depends On** | MVP-1.0 |
+| **Data** | [Data config] |
+| **Model** | [Model config] |
+| **Acceptance** | [Expected range] |
 
 ---
 
-# 4. 📊 进度追踪
+## Phase 2: [Phase Name]
 
-## 4.1 看板视图
+### MVP-2.0: [Experiment Name]
+
+(Continue with same format...)
+
+---
+
+# 4. 📊 Progress Tracking
+
+## 4.1 Kanban View
 
 ```
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
-│   ⏳ 计划中   │  🔴 待执行   │  🚀 运行中   │   ✅ 已完成   │   ❌ 已取消   │
+│  ⏳ Planned  │   🔴 Ready   │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
 │ MVP-2.0      │ MVP-1.1      │ MVP-1.0      │ MVP-0.0      │              │
 │ MVP-2.1      │              │              │              │              │
@@ -186,110 +183,110 @@
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
-## 4.2 核心结论快照
+## 4.2 Key Conclusions Snapshot
 
-> **每个完成的 MVP 的一句话结论，同步到 Hub**
+> **One-line conclusion per completed MVP, synced to Hub**
 
-| MVP | 核心结论（一句话） | 关键数字 | 同步到 Hub |
-|-----|------------------|---------|-----------|
-| MVP-0.0 | [结论] | R²=X.XX | ✅ §3.1 |
-| MVP-1.0 | [结论] | ΔR²=+X.XX | ✅ §3.2 |
+| MVP | Conclusion | Key Metric | Synced to Hub |
+|-----|------------|------------|---------------|
+| MVP-0.0 | [Conclusion] | R²=X.XX | ✅ §3.1 |
+| MVP-1.0 | [Conclusion] | ΔR²=+X.XX | ✅ §3.2 |
 
-## 4.3 时间线
+## 4.3 Timeline
 
-| 日期 | 事件 | 备注 |
-|------|------|------|
-| YYYY-MM-DD | MVP-0.0 完成 | baseline |
-| YYYY-MM-DD | MVP-1.0 启动 | - |
-| YYYY-MM-DD | MVP-1.0 完成 | ΔR²=+X.XX |
-| YYYY-MM-DD | 决策点 D1 触发 | 继续 Phase 2 |
+| Date | Event | Notes |
+|------|-------|-------|
+| YYYY-MM-DD | MVP-0.0 done | baseline |
+| YYYY-MM-DD | MVP-1.0 start | - |
+| YYYY-MM-DD | MVP-1.0 done | ΔR²=+X.XX |
+| YYYY-MM-DD | Decision D1 | Continue Phase 2 |
 
 ---
 
-# 5. 🔗 跨仓库集成
+# 5. 🔗 Cross-Repo Integration
 
-## 5.1 实验索引
+## 5.1 Experiment Index
 
-> **链接到 experiments_index/index.csv**
+> **Links to experiments_index/index.csv**
 
-| experiment_id | project | topic | 状态 | 对应 MVP |
-|---------------|---------|-------|------|---------|
+| experiment_id | project | topic | status | MVP |
+|---------------|---------|-------|--------|-----|
 | `[PROJECT]-[DATE]-[topic]-01` | VIT / BlindSpot | [topic] | ✅ | MVP-1.0 |
 | `[PROJECT]-[DATE]-[topic]-02` | VIT / BlindSpot | [topic] | 🚀 | MVP-1.1 |
 
-## 5.2 仓库关联
+## 5.2 Repository Links
 
-| 仓库 | 相关目录 | 说明 |
-|------|---------|------|
-| VIT | `~/VIT/results/[topic]/` | 训练结果 |
-| BlindSpot | `~/BlindSpotDenoiser/evals/` | 评估结果 |
-| 本仓库 | `logg/[topic]/` | 知识沉淀 |
+| Repo | Directory | Purpose |
+|------|-----------|---------|
+| VIT | `~/VIT/results/[topic]/` | Training results |
+| BlindSpot | `~/BlindSpotDenoiser/evals/` | Evaluation results |
+| This repo | `logg/[topic]/` | Knowledge base |
 
-## 5.3 运行路径记录
+## 5.3 Run Path Records
 
-> **记录实验的实际运行路径，便于复现**
+> **Actual run paths for reproducibility**
 
-| MVP | 仓库 | 运行路径 | 配置文件 | 输出路径 |
-|-----|------|---------|---------|---------|
+| MVP | Repo | Script | Config | Output |
+|-----|------|--------|--------|--------|
 | MVP-1.0 | VIT | `~/VIT/scripts/xxx.py` | `configs/xxx.yaml` | `lightning_logs/vX` |
 
 ---
 
-# 6. 📎 附录
+# 6. 📎 Appendix
 
-## 6.1 数值结果汇总表
+## 6.1 Results Summary
 
-> **所有 MVP 的核心数值结果**
+> **Core metrics from all MVPs**
 
-### 主要指标对比
+### Main Metrics Comparison
 
-| MVP | 配置 | $R^2$ | MAE | RMSE | ΔR² vs Baseline |
-|-----|------|-------|-----|------|-----------------|
-| MVP-0.0 | [配置] | X.XXX | X.XX | X.XX | - |
-| MVP-1.0 | [配置] | X.XXX | X.XX | X.XX | +X.XXX |
+| MVP | Config | $R^2$ | MAE | RMSE | ΔR² vs Baseline |
+|-----|--------|-------|-----|------|-----------------|
+| MVP-0.0 | [config] | X.XXX | X.XX | X.XX | - |
+| MVP-1.0 | [config] | X.XXX | X.XX | X.XX | +X.XXX |
 
-### [维度]扫描结果
+### [Dimension] Sweep Results
 
-| [维度] | $R^2$ | MAE | 备注 |
-|--------|-------|-----|------|
-| [值 1] | X.XXX | X.XX | |
-| [值 2] | X.XXX | X.XX | |
-
----
-
-## 6.2 相关文件索引
-
-| 类型 | 文件路径 | 说明 |
-|------|---------|------|
-| Roadmap | `logg/[topic]/[topic]_roadmap_YYYYMMDD.md` | 当前文件 |
-| Hub | `logg/[topic]/[topic]_hub_YYYYMMDD.md` | 智库导航 |
-| MVP-1.0 报告 | `logg/[topic]/exp_xxx_YYYYMMDD.md` | [实验名称] |
-| 图表目录 | `logg/[topic]/img/` | 实验图表 |
+| [Dim] | $R^2$ | MAE | Notes |
+|-------|-------|-----|-------|
+| [val 1] | X.XXX | X.XX | |
+| [val 2] | X.XXX | X.XX | |
 
 ---
 
-## 6.3 变更日志
+## 6.2 File Index
 
-| 日期 | 变更内容 | 影响 |
-|------|---------|------|
-| YYYY-MM-DD | 创建 Roadmap | - |
-| YYYY-MM-DD | MVP-1.0 完成，更新 §4 | §4.1, §4.2 |
-| YYYY-MM-DD | 添加 Phase 2 | §1, §2, §3 |
+| Type | Path | Description |
+|------|------|-------------|
+| Roadmap | `logg/[topic]/[topic]_roadmap_YYYYMMDD.md` | This file |
+| Hub | `logg/[topic]/[topic]_hub_YYYYMMDD.md` | Knowledge navigation |
+| MVP-1.0 | `logg/[topic]/exp_xxx_YYYYMMDD.md` | [Experiment name] |
+| Images | `logg/[topic]/img/` | Experiment figures |
 
 ---
 
-> **模板使用说明**：
+## 6.3 Changelog
+
+| Date | Change | Sections |
+|------|--------|----------|
+| YYYY-MM-DD | Created Roadmap | - |
+| YYYY-MM-DD | MVP-1.0 done | §4.1, §4.2 |
+| YYYY-MM-DD | Added Phase 2 | §1, §2, §3 |
+
+---
+
+> **Template Usage:**
 > 
-> **Roadmap 的定位**：
-> - ✅ **做**：MVP 规格、执行追踪、进度看板、跨仓库集成、数值结果
-> - ❌ **不做**：假设管理（→ hub.md）、洞见汇合（→ hub.md）、战略导航（→ hub.md）
+> **Roadmap Scope:**
+> - ✅ **Do:** MVP specs, execution tracking, kanban, cross-repo integration, metrics
+> - ❌ **Don't:** Hypothesis management (→ hub.md), insight synthesis (→ hub.md), strategy (→ hub.md)
 > 
-> **更新时机**：
-> - 规划新 MVP 时，更新 §2, §3
-> - MVP 状态变更时，更新 §4
-> - 实验完成后，记录核心结论到 §4.2，同步到 Hub
+> **Update Triggers:**
+> - Planning new MVP → update §2, §3
+> - MVP status change → update §4
+> - After experiment → record conclusion to §4.2, sync to Hub
 > 
-> **与 hub.md 的分工**：
-> - Hub = 「我们知道了什么？下一步该往哪走？」
-> - Roadmap = 「我们计划跑哪些实验？进度如何？」
+> **Hub vs Roadmap:**
+> - Hub = "What do we know? Where should we go?"
+> - Roadmap = "What experiments are planned? What's the progress?"
 

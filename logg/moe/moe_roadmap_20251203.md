@@ -4,8 +4,8 @@
 > **主题名称：** Mixture of Experts（MoE）要不要上？什么时候有用？  
 > **作者：** Viska Wei  
 > **创建日期：** 2025-12-03  
-> **最后更新：** 2025-12-04  
-> **当前 Phase：** Phase 8 ✅ 完成 → 推荐 Phase 6 NN-MoE 集成
+> **最后更新：** 2025-12-07  
+> **当前 Phase：** Phase 11 ✅ M2 里程碑达成 → 执行 Phase 12-13（大规模验证 + 特征增强）
 
 ---
 
@@ -48,56 +48,66 @@
 | **🟢 Phase 9: 9 专家扩展** | 物理窗 gate → 9 专家 (Teff×[M/H]) | MVP-9E1 | ✅ **完成！** | **R²=0.9213, ρ=1.13** |
 | **⚠️ Phase 10: NN Expert** | 固定 gate + NN expert | MVP-NN1 | ✅ 完成 | ⚠️ NN<<Ridge，暂停 |
 | **🟢 Phase 11: 优化 & 工程化** | 回归最优 gate + coverage + 校准 | MVP-Next-A/B/C | **MVP-Next-A ✅, MVP-Next-B ✅** | M2 里程碑 |
+| **🔴 Phase 12: 大规模验证** | 100k 复刻 + Coverage++ | MVP-12A/12B | ⏳ 立项中 | 稳态结论 + full>0.91 |
+| **🟡 Phase 13: 特征增强 & 小模型** | Feature mining + embedding + LGBM expert | MVP-13/14/15 | ⏳ 立项中 | Bin3/Bin6 增量改进 |
 
 ## 1.2 依赖关系图
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        MVP 实验依赖图 (Phase 7 重点)                      │
+│                    MVP 实验依赖图 (Phase 11-13 当前重点)                   │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│   Phase 0-2: 已验证 MoE 有结构 (ΔR²=0.050)                              │
-│         │                                                               │
-│         ▼                                                               │
-│   Phase 3: 可落地性验证 → ❌ Pseudo 7.3%, Quantile 失败                  │
-│         │                                                               │
-│         ▼                                                               │
-│   Phase 5: 系数解释 → ✅ Ca II 重要, [M/H] 差异化特征                     │
-│         │                                                               │
-│         ├────────────────────────────────────────────────┐              │
-│         ▼                                                ▼              │
-│   [MVP-7.1: Gate 噪声敏感性] 🔴                   [MVP-7.3: Noise 连续化]│
-│   → 决定"硬 MoE 还能不能救"                        → 修复 noise=0.5 异常 │
-│         │                                                │              │
-│         ▼                                                │              │
-│   [MVP-7.2: Conditional Ridge++]                         │              │
-│   → 榨出剩余 20% MoE 差距                                │              │
-│         │                                                │              │
-│         └────────────────────┬───────────────────────────┘              │
-│                              ▼                                          │
-│   [MVP-7.4: 物理窗门控] (可选，当想上 NN 时)                             │
-│         │                                                               │
-│         ▼                                                               │
-│   Phase 6: NN-MoE (仅当 Phase 7 验证门控可行时)                          │
+│   ════════════════════ 已完成路径 ════════════════════                  │
 │                                                                         │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│   🔴 Phase 8: 物理窗 Gate — 最小成本验证 gate 能否落地                   │
-│                                                                         │
-│   前置条件: Oracle ΔR²=0.05 ✅，Pseudo 7.3% ❌                           │
+│   Phase 0-2: ✅ MoE 有结构 (ΔR²=0.050)                                  │
 │         │                                                               │
 │         ▼                                                               │
-│   [MVP-PG1: 物理窗 Gate Baseline] 🔴 最高优先级                         │
-│   → 固定 [M/H] 3专家，只测 gate                                         │
-│   → 验证 ρ≥0.5（保住 50% oracle 增益）                                  │
+│   Phase 3: ✅ 可落地性验证 → Pseudo ❌, Cond ✅ 80%                       │
 │         │                                                               │
-│         ├─ ρ≥0.5 → [MVP-PG2: 窗口形状 PCA]                              │
-│         │          → 验证形状特征能否再推一截                            │
+│         ▼                                                               │
+│   Phase 5: ✅ 系数解释 → Ca II 重要                                      │
 │         │                                                               │
-│         ├─ ρ≥0.7 → [MVP-PG3: 小 CNN Gate]                               │
-│         │          → 最小 learned gate，连接 NN-MoE                      │
+│         ▼                                                               │
+│   Phase 8: ✅ 物理窗 Gate → ρ=1.00 超预期！                              │
 │         │                                                               │
-│         └─ ρ<0.3 → 放弃硬 MoE，转 Conditional 路线                       │
+│         ▼                                                               │
+│   Phase 9: ✅ 9 专家扩展 → R²=0.9213, ρ=1.13                            │
+│         │                                                               │
+│         ▼                                                               │
+│   Phase 10: ⚠️ NN Expert → NN<<Ridge，暂停                              │
+│         │                                                               │
+│         ▼                                                               │
+│   Phase 11: ✅ M2 里程碑达成                                             │
+│   ├─ MVP-Next-A ✅ 回归 Gate → R²=0.9310                                │
+│   ├─ MVP-Next-B ✅ Full Coverage → R²=0.8957                            │
+│   └─ MVP-Next-C ❌ 校准假设被否定                                        │
+│                                                                         │
+│   ════════════════════ 当前执行 ════════════════════                    │
+│                                                                         │
+│   🔴 Phase 12: 大规模验证                                                │
+│   ├─ [MVP-12A: 100k 复刻] 🔴 P0                                         │
+│   │   → 验证 0.9310 在 100k 规模可复现                                   │
+│   │   → 同 split 对比 LGBM=0.91                                         │
+│   │                                                                     │
+│   └─ [MVP-12B: Coverage++] 🔴 P0                                        │
+│       → 第 10 个 oor expert                                              │
+│       → full R² > 0.91                                                  │
+│                                                                         │
+│   🟡 Phase 13: 特征增强 & 小模型 (P1 待验证)                             │
+│   ├─ [MVP-13: Feature Mining] → Bin3/Bin6 窗口特征                      │
+│   ├─ [MVP-14: Embedding Gate] → 1M 参数 CNN/AE                          │
+│   └─ [MVP-15: LGBM Expert] → 替换困难 bin expert                        │
+│                                                                         │
+│   ════════════════════ 决策点 ════════════════════                      │
+│                                                                         │
+│   MVP-12A 完成后：                                                       │
+│   ├─ 如果 100k R² ≥ 0.93 且 > LGBM → ✅ MoE 稳态结论                    │
+│   └─ 如果 R² 下降或 CI 包含 0 → 分析难样本                               │
+│                                                                         │
+│   MVP-12B 完成后：                                                       │
+│   ├─ 如果 full R² > 0.91 → ✅ 可交付                                    │
+│   └─ 如果 full R² < 0.88 → 转 Phase 13 特征增强                         │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -142,6 +152,11 @@
 | **✅ MVP-Next-A** | **回归最优 soft mixing** | **11** | **✅ R²=0.9310 完成！** | `VIT-20251204-moe-regress-gate-01` | [exp](./exp_moe_regression_gate_20251204.md) |
 | **✅ MVP-Next-B** | **100% coverage** | **11** | **✅ R²=0.8957 完成！** | `VIT-20251204-moe-full-coverage-01` | [exp](./exp_moe_full_coverage_20251204.md) |
 | **❌ MVP-Next-C** | **Expert 校准** | **11** | **❌ 完成 (Negative)** | `VIT-20251204-moe-calibration-01` | [exp](./exp_moe_expert_calibration_20251204.md) |
+| **🔴 MVP-12A** | **100k 规模复刻 Next-A** | **12** | **⏳ 立项中** | `VIT-20251205-moe-100k-01` | (待创建) |
+| **🔴 MVP-12B** | **Coverage++** | **12** | **⏳ 立项中** | `VIT-20251205-moe-coverage-plus-01` | (待创建) |
+| **🟡 MVP-13** | **Feature mining Bin3/Bin6** | **13** | **⏳ 立项中** | `VIT-20251205-moe-feature-mining-01` | (待创建) |
+| **🟡 MVP-14** | **1M embedding for gate** | **13** | **⏳ 立项中** | `VIT-20251205-moe-embedding-01` | (待创建) |
+| **🟡 MVP-15** | **Hard bins 小 LightGBM expert** | **13** | **⏳ 立项中** | `VIT-20251205-moe-lgbm-expert-01` | (待创建) |
 
 ## 2.2 配置速查表
 
@@ -167,13 +182,30 @@
 | **MVP-Next-B** | full-1000 | 13 维 gate 特征 | 9-expert + fallback | edge-clamp/extra expert | **full R² > global + 0.05** |
 | **MVP-Next-C** | 全量 | 9-expert 输出 | **affine 校准** | per-expert $a_k, b_k$ | **Bin3/Bin6 ΔR² ≥ 0.02** |
 
+| **MVP-12A** | 100k train / 更大 test | 全谱 | **9× Ridge + 回归 gate** | 100k 规模 | **covered R² ≥ 0.93, CI_low > 0, MoE > LGBM** |
+| **MVP-12B** | full coverage | 全谱 + window 特征 | **第 10 个 oor expert / cond fallback** | out-of-range 专家 | **full R² ≥ max(LGBM, global+0.05)** |
+| **MVP-13** | 全量 | **新增窗口特征** | Ridge + 新特征 | 选线窗口 depth/EW/shape | **Bin3 或 Bin6 ΔR² ≥ +0.02** |
+| **MVP-14** | 全量 | **候选窗口 + 上下文** | **小 CNN/AE ~1M 参数** | 8~32 维 embedding | **R² +0.003 或 Bin3/Bin6 改善** |
+| **MVP-15** | 全量 | **选线窗口特征** | **Bin3/Bin6 用 LGBM expert** | stacking-safe OOF | **full R² > 0.91, Bin3/Bin6 不拖后腿** |
 ---
 
 # 3. 🔧 MVP 详细设计
 
-## Phase 7: 连续条件化（🔴 当前执行）
+> **导航说明**：
+> - 🔴 **当前执行**：Phase 12-13（大规模验证 + 特征增强）
+> - ✅ **已完成**：Phase 7(取消), 8, 9, 10, 11
+> - ⏳ **计划中**：Phase 4, 6
 
-### MVP-7.1: Gate 噪声敏感性曲线 🔴 最高优先级
+---
+
+## 🔴 当前执行：Phase 12-13
+
+<details>
+<summary><b>❌ Phase 7: 连续条件化（已取消 - 物理窗 Gate 已解决问题）</b></summary>
+
+## Phase 7: 连续条件化（❌ 已取消 - 物理窗 Gate 已解决问题）
+
+### MVP-7.1: Gate 噪声敏感性曲线 ❌ 已取消
 
 | 项目 | 配置 |
 |------|------|
@@ -197,7 +229,7 @@
 
 ---
 
-### MVP-7.2: Conditional Ridge++
+### MVP-7.2: Conditional Ridge++ ❌ 已取消
 
 | 项目 | 配置 |
 |------|------|
@@ -209,7 +241,7 @@
 
 ---
 
-### MVP-7.3: Noise 连续条件化
+### MVP-7.3: Noise 连续条件化 ❌ 已取消
 
 | 项目 | 配置 |
 |------|------|
@@ -222,7 +254,7 @@
 
 ---
 
-### MVP-7.4: "物理窗"诱导的轻量门控（可选）
+### MVP-7.4: "物理窗"诱导的轻量门控 → 已移至 Phase 8
 
 | 项目 | 配置 |
 |------|------|
@@ -232,15 +264,22 @@
 | **验收标准** | Learned gate ≥ pseudo gate，且能明显超过 conditional ridge++ |
 | **止损点** | 如果 learned gate ≈ conditional ridge++ → 直接用 conditional，放弃 NN-MoE |
 
+</details>
+
 ---
 
-## 🔴 Phase 8: 物理窗 Gate（当前执行）
+<details>
+<summary><b>✅ Phase 8: 物理窗 Gate（已完成 - ρ=1.00 超预期！）</b></summary>
+
+## ✅ Phase 8: 物理窗 Gate（已完成）
 
 > **核心目标**：用最小成本验证"物理窗特征能否把 gate 做对（至少比 pseudo 好）"
 > 
 > **验证指标**：$\rho = \frac{R^2_{\text{phys-gate}} - R^2_{\text{global}}}{R^2_{\text{oracle}} - R^2_{\text{global}}}$
 > - 最低可用：$\rho \ge 0.5$
 > - 很有戏：$\rho \ge 0.7$
+> 
+> **✅ 实际结果：ρ=1.00，远超预期！**
 
 ### MVP-PG1: 物理窗 Gate Baseline ✅ 完成！
 
@@ -313,9 +352,16 @@
 
 ---
 
-## 🔴 Phase 9: 9 专家扩展（最高 ROI）
+</details>
 
-### MVP-9E1: 物理窗 Soft Gate → 9 专家 🔴 最高优先级
+---
+
+<details>
+<summary><b>✅ Phase 9: 9 专家扩展（已完成 - R²=0.9213, ρ=1.13 大成功！）</b></summary>
+
+## ✅ Phase 9: 9 专家扩展（已完成）
+
+### MVP-9E1: 物理窗 Soft Gate → 9 专家 ✅ 已完成
 
 | 项目 | 配置 |
 |------|------|
@@ -366,9 +412,16 @@ Step 6: 计算 ρ 和 CI
 
 ---
 
-## 🔴 Phase 10: NN Expert（突破 Ridge 上限）
+</details>
 
-### MVP-NN1: 固定物理 gate + NN experts 🔴 P0
+---
+
+<details>
+<summary><b>⚠️ Phase 10: NN Expert（已完成 - NN<<Ridge，暂停）</b></summary>
+
+## ⚠️ Phase 10: NN Expert（已完成 - 结论：全谱 MLP 不适合）
+
+### MVP-NN1: 固定物理 gate + NN experts ⚠️ 已完成
 
 | 项目 | 配置 |
 |------|------|
@@ -419,13 +472,20 @@ Step 5: 分析增益来源
 
 ---
 
-## 🔴 Phase 11: 优化 & 工程化（M2 里程碑）🆕
+</details>
+
+---
+
+<details>
+<summary><b>✅ Phase 11: 优化 & 工程化（M2 里程碑达成！）</b></summary>
+
+## ✅ Phase 11: 优化 & 工程化（M2 里程碑达成）
 
 > **核心目标**：将 9 专家物理 MoE 升级为"回归最优 soft mixing + 100% coverage"，目标是在 full-test 上稳定超过当前分类 gate 的 R²。
 > 
-> **里程碑 M2**：教授可见的改进——不是在"继续堆模型"，而是在做最后 10% 的工程化与统计严谨。
+> **里程碑 M2**：✅ 已达成！回归 gate R²=0.9310 + full coverage R²=0.8957
 
-### MVP-Next-A: 回归最优 Soft Mixing 🔴 最高 ROI
+### MVP-Next-A: 回归最优 Soft Mixing ✅ 已完成 (R²=0.9310)
 
 | 项目 | 配置 |
 |------|------|
@@ -539,7 +599,180 @@ Step 4: 分析增益来源
 
 **保持可解释性**：这个方法是线性、透明的，每个专家的校准参数 $(a_k, b_k)$ 都有明确的物理解释。
 
+</details>
+
+## 🔴 当前执行：Phase 12-13
+</details>
+
 ---
+
+## 🔴 当前执行：Phase 12-13
+
+---
+
+## 🔴 Phase 12: 大规模验证（2025-12-05 新立项）
+
+> **核心目标**：把 0.9310 从 32k/816 test 升级为 100k 规模的"稳态结论"，并把 full coverage 拉回 >0.91
+>
+> **总策略**：先巩固稳态，再超越 LGBM=0.91
+
+### MVP-12A: 100k 规模复刻 Next-A 🔴 P0 最高优先级
+
+| 项目 | 配置 |
+|------|------|
+| **目标** | 把 0.9310 从"32k/816 test"升级成"100k/更大 test 的稳定结论"，并给出更硬的 CI |
+| **验证假设** | H-12A: 100k 规模下 MoE R²≥0.93 可复现，CI_low>0，且明显优于 LGBM=0.91 |
+| **专家设置** | 仍然 9×Ridge（和现在一致），但用 100k train 重新训练 |
+| **Gate 设置** | 仍然回归 gate(MLP) soft mixing（Next-A 配置） |
+| **Baseline 对照** | 同一 split 下同时跑 **LGBM baseline**，确保公平 |
+| **验收标准** | covered-test R² ≥ 0.93（或更稳的 CI_low > 0）；同 split 下 MoE 明显高于 LGBM 0.91 |
+| **止损点** | 如果 R² 下降或 CI 包含 0 → 需要分析是否 100k 带来更多难样本 |
+
+**实验步骤**：
+```
+Step 1: 准备 100k 数据
+├── 重新 split train/val/test
+├── 确保 test 更大、分布更接近真实
+└── 记录各 bin 样本数
+
+Step 2: 训练 9 专家
+├── 用真值 (Teff, [M/H]) 分组
+├── 每组用 100k 子集训练 Ridge
+└── 记录 α_optimal
+
+Step 3: 训练回归 Gate
+├── 复用 Next-A 的 MLP gate 配置
+├── 在 val 上最小化 MSE
+└── 输出 R²_moe
+
+Step 4: LGBM Baseline 对照
+├── 同 split 训练 LGBM
+├── 使用相同特征
+└── 输出 R²_lgbm
+
+Step 5: 统计验证
+├── Bootstrap CI for R²_moe
+├── 公平对比 R²_moe vs R²_lgbm
+└── 确认 MoE > LGBM 的显著性
+```
+
+---
+
+### MVP-12B: Coverage++ 🔴 P0
+
+| 项目 | 配置 |
+|------|------|
+| **目标** | 让 full-test R² 接近 covered-test，使 MoE 可交付 |
+| **验证假设** | H-12B: 第 10 个 out-of-range expert 能把 full-test R² 拉回 >0.91 |
+| **背景** | 当前最大短板不是 0.93，而是 full coverage 版本拉胯（会直接输给 LGBM） |
+| **策略 1** | **第 10 个 "out-of-range expert"**：专门用 out-of-range 的 train 样本训练 |
+| **策略 2** | fallback 不是 global ridge，而是 **conditional ridge / 或者 lightgbm-lite** |
+| **输出指标** | 同时输出 covered & full 两套指标，保留可比性 |
+| **验收标准** | full-test R² ≥ max(LGBM, global+0.05)；至少要把 full 拉回到 >0.91 |
+| **止损点** | 如果 full R² < 0.88 → 分析 out-of-range 样本特性 |
+
+**实验步骤**：
+```
+Step 1: 分析 out-of-range 样本
+├── 识别落在 9 bin 之外的样本
+├── 分析其 (Teff, [M/H]) 分布
+└── 理解为什么落在 9 bin 之外
+
+Step 2: 训练第 10 个专家
+├── 只用 out-of-range train 样本
+├── 使用 Ridge 或 LGBM-lite
+└── 记录该专家的单独性能
+
+Step 3: 扩展 Gate
+├── 方案 A: 10-class gate
+├── 方案 B: 9-class + "其他"检测器
+└── 方案 C: 概率低于阈值时 fallback
+
+Step 4: 评估
+├── covered-only (原 816)
+├── out-of-range only
+├── full coverage (1000)
+└── 对比三种策略
+```
+
+---
+
+## 🟡 Phase 13: 特征增强 & 小模型（P1 待验证）
+
+> **核心目标**：所有创新都只允许针对 Bin3/Bin6 做增量
+>
+> **前提**：H-C 校准失败表明 Metal-poor 误差不是简单 bias，需要特征/容量/分布层面改进
+
+### MVP-13: Feature Mining Bin3/Bin6 🟡 P1
+
+| 项目 | 配置 |
+|------|------|
+| **目标** | 只改善 Bin3/Bin6（Metal-poor bins） |
+| **验证假设** | H-13: 用 ridge 系数/残差选线添加窗口特征能改善 Bin3/Bin6 |
+| **背景** | H-C 校准失败说明 Metal-poor 误差不是简单 bias，是"缺信息/异质性" |
+| **方法** | 用 ridge expert 系数/残差做"选线"：找对 log g 或 [M/H]/Teff 最敏感的局部窗 |
+| **新增特征** | 把这些窗的 depth/EW/shape 特征写进 gate features 或 Bin3/Bin6 专用 expert features |
+| **注意** | 每次只加一类窗口（比如新增 1 组线），做 ablation，避免"堆一堆不知道谁有用" |
+| **验收标准** | Bin3 或 Bin6 至少一个 **ΔR² ≥ +0.02**，否则立刻止损 |
+| **止损点** | 如果 ΔR² < 0.01 → 停止该方向，转 MVP-15 |
+
+**候选窗口**：
+- Ca II 以外的金属线（Na, Mg, Fe...）
+- H 线 (Hα/Hβ) — 可能帮助区分 Teff
+- 弱金属线特征（在 Metal-poor 区域可能更敏感）
+
+---
+
+### MVP-14: 1M 参数 Embedding for Gate 🟡 P1
+
+| 项目 | 配置 |
+|------|------|
+| **目标** | 学一个更强的低维表征（embedding）当 gate 的 Teff/[M/H] proxy |
+| **验证假设** | H-14: 小模型 (1M 参数) 学习的 embedding 能改善 gate 质量 |
+| **定位** | **不是替代专家**，只是给 gate 提供更好的输入（专家换 NN 已踩过坑） |
+| **架构** | 小的 1D-CNN/autoencoder/supervised proxy（参数量 ~1M） |
+| **输入** | 只用"候选窗口 + 少量上下文"（不需要全谱） |
+| **输出** | 8~32 维 embedding，拼到现有 13D gate features 里 |
+| **Gate** | 仍然用回归 gate(MLP) 学 soft weights（Next-A 主线不变） |
+| **验收标准** | 总体 R² +0.003 以上 或 Bin3/Bin6 明显改善 |
+| **止损点** | 如果 ΔR² < 0.001 → embedding 不值得，维持现有 gate features |
+
+---
+
+### MVP-15: Hard Bins 小 LightGBM Expert 🟡 P1
+
+| 项目 | 配置 |
+|------|------|
+| **目标** | 用小 LightGBM 替换/增强 Bin3/Bin6 的 expert |
+| **验证假设** | H-15: 用小 LightGBM 替换困难 bin expert 能改善该区域性能 |
+| **定位** | **只替换 Bin3、Bin6 的 expert**（或作为 residual corrector），其余 bin 继续 Ridge |
+| **输入** | 不要全谱，优先用"MVP-13 选出来的窗口特征 + 少量 summary" |
+| **关键防翻车** | **stacking-safe** 版本：对 gate/二级模型用 **out-of-fold 的 expert 预测** 训练（避免 meta-model 过拟合） |
+| **验收标准** | full coverage 稳定超过 0.91，Bin3/Bin6 不再拖后腿 |
+| **止损点** | 如果 LGBM expert 只提升 <0.01 → 说明特征才是瓶颈，回到 MVP-13 |
+
+**实验步骤**：
+```
+Step 1: 选择窗口特征
+├── 复用 MVP-13 选出的窗口
+├── 提取 depth/EW/shape 特征
+└── 加少量 summary（如 PCA 前几维）
+
+Step 2: 训练 LGBM Expert
+├── 只为 Bin3 训练一个 LGBM
+├── 只为 Bin6 训练一个 LGBM
+└── 使用 OOF 预测避免过拟合
+
+Step 3: 集成
+├── Bin3/Bin6 用 LGBM expert
+├── 其他 bin 继续用 Ridge expert
+└── Gate 权重保持不变
+
+Step 4: 评估
+├── per-bin R² 对比
+├── full coverage R²
+└── 确认 Bin3/Bin6 不再拖后腿
+```
 
 ## 已完成 Phase 详细设计
 
@@ -581,9 +814,9 @@ Step 4: 分析增益来源
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   ⏳ 计划中   │  🔴 待执行   │  🚀 运行中   │   ✅ 已完成   │   ❌ 已取消   │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-4.0      │ MVP-Next-B   │              │ MVP-0        │ MVP-7.1~7.3  │
-│ MVP-6.0      │ H-D 特征增强 │              │ MVP-1.0      │ MVP-PG2      │
-│ MVP-PG3      │              │              │ MVP-1.1 ✓    │ MVP-Next-C ❌│
+│ MVP-4.0      │ MVP-12A      │              │ MVP-0        │ MVP-7.1~7.3  │
+│ MVP-6.0      │ MVP-12B      │              │ MVP-1.0      │ MVP-PG2      │
+│ MVP-PG3      │ MVP-13~15    │              │ MVP-1.1 ✓    │ MVP-Next-C ❌│
 │              │              │              │ MVP-2.0      │              │
 │              │              │              │ MVP-3.0 ✓    │              │
 │              │              │              │ MVP-3.1 ❌   │              │
@@ -593,13 +826,19 @@ Step 4: 分析增益来源
 │              │              │              │ MVP-NN1 ✓ ⚠️ │              │
 │              │              │              │ MVP-9E1 ✓ 🟢 │              │
 │              │              │              │ MVP-Next-A ✓ │              │
+│              │              │              │ MVP-Next-B ✓ │              │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 
-🔴 Phase 11 立项（2025-12-04）：
-- MVP-Next-A: 回归最优 soft mixing（最高 ROI）
-- MVP-Next-B: 100% coverage（可交付性）
-- MVP-Next-C: Expert 校准（冲 R²）
-- M2 里程碑：回归最优 + 100% coverage + bootstrap CI
+✅ Phase 11 完成（2025-12-04）：
+- MVP-Next-A ✅: 回归最优 soft mixing → R²=0.9310
+- MVP-Next-B ✅: 100% coverage → R²=0.8957
+- MVP-Next-C ❌: Expert 校准 → 假设被否定
+- M2 里程碑：✅ 达成！回归 gate + full coverage 验证完成
+
+🔴 Phase 12-13 立项（2025-12-05）：
+- MVP-12A: 100k 规模复刻（最高优先级）
+- MVP-12B: Coverage++（可交付性）
+- MVP-13~15: 特征增强 & 小模型（P1 待验证）
 
 🟢 Phase 9 完成（2025-12-04）：
 - MVP-9E1 ✅ 大成功！R²=0.9213, ρ=1.13, Gate 准确率 94.6%
@@ -674,6 +913,11 @@ Step 4: 分析增益来源
 | **`VIT-20251204-moe-regress-gate-01`** | VIT | moe | ✅ **R²=0.9310** | **MVP-Next-A** |
 | **`VIT-20251204-moe-full-coverage-01`** | VIT | moe | ✅ **完成** | **MVP-Next-B** |
 | **`VIT-20251204-moe-calibration-01`** | VIT | moe | ⏳ **立项** | **MVP-Next-C** |
+| **`VIT-20251205-moe-100k-01`** | VIT | moe | ⏳ **立项中** | **MVP-12A** |
+| **`VIT-20251205-moe-coverage-plus-01`** | VIT | moe | ⏳ **立项中** | **MVP-12B** |
+| **`VIT-20251205-moe-feature-mining-01`** | VIT | moe | ⏳ **立项中** | **MVP-13** |
+| **`VIT-20251205-moe-embedding-01`** | VIT | moe | ⏳ **立项中** | **MVP-14** |
+| **`VIT-20251205-moe-lgbm-expert-01`** | VIT | moe | ⏳ **立项中** | **MVP-15** |
 
 ## 5.2 仓库关联
 
@@ -792,3 +1036,13 @@ Step 4: 分析增益来源
 | 2025-12-04 | 设定 M2 里程碑目标 | §3 |
 | **2025-12-04** | **❌ MVP-Next-C 完成！H-C 校准假设被否定** | §2.1, §4.1, §4.2, §5.1 |
 | 2025-12-04 | 更新看板视图：MVP-Next-C 移至已取消，MVP-Next-A 移至已完成 | §4.1 |
+| **2025-12-05** | **🔴 立项 Phase 12-13: MVP-12A/12B/13/14/15** | §1.1, §2.1, §2.2, §3, §5.1 |
+| 2025-12-05 | 添加 Phase 12 (大规模验证) 详细设计 | §3 |
+| 2025-12-05 | 添加 Phase 13 (特征增强 & 小模型) 详细设计 | §3 |
+| 2025-12-05 | 更新实验索引：添加 MVP-12A~15 | §5.1 |
+| **2025-12-07** | **Review & Fix：状态一致性修复** | §1.1, §1.2, §2.1, §3, §4.1 |
+| 2025-12-07 | 更新依赖图为 Phase 11-13 重点 | §1.2 |
+| 2025-12-07 | Phase 7 详细设计标记为已取消 | §3 |
+| 2025-12-07 | 已完成 Phase 折叠到 `<details>` 区块 | §3 |
+| 2025-12-07 | MVP-Next-B 移至看板已完成区域 | §4.1 |
+| 2025-12-07 | 待创建实验报告链接标注为 (待创建) | §2.1 |

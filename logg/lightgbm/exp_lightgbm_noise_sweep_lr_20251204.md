@@ -1,27 +1,29 @@
-# 📘 Experiment Report: LightGBM Noise Sweep (Learning Rate as Main Axis)
+# 📘 Experiment Report: LightGBM Noise Sweep (lr 主轴)
 
 ---
 > **Name:** LightGBM Noise Sweep (lr 主轴)  
-> **ID:** `VIT-20251204-lightgbm-noise-sweep-01`  
-> **Topic ｜ MVP:** `VIT` / `lightgbm` ｜ 衍生自 main.md §5 P0 噪声鲁棒性   
+> **ID:** `VIT-20251204-lgb-noise-sweep-01`  
+> **Topic ｜ MVP:** `VIT` / `lightgbm` ｜ MVP-1.1  
 > **Author:** Viska Wei  
 > **Date:** 2025-12-04  
-> **Project:** `VIT`  
-> **Status:** 🔄 立项中
+> **Status:** ✅ Completed
+
 ---
 
 ## 🔗 Upstream Links
 
 | Type | Link | Description |
 |------|------|-------------|
-| 📊 Main | [`lightgbm_main_20251130.md`](./lightgbm_main_20251130.md) | LightGBM 主笔记 |
-| 📚 Prerequisite | [`exp_lightgbm_hyperparam_sweep_20251129.md`](./exp_lightgbm_hyperparam_sweep_20251129.md) | Noiseless sweep baseline |
-| 📋 Kanban | [`../../status/kanban.md`](../../status/kanban.md) | 实验队列 |
+| 🧠 Hub | [`lightgbm_hub_20251130.md`](./lightgbm_hub_20251130.md) | 智库导航 |
+| 🗺️ Roadmap | [`lightgbm_roadmap_20251130.md`](./lightgbm_roadmap_20251130.md) | 实验追踪 |
+| 📚 Prerequisite | [`exp_lightgbm_hyperparam_sweep_20251129.md`](./exp_lightgbm_hyperparam_sweep_20251129.md) | Noiseless baseline |
+| 📊 Ridge 对比 | [`../ridge/exp_ridge_alpha_sweep_20251127.md`](../ridge/exp_ridge_alpha_sweep_20251127.md) | Ridge baseline |
 
 ---
+
 # 📑 Table of Contents
 
-- [⚡ Key Findings](#-核心结论速览供-main-提取)
+- [⚡ Key Findings](#-核心结论速览)
 - [1. 🎯 Objective](#1--目标)
 - [2. 🧪 Experiment Design](#2--实验设计)
 - [3. 📊 Figures & Results](#3--实验图表)
@@ -31,38 +33,36 @@
 
 ---
 
-## ⚡ 核心结论速览（供 main 提取）
-
-> **待实验完成后填写**
+## ⚡ 核心结论速览
 
 ### 一句话总结
 
-> **TODO**: 实验完成后填写
+> **所有噪声水平下最优 lr=0.1，高噪声时 LightGBM 显著优于 Ridge(α=100)，但略逊于 Ridge best（最优 α）**
 
 ### 对假设的验证
 
 | 验证问题 | 结果 | 结论 |
 |---------|------|------|
-| Q1: 各 noise level 的 R² 上限是多少？ | ⏳ | TODO |
-| Q2: 最优 lr 随 noise 变化趋势？ | ⏳ | TODO（变大=快速平均？变小=保守拟合？） |
-| Q3: LightGBM vs Ridge 在小模型约束下差多少？ | ⏳ | TODO |
+| Q1: 各 noise level 的 R² 上限？ | ✅ | 0.1→0.95, 0.2→0.88, 0.5→0.67, 1.0→0.45 |
+| Q2: 最优 lr 随 noise 变化趋势？ | ✅ | **恒定 0.1**，未随噪声漂移 |
+| Q3: LightGBM vs Ridge best？ | ✅ | 低噪声 +4-6%, 高噪声 -4% |
 
-### 设计启示（1-2 条）
+### 设计启示
 
 | 启示 | 具体建议 |
 |------|---------|
-| TODO | TODO |
+| lr 不需要调整 | 对所有 noise level 使用 lr=0.1 |
+| 高噪声模型选择 | noise≥1.0 时用 Ridge best |
 
 ### 关键数字
 
 | 指标 | 值 |
 |------|-----|
-| **Baseline (noiseless)** | R² = 0.9982 |
-| **R² @ noise=0.1** | ⏳ TODO |
-| **R² @ noise=0.2** | ⏳ TODO |
-| **R² @ noise=0.5** | ⏳ TODO |
-| **R² @ noise=1.0** | ⏳ TODO |
-| **最优 lr 趋势** | ⏳ TODO |
+| R² @ noise=0.1 | 0.9456 |
+| R² @ noise=0.2 | 0.8778 |
+| R² @ noise=0.5 | 0.6740 |
+| R² @ noise=1.0 | 0.4505 |
+| 最优 lr 趋势 | 恒定 0.1 |
 
 ---
 
@@ -70,26 +70,24 @@
 
 ## 1.1 实验目的
 
-**核心问题**：在 n_estimators ≤ 100、max_depth=-1 约束下，LightGBM 在各噪声水平的 R² 上限是多少？最优 learning_rate 如何随噪声变化？
+**核心问题**：在 n_estimators ≤ 100、max_depth=-1 约束下，LightGBM 在各噪声水平的 R² 上限是多少？最优 lr 如何随噪声变化？
 
 **回答的问题**：
-1. **R² 上限**：在每个 noise level 下（0.1 / 0.2 / 0.5 / 1.0），LightGBM 能做到的最高 R² 大概是多少？
-2. **超参数漂移**：这些最佳配置和 noiseless 最优配置在超参数（尤其是 lr）上有什么系统性变化？
-3. **Cross-noise 鲁棒性**（Bonus）：同一套超参数在不同噪声下的性能变化有多大？
+1. **R² 上限**：每个 noise level 下能做到的最高 R²
+2. **超参数漂移**：最优 lr 是否随噪声系统性变化
+3. **vs Ridge 对比**：在小模型约束下差多少
 
-**对应 main.md 的**：
-- §5 下一步实验计划 → P0 噪声鲁棒性
-
-**设计原则**：以 `learning_rate` 为主轴，`num_leaves` 和 `n_estimators` 为配角，快速扫描噪声影响。
+**验证假设**：
+- H2.1: 高噪声需要更小的 lr（保守拟合）→ 待验证
+- H2.2: 高噪声下 LightGBM 优于 Ridge → 待验证
 
 ## 1.2 预期结果
 
 | 场景 | 预期结果 | 判断标准 |
 |------|---------|---------|
-| 正常情况 | noise=0.1 R² > 0.95, noise=1.0 R² > 0.50 | 与之前 32k SOTA (0.536) 对齐 |
-| 发现 1 | 高噪声时最优 lr 变大 | 验证"快速平均噪声"假说 |
-| 发现 2 | 高噪声时最优 lr 变小 | 验证"保守拟合"假说 |
-| 异常情况 | noise=1.0 R² < 0.40 | 需要检查数据/代码 |
+| 正常情况 | noise=0.1 R² > 0.95, noise=1.0 R² > 0.50 | 与 32k SOTA 对齐 |
+| 假说 A | 高噪声时最优 lr 变大 | "快速平均噪声" |
+| 假说 B | 高噪声时最优 lr 变小 | "保守拟合" |
 
 ---
 
@@ -100,216 +98,125 @@
 | 配置项 | 值 |
 |--------|-----|
 | 训练样本数 | 32,000 |
-| 验证样本数 | ~5,000 |
-| 测试样本数 | ~5,000 |
-| 特征维度 | 7514 (光谱) |
+| 验证/测试样本数 | 512 / 512 |
+| 特征维度 | 4096 (光谱) |
 | 标签参数 | log_g |
-| 数据划分 seed | 与 noiseless sweep 一致 |
 
-**噪声模型**：
-
-$$
-\text{noisy\_flux} = \text{flux} + \mathcal{N}(0, \sigma^2)
-$$
+**噪声模型**：$\text{noisy\_flux} = \text{flux} + \mathcal{N}(0, \sigma^2)$
 
 **Noise levels**: $\sigma \in \{0.1, 0.2, 0.5, 1.0\}$
 
-- 训练 / 验证 / 测试都注入**同一个** noise level
-- 每个 noise level 独立跑完整 sweep
-
-## 2.2 模型与算法
-
-### LightGBM
-
-```python
-params = {
-    'boosting_type': 'gbdt',
-    'objective': 'regression',
-    'metric': 'mae',
-    'max_depth': -1,  # 固定
-    'learning_rate': [0.02, 0.05, 0.1],  # 主调参数
-    'num_leaves': [15, 31, 63],  # 次要参数
-    'n_estimators': [50, 100],  # 次要参数
-    'n_jobs': -1,
-    'random_state': 42,
-    'verbose': -1
-}
-```
-
-## 2.3 超参数配置
+## 2.2 超参数配置
 
 | 参数 | 范围/值 | 说明 |
 |------|--------|------|
-| **learning_rate** | {0.02, 0.05, 0.1} | **主调参数**：0.01 已证明欠拟合，0.05 是 sweet spot，0.1 看高噪声 regime |
-| num_leaves | {15, 31, 63} | 次要参数：控制树复杂度 |
-| n_estimators | {50, 100} | 次要参数：满足 ≤100 约束 |
-| max_depth | -1 (固定) | 无限深度，由 num_leaves 控制复杂度 |
+| **learning_rate** | {0.02, 0.05, 0.1} | **主调参数** |
+| num_leaves | {15, 31, 63} | 次要参数 |
+| n_estimators | {50, 100} | 满足 ≤100 约束 |
+| max_depth | -1 (固定) | 无限深度 |
 
-**每个 noise level 组合数**：`3 (lr) × 3 (leaves) × 2 (n_est) = 18`
-
-**总组合数**：`18 × 4 (noise levels) = 72`
-
-## 2.4 评价指标
-
-| 指标 | 公式 | 用途 |
-|------|------|------|
-| $R^2$ | $1 - \frac{\sum(y - \hat{y})^2}{\sum(y - \bar{y})^2}$ | 主要评价指标 |
-| MAE | $\frac{1}{n}\sum\|y - \hat{y}\|$ | 绝对误差参考 |
-| train_time_s | - | 训练耗时 |
-
-## 2.5 输出文件结构
-
-```
-~/VIT/results/lightgbm_noise_sweep/
-├── nz0.1/
-│   └── sweep_results.csv
-├── nz0.2/
-│   └── sweep_results.csv
-├── nz0.5/
-│   └── sweep_results.csv
-├── nz1.0/
-│   └── sweep_results.csv
-├── lightgbm_noise_sweep_best_per_noise.csv  # Summary A
-└── lightgbm_noise_sweep_lr_grid.csv         # Summary B
-```
-
-## 2.6 两个 Summary 视图
-
-### Summary A: 按 noise 找全局最优配置
-
-```
-noise_level, best_val_R2, best_test_R2, learning_rate, n_estimators, num_leaves, train_time_s
-0.1, ...
-0.2, ...
-0.5, ...
-1.0, ...
-```
-
-### Summary B: 按 (noise, lr) 看 lr 的作用
-
-```
-noise_level, learning_rate, best_val_R2, best_test_R2, best_num_leaves, best_n_estimators
-0.1, 0.02, ...
-0.1, 0.05, ...
-0.1, 0.1, ...
-0.2, 0.02, ...
-...
-```
-
-用途：
-- 看噪声变大时，最优 lr 往上还是往下漂
-- 验证"高噪声 regime 是否更需要大 lr 来快速平均噪声"
-
-## 2.7 实验后分析重点（⚠️ 必须回答）
-
-跑完后需要贴出 `*_best_per_noise.csv` 和 `*_lr_grid.csv` 的结果，并回答：
-
-### 分析 1：最优 lr 随噪声的漂移趋势
-
-| noise_level | best_lr | 趋势判断 |
-|-------------|---------|---------|
-| 0.1 | ⏳ | - |
-| 0.2 | ⏳ | - |
-| 0.5 | ⏳ | - |
-| 1.0 | ⏳ | - |
-
-**核心问题**：高噪声时最优 lr 是变大（快速平均噪声）还是变小（保守拟合）？
-
-### 分析 2：LightGBM vs Ridge 在小模型约束下的 noise-R² 对比
-
-| noise_level | LightGBM best R² | Ridge R² (参考) | ΔR² | 优势方 |
-|-------------|------------------|-----------------|-----|--------|
-| 0.1 | ⏳ | ⏳ | - | - |
-| 0.2 | ⏳ | ⏳ | - | - |
-| 0.5 | ⏳ | ⏳ | - | - |
-| 1.0 | ⏳ | ⏳ | - | - |
-
-**核心问题**：在 `n_estimators ≤ 100` 约束下，LightGBM 相比 Ridge 的优势有多大？高噪声时差距是收窄还是拉大？
-
-> **注意**：Ridge R² 需要从 `logg/ridge/` 或已有实验中查找对应 noise level 的结果。
+**配置数**：`3 × 3 × 2 × 4 = 72`
 
 ---
 
 # 3. 📊 实验图表
 
-> **TODO**: 实验完成后添加图表
+### 图 1：R² vs Noise Level
 
-### 图 1：R² vs Noise Level (Best Config per Noise)
+![R² vs Noise](./img/r2_vs_noise.png)
 
-**TODO**: 折线图，x 轴 noise level，y 轴 best R²
+**观察**：R² 随 noise 近乎线性下降，从 0.95 (noise=0.1) 降至 0.45 (noise=1.0)
 
-### 图 2：R² vs Learning Rate (per Noise Level)
+---
 
-**TODO**: 4 条线（每个 noise），x 轴 lr，y 轴 best R² for that lr
+### 图 2：R² vs Learning Rate (per Noise)
+
+![R² vs LR](./img/r2_vs_lr_per_noise.png)
+
+**观察**：所有 noise level 下 lr=0.1 都是最优
+
+---
 
 ### 图 3：最优 lr 随 Noise 变化
 
-**TODO**: 观察最优 lr 是否从 0.05 向 0.1 或 0.02 漂移
+![Best LR](./img/best_lr_vs_noise.png)
 
-### 图 4：Cross-Noise Robustness (Optional)
+**观察**：最优 lr 恒定为 0.1，未出现随噪声漂移
 
-**TODO**: 如果时间允许，把 noiseless 最优配置直接在各 noise 上测试
+---
+
+### 图 4：Heatmaps per Noise
+
+| noise=0.1 | noise=0.2 | noise=0.5 | noise=1.0 |
+|-----------|-----------|-----------|-----------|
+| ![](./img/heatmap_noise_0p1.png) | ![](./img/heatmap_noise_0p2.png) | ![](./img/heatmap_noise_0p5.png) | ![](./img/heatmap_noise_1p0.png) |
+
+**观察**：右下角（高 lr + 高 leaves + n=100）在所有 noise level 下表现最佳
+
+---
+
+### Combined Summary
+
+![Combined](./img/combined_summary.png)
 
 ---
 
 # 4. 💡 关键洞见
 
-> **TODO**: 实验完成后填写
+## 4.1 宏观层
 
-## 4.1 宏观层洞见
+1. **噪声对 R² 的影响是系统性的**：R² 从 0.95 单调下降至 0.45
+2. **vs Ridge best：LightGBM 优势有限**：低噪声领先 4-6%，高噪声反被超越 4%
 
-TODO
+## 4.2 模型层
 
-## 4.2 模型层洞见
+1. **lr=0.1 在所有噪声下都是最优**：否定了"高噪声需小 lr"假说
+2. **n_estimators=100 显著优于 50**：所有 noise level 下 n=100 高出 10-20%
+3. **num_leaves=63 在高噪声下更稳健**
 
-TODO
+## 4.3 实验层细节
 
-## 4.3 实验层细节洞见
-
-TODO
+- 训练时间约 11-16 秒/配置
+- Early stopping 生效，实际树数通常小于设定值
 
 ---
 
 # 5. 📝 结论
 
-> **TODO**: 实验完成后填写
-
 ## 5.1 核心发现
 
-TODO
+> **所有噪声水平下最优 lr=0.1**，LightGBM 的 boosting 机制倾向于"快速拟合"而非"保守平滑"。但在极高噪声下效果不如 Ridge 正则化。
 
-## 5.2 关键结论（3 条）
+- ❌ 假设 H2.1: 高噪声需要小 lr → **否定**
+- ❌ 假设 H2.2: 高噪声 LightGBM 更强 → **否定**（vs Ridge best）
+
+## 5.2 关键结论
 
 | # | 结论 | 证据 |
 |---|------|------|
-| 1 | TODO | TODO |
-| 2 | TODO | TODO |
-| 3 | TODO | TODO |
+| 1 | 最优 lr 不随噪声漂移，恒定为 0.1 | 所有 4 个 noise level |
+| 2 | LightGBM 在低噪声时优于 Ridge best | noise=0.1: +4% |
+| 3 | LightGBM 在高噪声时略逊于 Ridge best | noise=1.0: -4% |
 
 ## 5.3 设计启示
 
-TODO
+1. **简化调参**：噪声场景下只需 lr=0.1
+2. **模型选择**：noise < 1.0 用 LightGBM，noise ≥ 1.0 用 Ridge best
+3. **模型容量**：n_estimators=100 是关键
 
 ## 5.4 物理解释
 
-TODO
+- **低噪声**：树分裂能捕捉光谱的非线性结构
+- **高噪声**：噪声淹没非线性信号，Ridge L2 正则化更稳健
 
 ## 5.5 关键数字速查
 
-| 指标 | 值 | 配置/条件 |
-|------|-----|----------|
-| Noiseless best | R² = 0.9982 | lr=0.05, n=2000, leaves=31, depth=7 |
-| noise=0.1 best | TODO | TODO |
-| noise=0.2 best | TODO | TODO |
-| noise=0.5 best | TODO | TODO |
-| noise=1.0 best | TODO | TODO |
-| 最优 lr 趋势 | TODO | - |
-
-## 5.6 下一步工作
-
-| 方向 | 具体任务 | 优先级 | 对应 MVP |
-|------|----------|--------|---------|
-| TODO | TODO | TODO | TODO |
+| 指标 | 值 | 配置 |
+|------|-----|------|
+| noise=0.1 best | R² = 0.9456 | lr=0.1, n=100, leaves=31 |
+| noise=0.2 best | R² = 0.8778 | lr=0.1, n=100, leaves=63 |
+| noise=0.5 best | R² = 0.6740 | lr=0.1, n=100, leaves=31 |
+| noise=1.0 best | R² = 0.4505 | lr=0.1, n=100, leaves=31 |
 
 ---
 
@@ -317,83 +224,61 @@ TODO
 
 ## 6.1 数值结果表
 
-> **TODO**: 实验完成后填写
-
 ### Summary A: Best Config per Noise
 
-| noise_level | best_val_R² | best_test_R² | learning_rate | n_estimators | num_leaves | train_time_s |
-|-------------|-------------|--------------|---------------|--------------|------------|--------------|
-| 0.1 | | | | | | |
-| 0.2 | | | | | | |
-| 0.5 | | | | | | |
-| 1.0 | | | | | | |
+| noise | best R² | lr | n_est | leaves | time(s) |
+|-------|---------|-----|-------|--------|---------|
+| 0.1 | 0.9456 | 0.10 | 100 | 31 | 11.1 |
+| 0.2 | 0.8778 | 0.10 | 100 | 63 | 15.9 |
+| 0.5 | 0.6740 | 0.10 | 100 | 63 | 15.6 |
+| 1.0 | 0.4505 | 0.10 | 100 | 63 | 16.7 |
 
 ### Summary B: R²(noise, lr) Grid
 
-| noise_level | learning_rate | best_val_R² | best_test_R² | best_num_leaves | best_n_estimators |
-|-------------|---------------|-------------|--------------|-----------------|-------------------|
-| 0.1 | 0.02 | | | | |
-| 0.1 | 0.05 | | | | |
-| 0.1 | 0.1 | | | | |
-| 0.2 | 0.02 | | | | |
-| 0.2 | 0.05 | | | | |
-| 0.2 | 0.1 | | | | |
-| 0.5 | 0.02 | | | | |
-| 0.5 | 0.05 | | | | |
-| 0.5 | 0.1 | | | | |
-| 1.0 | 0.02 | | | | |
-| 1.0 | 0.05 | | | | |
-| 1.0 | 0.1 | | | | |
+| noise | lr=0.02 | lr=0.05 | lr=0.10 |
+|-------|---------|---------|---------|
+| 0.1 | 0.8654 | 0.9389 | **0.9456** |
+| 0.2 | 0.7768 | 0.8725 | **0.8775** |
+| 0.5 | 0.5297 | 0.6356 | **0.6697** |
+| 1.0 | 0.3150 | 0.4099 | **0.4407** |
 
----
+## 6.2 LightGBM vs Ridge 对比
 
-## 6.2 实验流程记录
+### vs Ridge best（最优 α）
 
-### 6.2.1 环境与配置
+| noise | LightGBM | Ridge best | Ridge α | ΔR² | 优势方 |
+|-------|----------|------------|---------|-----|--------|
+| 0.1 | 0.9456 | 0.9090 | 1.0 | +4.0% | **LightGBM** |
+| 0.2 | 0.8775 | 0.8264 | 10.0 | +6.2% | **LightGBM** |
+| 0.5 | 0.6697 | 0.6550 | 50.0 | +2.2% | **LightGBM** |
+| 1.0 | 0.4407 | 0.458 | 200.0 | -3.9% | **Ridge** |
+
+## 6.3 Follow-up: 更大模型容量
+
+> 详细数值结果见 [`lightgbm_roadmap_20251130.md`](./lightgbm_roadmap_20251130.md) §6.1
+
+### 核心发现汇总
+
+| noise | n=100 | n=500 | n=1000 | 最优 n |
+|-------|-------|-------|--------|--------|
+| 0.1 | 0.9456 | 0.9574 | 0.9570 | 500 |
+| 0.2 | 0.8778 | 0.9003 | **0.9130** | 1000 (lr=0.05) |
+| 0.5 | 0.6740 | 0.7122 | **0.7198** | 1000 |
+| 1.0 | 0.4505 | **0.4949** | 0.4822 | 500 |
+
+**关键发现**：
+- 放开模型容量后，低噪声 (≤0.2) **lr=0.05** 更优
+- 高噪声 (≥0.5) lr=0.1 仍然最优，但需控制树数防止过拟合
+- noise=1.0 最优 n=500，更多树反而过拟合
+
+## 6.4 实验环境
 
 | 项目 | 值 |
 |------|-----|
-| **仓库** | `~/VIT` |
-| **脚本路径** | `scripts/lightgbm_noise_sweep_lr_main.py` (待创建) |
-| **输出路径** | `results/lightgbm_noise_sweep/` |
-| **Python** | 3.x |
-| **关键依赖** | LightGBM, numpy, pandas, sklearn |
-
-### 6.2.2 执行命令
-
-```bash
-# TODO: 实验执行时记录
-cd /home/swei20/VIT
-source init.sh
-python -u scripts/lightgbm_noise_sweep_lr_main.py
-```
-
-### 6.2.3 运行日志摘要
-
-> **TODO**: 实验完成后填写
+| 仓库 | `~/VIT` |
+| 脚本 | `scripts/lightgbm_noise_sweep_lr_main.py` |
+| 总耗时 | 13.3 分钟 |
 
 ---
 
-## 6.3 相关文件
-
-| 类型 | 路径 | 说明 |
-|------|------|------|
-| 主笔记 | `logg/lightgbm/lightgbm_main_20251130.md` | main 文件 |
-| 本报告 | `logg/lightgbm/exp_lightgbm_noise_sweep_lr_20251204.md` | 当前文件 |
-| 前置实验 | `logg/lightgbm/exp_lightgbm_hyperparam_sweep_20251129.md` | Noiseless sweep |
-| 图表 | `logg/lightgbm/img/` | 实验图表 |
-| 实验代码 | `~/VIT/scripts/lightgbm_noise_sweep_lr_main.py` | 待创建 |
-
----
-
-## 🔗 Cross-Repo Metadata
-
-| Field | Value |
-|-------|-------|
-| **source_repo_path** | `~/VIT/results/lightgbm_noise_sweep/` |
-| **script_path** | `~/VIT/scripts/lightgbm_noise_sweep_lr_main.py` |
-
----
-
-> **实验状态**：🔄 立项中，待执行
-
+*报告完成时间: 2025-12-04*
