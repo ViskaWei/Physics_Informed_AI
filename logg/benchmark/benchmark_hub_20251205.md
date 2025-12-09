@@ -4,7 +4,7 @@
 > **主题名称：** 跨模型 $\log g$ 预测 Benchmark  
 > **作者：** Viska Wei  
 > **创建日期：** 2025-12-05  
-> **最后更新：** 2025-12-05  
+> **最后更新：** 2025-12-09  
 > **状态：** 🔄 探索中
 
 ---
@@ -24,7 +24,8 @@
 | Ridge | [`../ridge/ridge_main_20251130.md`](../ridge/ridge_main_20251130.md) | 32k baseline |
 | Ridge 100k | [`exp_ridge_100k_noise_sweep_20251205.md`](./exp_ridge_100k_noise_sweep_20251205.md) | 100k 全 noise |
 | LightGBM | [`../lightgbm/lightgbm_hub_20251130.md`](../lightgbm/lightgbm_hub_20251130.md) | 32k + 100k |
-| **LightGBM Summary** 🆕 | [`../lightgbm/exp_lightgbm_summary_20251205.md`](../lightgbm/exp_lightgbm_summary_20251205.md) | **32k n=1000 完整 benchmark** |
+| LightGBM Summary | [`../lightgbm/exp_lightgbm_summary_20251205.md`](../lightgbm/exp_lightgbm_summary_20251205.md) | 32k n=1000 完整 benchmark |
+| **LightGBM 100k SOTA** 🆕 | [`../lightgbm/exp_lightgbm_noise_config_consolidated_20251209.md`](../lightgbm/exp_lightgbm_noise_config_consolidated_20251209.md) | **100k n=2500, lr=0.05 全noise** |
 | MoE | [`../moe/moe_main_20251203.md`](../moe/moe_main_20251203.md) | 分区 Ridge |
 | MLP/NN | [`../NN/NN_main_20251130.md`](../NN/NN_main_20251130.md) | 32k + 100k |
 | CNN | [`../cnn/cnn_main_20251201.md`](../cnn/cnn_main_20251201.md) | Dilated CNN |
@@ -160,7 +161,8 @@
 | C5 | MLP vs 传统 ML | NN E01 | 32k 数据 MLP 介于 Ridge 和 LightGBM 之间 | 🟢 高 |
 | C6 | CNN 小 kernel 最优 | CNN E01 | 小 kernel (k=9) >> 大 kernel (k=63) | 🟢 高 |
 | C7 | MoE 分区有效 | MoE MVP-1.1 | 分区 Ridge ΔR²=+0.050，[M/H] 贡献 69% | 🟢 高 |
-| **C8** | **Ridge 数据量增益有限** | **MVP-1.0** | **100k vs 32k 平均 +2.71%，高噪声例外 (+14.8%)** | 🟢 高 |
+| C8 | Ridge 数据量增益有限 | MVP-1.0 | 100k vs 32k 平均 +2.71%，高噪声例外 (+14.8%) | 🟢 高 |
+| **C9** | **LightGBM 100k SOTA** 🆕 | **Consolidated** | **100k+n=2500+lr=0.05 是全 noise 最优，增益 +0.1%~+13.4%** | 🟢 高 |
 
 ## 3.2 汇合详情
 
@@ -261,7 +263,7 @@
 
 ---
 
-### 汇合点 C8: Ridge 数据量增益有限 🆕
+### 汇合点 C8: Ridge 数据量增益有限
 
 **单点发现汇总**：
 
@@ -278,6 +280,27 @@
 - Ridge 不值得用更多数据训练，32k 已足够
 - 高噪声场景若用 Ridge，可考虑更多数据
 - 提升方向应放在模型复杂度（LightGBM、NN）而非数据量
+
+---
+
+### 汇合点 C9: LightGBM 100k SOTA 🆕
+
+**单点发现汇总**：
+
+| 来源实验 | 单点发现 | 关键数据 |
+|---------|---------|---------|
+| LightGBM 100k Consolidated | 100k + n=2500 + lr=0.05 是全 noise 最优配置 | 所有 noise level 都超越 32k |
+| LightGBM 100k Consolidated | 增益随噪声递增 | noise=0.1: +1.04%, noise=2.0: +13.4% |
+| LightGBM 100k Consolidated | tree 上限中位数 2179，推荐 n=2500 | lr=0.05 需要更多树 |
+| LightGBM 100k Consolidated | lr=0.05 在低噪声/极高噪声最优，lr=0.1 在中高噪声更稳 | 见趋势表 |
+
+**汇合结论**：
+> **100k 数据 + n_estimators=2500 + lr=0.05 是各 noise level 的最优配置**；增益随噪声增大，低噪声 +1%，高噪声 +10%+。100k 数据必须配合 n≥2500 才能发挥优势。
+
+**设计启示**：
+- LightGBM 是全场景最强 baseline（优于 Ridge、MLP、CNN）
+- 100k 配置推荐：`lr=0.05, n_estimators=2500, num_leaves=31`
+- 高噪声场景从更多数据中获益最大
 
 ---
 
@@ -383,19 +406,20 @@
 
 **结论**: H2.2 成立 - Ridge 对数据量增益有限 (平均 +2.71%)
 
-### 📊 LightGBM (32k vs 100k)
+### 📊 LightGBM (32k vs 100k SOTA)
 
-| Noise | 32k R² | 100k R² | 增益 | 最优 lr | 来源 |
-|-------|--------|---------|------|---------|------|
-| 0.0 | **0.9981** | - | - | 0.05 | LightGBM Summary |
-| 0.1 | **0.9616** | 0.9641 | +0.26% | 0.05/0.1 | LightGBM Summary |
-| 0.2 | **0.9045** | 0.9129 | +0.93% | 0.05 | LightGBM Summary |
-| 0.5 | **0.7393** | 0.7370 | -0.31% | 0.10 | LightGBM Summary |
-| 1.0 | **0.5361** | 0.5310 | -0.95% | 0.10 | LightGBM Summary |
-| 2.0 | **0.2679** | 0.3038 | +13.4% | 0.05 | LightGBM Summary |
+| Noise | 32k R² | 100k R² (SOTA) | 增益 | 100k 配置 | 来源 |
+|-------|--------|----------------|------|-----------|------|
+| 0.0 | 0.9981 | **0.9991** | +0.10% | lr=0.05, n=5000 | LightGBM 100k Consolidated |
+| 0.1 | 0.9616 | **0.9720** | +1.08% | lr=0.05, n=2218 | LightGBM 100k Consolidated |
+| 0.2 | 0.9045 | **0.9318** | +3.02% | lr=0.05, n=3608 | LightGBM 100k Consolidated |
+| 0.5 | 0.7393 | **0.7573** | +2.44% | lr=0.05, n=3855 | LightGBM 100k Consolidated |
+| 1.0 | 0.5361 | **0.5582** | +4.12% | lr=0.05, n=2140 | LightGBM 100k Consolidated |
+| 2.0 | 0.2679 | **0.3038** | +13.4% | lr=0.05, n=2000 | LightGBM 100k Consolidated |
 
-> **32k 数据配置**: n=1000, leaves=63, lr=0.05, feature_fraction=0.8, bagging_fraction=0.8
-> **关键发现**: 32k 已接近 LightGBM 性能上限；100k 增益主要在 noise=2.0 (+13.4%)
+> **32k 配置**: n=1000, leaves=63, lr=0.05
+> **100k SOTA 配置**: n=2500 (推荐), leaves=31, lr=0.05
+> **关键发现**: 100k 在所有 noise level 都优于 32k；增益随噪声增大 (+0.1% ~ +13.4%)
 
 ### 📊 MoE (32k, noise=0.2)
 
@@ -439,46 +463,50 @@
                     │           32k              100k              1M              │
 ┌───────────────────┼─────────────────────────────────────────────────────────────┤
 │ Noise = 0         │ Ridge:  0.999 ✅        Ridge: 0.9994 ✅   Ridge: ?          │
-│                   │ LGB:    0.9981 ✅       LGB:   ?          LGB:   ?          │
+│                   │ LGB:    0.9981 ✅       LGB:   0.9991 ✅🏆 LGB:   ?          │
 │                   │ MoE:    ?               MoE:   ?          MoE:   ?          │
 │                   │ MLP:    ?               MLP:   ?          MLP:   ?          │
 │                   │ CNN:    ?               CNN:   ?          CNN:   ?          │
 ├───────────────────┼─────────────────────────────────────────────────────────────┤
 │ Noise = 0.1       │ Ridge:  0.900 ✅        Ridge: 0.9174 ✅   Ridge: ?          │
-│                   │ LGB:    0.9616 ✅       LGB:   0.964 ✅   LGB:   ?          │
+│                   │ LGB:    0.9616 ✅       LGB:   0.9720 ✅🏆 LGB:   ?          │
 │                   │ MoE:    ?               MoE:   ?          MoE:   ?          │
 │                   │ MLP:    ?               MLP:   ?          MLP:   ?          │
-│                   │ CNN:    0.657 ✅🏆      CNN:   ?          CNN:   ?          │
+│                   │ CNN:    0.657 ✅        CNN:   ?          CNN:   ?          │
 ├───────────────────┼─────────────────────────────────────────────────────────────┤
 │ Noise = 0.2       │ Ridge:  0.862 ✅        Ridge: 0.8413 ✅   Ridge: ?          │
-│ (MoE 主测点)       │ LGB:    0.9045 ✅       LGB:   0.913 ✅   LGB:   ?          │
+│ (MoE 主测点)       │ LGB:    0.9045 ✅       LGB:   0.9318 ✅🏆 LGB:   ?          │
 │                   │ MoE:    0.912 ✅        MoE:   0.925 ✅   MoE:   ?          │
 │                   │ MLP:    ?               MLP:   ?          MLP:   ?          │
 │                   │ CNN:    ?               CNN:   ?          CNN:   ?          │
 ├───────────────────┼─────────────────────────────────────────────────────────────┤
 │ Noise = 0.5       │ Ridge:  0.670 ✅        Ridge: 0.6674 ✅   Ridge: ?          │
-│                   │ LGB:    0.7393 ✅       LGB:   0.737 ✅   LGB:   ?          │
+│                   │ LGB:    0.7393 ✅       LGB:   0.7573 ✅🏆 LGB:   ?          │
 │                   │ MoE:    0.772 ✅        MoE:   ?          MoE:   ?          │
 │                   │ MLP:    ?               MLP:   ?          MLP:   ?          │
 │                   │ CNN:    ?               CNN:   ?          CNN:   ?          │
 ├───────────────────┼─────────────────────────────────────────────────────────────┤
 │ Noise = 1.0       │ Ridge:  0.458 ✅        Ridge: 0.4687 ✅   Ridge: ?          │
-│ (NN 主测点)        │ LGB:    0.5361 ✅       LGB:   0.531 ✅   LGB:   ?          │
+│ (NN 主测点)        │ LGB:    0.5361 ✅       LGB:   0.5582 ✅🏆 LGB:   ?          │
 │                   │ MoE:    ?               MoE:   ?          MoE:   ?          │
 │                   │ MLP:    0.498 ✅        MLP:   0.551 ✅   MLP:   ?          │
 │                   │ CNN:    ?               CNN:   ?          CNN:   ?          │
 ├───────────────────┼─────────────────────────────────────────────────────────────┤
 │ Noise = 2.0       │ Ridge:  0.221 ✅        Ridge: 0.2536 ✅   Ridge: ?          │
-│                   │ LGB:    0.2679 ✅       LGB:   0.304 ✅   LGB:   ?          │
+│                   │ LGB:    0.2679 ✅       LGB:   0.3038 ✅🏆 LGB:   ?          │
 │                   │ MoE:    ?               MoE:   ?          MoE:   ?          │
 │                   │ MLP:    ?               MLP:   ?          MLP:   ?          │
 │                   │ CNN:    ?               CNN:   ?          CNN:   ?          │
 └───────────────────┴─────────────────────────────────────────────────────────────┘
 
 图例: ✅ = 已测量 | 🏆 = 该配置最佳 | ? = 待测量
+
+> **LightGBM 100k SOTA 配置**: lr=0.05, n_estimators=2500, num_leaves=31
 ```
 
-### 模型排序总结（32k 数据）
+### 模型排序总结
+
+#### 32k 数据
 
 | Noise | 排序（高→低） | 最佳模型 | 备注 |
 |-------|-------------|---------|------|
@@ -489,7 +517,18 @@
 | 1.0 | **LightGBM > MLP** > Ridge | LightGBM (0.5361) | LGB n=1000 反超 MLP |
 | 2.0 | **LightGBM > Ridge** | LightGBM (0.2679) | LGB n=1000 > Ridge 0.221 |
 
-> **⚠️ 重要修正**: 32k LightGBM (n=1000, leaves=63) 在所有 noise level 下都超越了 Ridge 和 MLP，只有 MoE 在 noise=0.2-0.5 时略优
+#### 100k 数据 🆕
+
+| Noise | 排序（高→低） | 最佳模型 | R² | 备注 |
+|-------|-------------|---------|-----|------|
+| 0.0 | **LightGBM** > Ridge | LightGBM | **0.9991** | 接近完美 |
+| 0.1 | **LightGBM** > Ridge | LightGBM | **0.9720** | +1.04% vs 32k |
+| 0.2 | **LightGBM** > MoE > Ridge | LightGBM | **0.9318** | +3.02% vs 32k |
+| 0.5 | **LightGBM** > MoE > Ridge | LightGBM | **0.7573** | +2.44% vs 32k |
+| 1.0 | **LightGBM** > MLP > Ridge | LightGBM | **0.5582** | +4.12% vs 32k |
+| 2.0 | **LightGBM** > Ridge | LightGBM | **0.3038** | +13.4% vs 32k |
+
+> **⚠️ 重要发现**: LightGBM 100k (n=2500, lr=0.05) 在所有 noise level 都是 SOTA，增益随噪声增大
 
 ## 6.2 术语表
 
@@ -521,8 +560,9 @@
 | 2025-12-05 | 整合 Ridge/LightGBM/MoE/MLP/CNN 实验结果 | §2, §3, §5, §6 |
 | 2025-12-05 | 添加完整实验矩阵和模型排序 | §6.1 |
 | 2025-12-05 | 更新假设验证状态 | §2 |
-| **2025-12-05** | **⚠️ 重大修正: 更新 LightGBM 32k (n=1000) 完整 benchmark，否定 H3.1 (Ridge>LGB@高噪声)** | §2.2, §2.3, §3.1, §3.2 C2, §4.4, §5.1 P2, §5.3, §6.1 |
+| 2025-12-05 | ⚠️ 重大修正: 更新 LightGBM 32k (n=1000) 完整 benchmark，否定 H3.1 | §2.2, §2.3, §3.1, §3.2 C2, §4.4, §5.1 P2, §5.3, §6.1 |
+| **2025-12-09** | **🆕 添加 LightGBM 100k SOTA (n=2500, lr=0.05) 完整 benchmark** | §相关文件, §3.1 C9, §5.3, §6.1 |
 
 ---
 
-*最后更新: 2025-12-05*
+*最后更新: 2025-12-09*

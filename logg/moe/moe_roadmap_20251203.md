@@ -4,8 +4,8 @@
 > **主题名称：** Mixture of Experts（MoE）要不要上？什么时候有用？  
 > **作者：** Viska Wei  
 > **创建日期：** 2025-12-03  
-> **最后更新：** 2025-12-07  
-> **当前 Phase：** Phase 11 ✅ M2 里程碑达成 → 执行 Phase 12-13（大规模验证 + 特征增强）
+> **最后更新：** 2025-12-09  
+> **当前 Phase：** Phase 12A ✅ 完成 → 执行 Phase 12B (Coverage++) + Phase 13 (特征增强，32k)
 
 ---
 
@@ -48,7 +48,7 @@
 | **🟢 Phase 9: 9 专家扩展** | 物理窗 gate → 9 专家 (Teff×[M/H]) | MVP-9E1 | ✅ **完成！** | **R²=0.9213, ρ=1.13** |
 | **⚠️ Phase 10: NN Expert** | 固定 gate + NN expert | MVP-NN1 | ✅ 完成 | ⚠️ NN<<Ridge，暂停 |
 | **🟢 Phase 11: 优化 & 工程化** | 回归最优 gate + coverage + 校准 | MVP-Next-A/B/C | **MVP-Next-A ✅, MVP-Next-B ✅** | M2 里程碑 |
-| **🔴 Phase 12: 大规模验证** | 100k 复刻 + Coverage++ | MVP-12A/12B | ⏳ 立项中 | 稳态结论 + full>0.91 |
+| **🟢 Phase 12: 大规模验证** | 100k 复刻 + Coverage++ | MVP-12A/12B | **MVP-12A ✅, MVP-12B ⏳** | **R²=0.9400 稳态！** |
 | **🟡 Phase 13: 特征增强 & 小模型** | Feature mining + embedding + LGBM expert | MVP-13/14/15 | ⏳ 立项中 | Bin3/Bin6 增量改进 |
 
 ## 1.2 依赖关系图
@@ -85,10 +85,10 @@
 │                                                                         │
 │   ════════════════════ 当前执行 ════════════════════                    │
 │                                                                         │
-│   🔴 Phase 12: 大规模验证                                                │
-│   ├─ [MVP-12A: 100k 复刻] 🔴 P0                                         │
-│   │   → 验证 0.9310 在 100k 规模可复现                                   │
-│   │   → 同 split 对比 LGBM=0.91                                         │
+│   🟢 Phase 12: 大规模验证                                                │
+│   ├─ [MVP-12A: 100k 复刻] ✅ 完成！                                      │
+│   │   → R²=0.9400 稳定复现！CI_low=0.0045 > 0                           │
+│   │   → vs 32k baseline: +0.0090                                        │
 │   │                                                                     │
 │   └─ [MVP-12B: Coverage++] 🔴 P0                                        │
 │       → 第 10 个 oor expert                                              │
@@ -130,29 +130,29 @@
 | MVP | 实验名称 | Phase | 状态 | experiment_id | 报告链接 |
 |-----|---------|-------|------|---------------|---------|
 | MVP-0 | 全局 Ridge Baseline | 0 | ✅ | - | (包含在 MVP-1.0) |
-| MVP-1.0 | Piecewise Ridge | 1 | ✅ | `VIT-20251203-moe-piecewise-01` | [exp](./exp_moe_piecewise_ridge_20251203.md) |
-| MVP-1.1 | 严谨验证 | 1 | ✅ | `VIT-20251203-moe-rigorous-01` | [exp](./exp_moe_rigorous_validation_20251203.md) |
-| MVP-2.0 | Noise-conditioned Ridge | 2 | ✅ | `VIT-20251203-moe-snr-02` | [exp](./exp_moe_noise_conditioned_20251203.md) |
-| MVP-3.0 | Quantile Bins Sweep | 3 | ✅ | `VIT-20251203-moe-quantile-01` | [exp](./exp_moe_quantile_bins_sweep_20251203.md) |
+| MVP-1.0 | Piecewise Ridge | 1 | ✅ | `VIT-20251203-moe-piecewise-01` | [exp](./exp/exp_moe_piecewise_ridge_20251203.md) |
+| MVP-1.1 | 严谨验证 | 1 | ✅ | `VIT-20251203-moe-rigorous-01` | [exp](./exp/exp_moe_rigorous_validation_20251203.md) |
+| MVP-2.0 | Noise-conditioned Ridge | 2 | ✅ | `VIT-20251203-moe-snr-02` | [exp](./exp/exp_moe_noise_conditioned_20251203.md) |
+| MVP-3.0 | Quantile Bins Sweep | 3 | ✅ | `VIT-20251203-moe-quantile-01` | [exp](./exp/exp_moe_quantile_bins_sweep_20251203.md) |
 | MVP-3.1 | Pseudo Gating | 3 | ✅ | `VIT-20251203-moe-pseudo-01` | - |
-| MVP-3.2 | Conditional Ridge | 3 | ✅ | `VIT-20251203-moe-conditional-01` | [exp](./exp_moe_conditional_ridge_20251203.md) |
+| MVP-3.2 | Conditional Ridge | 3 | ✅ | `VIT-20251203-moe-conditional-01` | [exp](./exp/exp_moe_conditional_ridge_20251203.md) |
 | MVP-4.0 | log g Gate Analysis | 4 | ⏳ | `VIT-20251203-moe-logg-gate-01` | - |
-| MVP-5.0 | Ridge 系数解释 | 5 | ✅ | `VIT-20251203-moe-coef-01` | [exp](./exp_moe_coefficient_analysis_20251203.md) |
+| MVP-5.0 | Ridge 系数解释 | 5 | ✅ | `VIT-20251203-moe-coef-01` | [exp](./exp/exp_moe_coefficient_analysis_20251203.md) |
 | MVP-6.0 | Learned Gate | 6 | ⏳ | - | - |
 | MVP-6.1 | NN-MoE | 6 | ⏳ | `VIT-20251203-moe-nn-03` | - |
 | MVP-7.1 | Gate 噪声敏感性 | 7 | ⏳ 暂缓 | - | - |
 | MVP-7.2 | Conditional Ridge++ | 7 | ⏳ 暂缓 | - | - |
 | MVP-7.3 | Noise 连续条件化 | 7 | ⏳ 暂缓 | - | - |
 | MVP-7.4 | 物理窗门控 | 7 | → Phase 8 | - | - |
-| **MVP-PG1** | **🟢 物理窗 Gate Baseline** | 8 | ✅ **完成 ρ=1.00！** | `VIT-20251204-moe-phys-gate-01` | [exp](./exp_moe_phys_gate_baseline_20251204.md) |
+| **MVP-PG1** | **🟢 物理窗 Gate Baseline** | 8 | ✅ **完成 ρ=1.00！** | `VIT-20251204-moe-phys-gate-01` | [exp](./exp/exp_moe_phys_gate_baseline_20251204.md) |
 | ~~MVP-PG2~~ | ~~窗口形状 PCA Gate~~ | 8 | ❌ 不需要 | - | ρ≈1.00 已足够 |
 | MVP-PG3 | 小 CNN Gate | 8 | ⏳ 可选 | - | 锦上添花 |
-| **🟢 MVP-9E1** | **物理窗 gate → 9 专家** | **9** | **✅ 完成！** | `VIT-20251204-moe-9expert-01` | [exp](./exp_moe_9expert_phys_gate_20251204.md) |
-| **⚠️ MVP-NN1** | **固定 gate + NN expert** | **10** | **✅ 完成** | `VIT-20251204-moe-nn-expert-01` | [exp](./exp_moe_nn_experts_20251204.md) |
-| **✅ MVP-Next-A** | **回归最优 soft mixing** | **11** | **✅ R²=0.9310 完成！** | `VIT-20251204-moe-regress-gate-01` | [exp](./exp_moe_regression_gate_20251204.md) |
-| **✅ MVP-Next-B** | **100% coverage** | **11** | **✅ R²=0.8957 完成！** | `VIT-20251204-moe-full-coverage-01` | [exp](./exp_moe_full_coverage_20251204.md) |
-| **❌ MVP-Next-C** | **Expert 校准** | **11** | **❌ 完成 (Negative)** | `VIT-20251204-moe-calibration-01` | [exp](./exp_moe_expert_calibration_20251204.md) |
-| **🔴 MVP-12A** | **100k 规模复刻 Next-A** | **12** | **⏳ 立项中** | `VIT-20251205-moe-100k-01` | (待创建) |
+| **🟢 MVP-9E1** | **物理窗 gate → 9 专家** | **9** | **✅ 完成！** | `VIT-20251204-moe-9expert-01` | [exp](./exp/exp_moe_9expert_phys_gate_20251204.md) |
+| **⚠️ MVP-NN1** | **固定 gate + NN expert** | **10** | **✅ 完成** | `VIT-20251204-moe-nn-expert-01` | [exp](./exp/exp_moe_nn_experts_20251204.md) |
+| **✅ MVP-Next-A** | **回归最优 soft mixing** | **11** | **✅ R²=0.9310 完成！** | `VIT-20251204-moe-regress-gate-01` | [exp](./exp/exp_moe_regression_gate_20251204.md) |
+| **✅ MVP-Next-B** | **100% coverage** | **11** | **✅ R²=0.8957 完成！** | `VIT-20251204-moe-full-coverage-01` | [exp](./exp/exp_moe_full_coverage_20251204.md) |
+| **❌ MVP-Next-C** | **Expert 校准** | **11** | **❌ 完成 (Negative)** | `VIT-20251204-moe-calibration-01` | [exp](./exp/exp_moe_expert_calibration_20251204.md) |
+| **✅ MVP-12A** | **100k 规模复刻 Next-A** | **12** | **✅ R²=0.9400 完成！** | `VIT-20251205-moe-100k-01` | [exp](./exp/exp_moe_100k_replication_20251205.md) |
 | **🔴 MVP-12B** | **Coverage++** | **12** | **⏳ 立项中** | `VIT-20251205-moe-coverage-plus-01` | (待创建) |
 | **🟡 MVP-13** | **Feature mining Bin3/Bin6** | **13** | **⏳ 立项中** | `VIT-20251205-moe-feature-mining-01` | (待创建) |
 | **🟡 MVP-14** | **1M embedding for gate** | **13** | **⏳ 立项中** | `VIT-20251205-moe-embedding-01` | (待创建) |
@@ -184,9 +184,9 @@
 
 | **MVP-12A** | 100k train / 更大 test | 全谱 | **9× Ridge + 回归 gate** | 100k 规模 | **covered R² ≥ 0.93, CI_low > 0, MoE > LGBM** |
 | **MVP-12B** | full coverage | 全谱 + window 特征 | **第 10 个 oor expert / cond fallback** | out-of-range 专家 | **full R² ≥ max(LGBM, global+0.05)** |
-| **MVP-13** | 全量 | **新增窗口特征** | Ridge + 新特征 | 选线窗口 depth/EW/shape | **Bin3 或 Bin6 ΔR² ≥ +0.02** |
-| **MVP-14** | 全量 | **候选窗口 + 上下文** | **小 CNN/AE ~1M 参数** | 8~32 维 embedding | **R² +0.003 或 Bin3/Bin6 改善** |
-| **MVP-15** | 全量 | **选线窗口特征** | **Bin3/Bin6 用 LGBM expert** | stacking-safe OOF | **full R² > 0.91, Bin3/Bin6 不拖后腿** |
+| **MVP-13** | **32k train** | **新增窗口特征** | Ridge + 新特征 | 选线窗口 depth/EW/shape | **Bin3 或 Bin6 ΔR² ≥ +0.02** |
+| **MVP-14** | **32k train** | **候选窗口 + 上下文** | **小 CNN/AE ~1M 参数** | 8~32 维 embedding | **R² +0.003 或 Bin3/Bin6 改善** |
+| **MVP-15** | **32k train** | **选线窗口特征** | **Bin3/Bin6 用 LGBM expert** | stacking-safe OOF | **full R² > 0.91, Bin3/Bin6 不拖后腿** |
 ---
 
 # 3. 🔧 MVP 详细设计
@@ -702,6 +702,8 @@ Step 4: 评估
 > **核心目标**：所有创新都只允许针对 Bin3/Bin6 做增量
 >
 > **前提**：H-C 校准失败表明 Metal-poor 误差不是简单 bias，需要特征/容量/分布层面改进
+>
+> **⚠️ 数据规模**：MVP-13/14/15 **在 32k 上操作**（快速验证特征/方法有效性后再上 100k）
 
 ### MVP-13: Feature Mining Bin3/Bin6 🟡 P1
 
@@ -814,9 +816,9 @@ Step 4: 评估
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │   ⏳ 计划中   │  🔴 待执行   │  🚀 运行中   │   ✅ 已完成   │   ❌ 已取消   │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-4.0      │ MVP-12A      │              │ MVP-0        │ MVP-7.1~7.3  │
-│ MVP-6.0      │ MVP-12B      │              │ MVP-1.0      │ MVP-PG2      │
-│ MVP-PG3      │ MVP-13~15    │              │ MVP-1.1 ✓    │ MVP-Next-C ❌│
+│ MVP-4.0      │ MVP-12B      │              │ MVP-0        │ MVP-7.1~7.3  │
+│ MVP-6.0      │ MVP-13~15    │              │ MVP-1.0      │ MVP-PG2      │
+│ MVP-PG3      │              │              │ MVP-1.1 ✓    │ MVP-Next-C ❌│
 │              │              │              │ MVP-2.0      │              │
 │              │              │              │ MVP-3.0 ✓    │              │
 │              │              │              │ MVP-3.1 ❌   │              │
@@ -827,7 +829,13 @@ Step 4: 评估
 │              │              │              │ MVP-9E1 ✓ 🟢 │              │
 │              │              │              │ MVP-Next-A ✓ │              │
 │              │              │              │ MVP-Next-B ✓ │              │
+│              │              │              │ MVP-12A ✓ 🟢 │              │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
+
+✅ Phase 12A 完成（2025-12-07）：
+- MVP-12A ✅: 100k 规模复刻 → R²=0.9400 稳定复现！
+- CI_low=0.0045 > 0，显著优于 32k baseline (+0.0090)
+- H-12A 假设验证通过
 
 ✅ Phase 11 完成（2025-12-04）：
 - MVP-Next-A ✅: 回归最优 soft mixing → R²=0.9310
@@ -873,6 +881,7 @@ Step 4: 评估
 | **MVP-9E1** | **🟢 9专家扩展大成功！ρ=1.13超越Oracle，R²=0.9213突破0.90** | **ρ=1.13, R²=0.9213, Acc=94.6%** | ✅ **§3.2 C8** |
 | **MVP-Next-A** | **🟢 回归Gate优于分类Gate，R²=0.9310** | **ΔR²=+0.0097** | ✅ **§3.2 C8** |
 | **MVP-Next-C** | **❌ H-C 校准假设被否定，Metal-poor 误差非系统性 bias** | **ΔR²=-0.0013, Bin3 ΔR²=-0.0083** | ✅ **§3.2 C9** |
+| **🟢 MVP-12A** | **🟢 100k 规模复刻大成功！R²=0.9400 稳态，显著超越 32k** | **R²=0.9400, CI=[0.0045,0.0175], vs 32k +0.0090** | ✅ **§3.2 C10** |
 
 ## 4.3 时间线
 
@@ -889,6 +898,7 @@ Step 4: 评估
 | 2025-12-04 | 拆分 main → hub + roadmap | 架构重构 |
 | 2025-12-04 | **立项 Phase 8: 物理窗 Gate** | MVP-PG1/PG2/PG3，验证 gate 可落地性 |
 | **2025-12-04** | **🟢 MVP-PG1 完成！** | **ρ=1.00，Soft routing 超预期成功** |
+| **2025-12-07** | **🟢 MVP-12A 完成！** | **100k R²=0.9400 稳态复现！CI_low > 0** |
 
 ---
 
@@ -913,7 +923,7 @@ Step 4: 评估
 | **`VIT-20251204-moe-regress-gate-01`** | VIT | moe | ✅ **R²=0.9310** | **MVP-Next-A** |
 | **`VIT-20251204-moe-full-coverage-01`** | VIT | moe | ✅ **完成** | **MVP-Next-B** |
 | **`VIT-20251204-moe-calibration-01`** | VIT | moe | ⏳ **立项** | **MVP-Next-C** |
-| **`VIT-20251205-moe-100k-01`** | VIT | moe | ⏳ **立项中** | **MVP-12A** |
+| **`VIT-20251205-moe-100k-01`** | VIT | moe | ✅ **R²=0.9400 完成** | **MVP-12A** |
 | **`VIT-20251205-moe-coverage-plus-01`** | VIT | moe | ⏳ **立项中** | **MVP-12B** |
 | **`VIT-20251205-moe-feature-mining-01`** | VIT | moe | ⏳ **立项中** | **MVP-13** |
 | **`VIT-20251205-moe-embedding-01`** | VIT | moe | ⏳ **立项中** | **MVP-14** |
@@ -969,6 +979,22 @@ Step 4: 评估
 | **0.2** | 0.8745 | **0.9246** | **+0.0501** | **[0.0451, 0.0552]** | ✅ 稳健 |
 | **0.5** | 0.7198 | **0.7719** | **+0.0521** | **[0.0421, 0.0611]** | ✅ 稳健 |
 
+### 🟢 MVP-12A: 100k 规模复刻 (2025-12-07)
+
+| 指标 | 值 | 说明 |
+|------|-----|------|
+| **covered-test R²** | **0.9400** | MLP gate, 100k train |
+| **Bootstrap CI (MLP - Classify)** | **[0.0045, 0.0175]** | CI_low > 0！ |
+| **vs 32k baseline** | **+0.0090** | 0.9400 vs 0.9310 |
+| **运行时间** | ~5 小时 | 2025-12-07 完成 |
+
+**Per-bin ΔR² (MLP vs Classify)**:
+| Bin | 描述 | R²_MLP | ΔR² |
+|-----|------|--------|-----|
+| 0 | Cool Metal-poor | 0.9573 | +0.0166 |
+| 4 | Mid Solar | 0.9392 | **+0.0212** |
+| 6 | Hot Metal-poor | 0.8637 | **+0.0199** |
+
 ### 分 bin 统计 (noise=0.2)
 
 | Bin | $T_{\text{eff}}$ 范围 | $[\text{M/H}]$ 范围 | Train | Test | 局部 $R^2$ | vs 全局 |
@@ -1001,13 +1027,14 @@ Step 4: 评估
 |------|---------|------|
 | Roadmap | `logg/moe/moe_roadmap_20251203.md` | 当前文件 |
 | Hub | `logg/moe/moe_hub_20251203.md` | 智库导航 |
-| MVP-1.0 报告 | `logg/moe/exp_moe_piecewise_ridge_20251203.md` | Piecewise Ridge |
-| MVP-1.1 报告 | `logg/moe/exp_moe_rigorous_validation_20251203.md` | 严谨验证 |
-| MVP-2.0 报告 | `logg/moe/exp_moe_noise_conditioned_20251203.md` | Noise-conditioned |
-| MVP-3.0 报告 | `logg/moe/exp_moe_quantile_bins_sweep_20251203.md` | Quantile Bins |
-| MVP-3.2 报告 | `logg/moe/exp_moe_conditional_ridge_20251203.md` | Conditional Ridge |
-| MVP-5.0 报告 | `logg/moe/exp_moe_coefficient_analysis_20251203.md` | 系数分析 |
-| **MVP-PG1 报告** | `logg/moe/exp_moe_phys_gate_baseline_20251204.md` | 🟢 物理窗 Gate |
+| MVP-1.0 报告 | `logg/moe/exp/exp_moe_piecewise_ridge_20251203.md` | Piecewise Ridge |
+| MVP-1.1 报告 | `logg/moe/exp/exp_moe_rigorous_validation_20251203.md` | 严谨验证 |
+| MVP-2.0 报告 | `logg/moe/exp/exp_moe_noise_conditioned_20251203.md` | Noise-conditioned |
+| MVP-3.0 报告 | `logg/moe/exp/exp_moe_quantile_bins_sweep_20251203.md` | Quantile Bins |
+| MVP-3.2 报告 | `logg/moe/exp/exp_moe_conditional_ridge_20251203.md` | Conditional Ridge |
+| MVP-5.0 报告 | `logg/moe/exp/exp_moe_coefficient_analysis_20251203.md` | 系数分析 |
+| **MVP-PG1 报告** | `logg/moe/exp/exp_moe_phys_gate_baseline_20251204.md` | 🟢 物理窗 Gate |
+| **MVP-12A 报告** | `logg/moe/exp/exp_moe_100k_replication_20251205.md` | 🟢 100k 复刻 |
 | 图表目录 | `logg/moe/img/` | 实验图表 |
 
 ---
@@ -1046,3 +1073,5 @@ Step 4: 评估
 | 2025-12-07 | 已完成 Phase 折叠到 `<details>` 区块 | §3 |
 | 2025-12-07 | MVP-Next-B 移至看板已完成区域 | §4.1 |
 | 2025-12-07 | 待创建实验报告链接标注为 (待创建) | §2.1 |
+| **2025-12-09** | **🟢 MVP-12A 完成！100k R²=0.9400 稳态复现** | §1.1, §1.2, §2.1, §4.1, §4.2, §4.3, §5.1 |
+| 2025-12-09 | 更新 MVP-13/14/15：在 32k 上操作 | §2.2 |

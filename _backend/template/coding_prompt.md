@@ -144,11 +144,21 @@ python .../driver.py \
 
 【Step 2】训练完成后 → 生成图表
 驱动器已自动生成 summary.json，接下来生成图表：
+
+⚠️⚠️⚠️ 图表文字规则（重要！）⚠️⚠️⚠️
+图表中的所有文字必须使用英文！包括：
+- 标题 (title)
+- 坐标轴标签 (xlabel, ylabel)
+- 图例 (legend)
+- 注释 (annotation)
+- colorbar 标签
+原因：中文字符会显示为乱码方块
+
 ```bash
 # 读取摘要获取关键信息
 cat [repo]/results/[exp_id]/summary.json
 
-# 生成图表
+# 生成图表（⚠️ 所有文字用英文！）
 python plot.py --exp_id [exp_id] \
     --output /home/swei20/Physics_Informed_AI/logg/[topic]/img/
 ```
@@ -157,6 +167,15 @@ python plot.py --exp_id [exp_id] \
 # ⚠️ 下面所有写入知识中心的操作，必须用 run_terminal_cmd 执行 bash 命令
 # ❌ 禁止：write()、search_replace()、edit_file() 等 IDE 工具
 # ✅ 必须：cat << 'EOF' > 或 echo >> 通过终端写入
+
+# ⚠️⚠️⚠️ 实验细节必须完整记录！⚠️⚠️⚠️
+# 以下信息必须写入报告 §2 实验设计，不能省略：
+# - 数据来源（如 APOGEE DR17 / xxx.h5）
+# - train/val/test size（具体数字）
+# - 噪声配置（sigma 值、噪声类型、添加公式）
+# - 所有训练参数（包括 default 值：lr, batch_size, epochs, optimizer, seed 等）
+# 原因：后续实验可能更换数据/噪声/参数，完整记录才能准确对比
+
 ```bash
 KNOWLEDGE_CENTER="/home/swei20/Physics_Informed_AI"
 
@@ -182,9 +201,35 @@ cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/[topic]/exp_[name]_YYYYMMDD.md"
 [实验目的]
 
 ## 2. 实验设计
-[数据/模型/超参数]
+### 2.1 数据
+| 配置项 | 值 |
+|--------|-----|
+| **数据来源** | [具体来源] |
+| **训练样本数** | [N] |
+| **验证样本数** | [N] |
+| **测试样本数** | [N] |
+| **特征维度** | [N] |
+
+### 2.2 噪声配置
+| 配置项 | 值 |
+|--------|-----|
+| **噪声类型** | [gaussian/none/...] |
+| **噪声水平 σ** | [值] |
+| **应用范围** | [train/all/...] |
+
+### 2.3 训练参数（包括 default 值）
+| 参数 | 值 |
+|------|-----|
+| epochs | [N] |
+| batch_size | [N] |
+| learning_rate | [值] |
+| optimizer | [Adam/...] |
+| weight_decay | [值] |
+| random_seed | [N] |
 
 ## 3. 图表
+> ⚠️ **图表文字规则**：所有图表中的文字（标题、坐标轴标签、图例、注释等）必须使用英文，中文会显示为乱码！
+
 ![fig1](./img/[exp_id]_xxx.png)
 [观察]
 
@@ -289,21 +334,44 @@ train_cmd: "python scripts/xxx.py --config xxx.yaml"
 # 或
 config_file: "configs/exp/xxx.yaml"
 
-# 数据
+# ⚠️ 数据配置（必须详细记录！后续实验可能有变化）
 data:
-  train_size: N
-  target: "log_g"
+  source: "[数据来源，如 APOGEE DR17 / 合成数据 / xxx.h5]"
+  train_size: N       # 训练样本数
+  val_size: N         # 验证样本数（如有）
+  test_size: N        # 测试样本数
+  feature_dim: N      # 光谱特征维度
+  wavelength_range: "[起始, 结束]"  # 波长范围（如有）
+  target: "log_g"     # 预测目标
+  aux_features: []    # 辅助特征（如 Teff, Fe_H）
+
+# ⚠️ 噪声配置（必须详细记录！）
+noise:
+  enabled: true/false
+  type: "gaussian"    # gaussian / poisson / snr_based
+  noise level: 0.1        # 高斯噪声标准差（如适用）
+  snr: 20 #noise level 对应的信噪比
+  snr: null           # 信噪比（如适用）
+  apply_to: "train"   # train / train+val / all
+  formula: "noisy = flux + noise_level * N(0, sigma^2)"  # 噪声添加公式
 
 # 模型
 model:
   type: "[类型]"
   # [其他参数]
 
-# 训练
+# ⚠️ 训练配置（所有参数都要记录，包括 default 值！）
 training:
   epochs: N
   batch_size: N
   lr: 1e-4
+  optimizer: "Adam"           # 优化器
+  weight_decay: 0.0           # L2 正则化
+  scheduler: null             # 学习率调度器
+  grad_clip: null             # 梯度裁剪
+  early_stopping: false       # 早停
+  early_stopping_patience: 10 # 早停耐心值
+  seed: 42                    # 随机种子
 
 # 健康检查配置（可选）
 health_check:
@@ -311,12 +379,19 @@ health_check:
   interval: 10  # 检查间隔
 
 # 要画的图
+# ⚠️ 图表内所有文字必须用英文！中文会显示为乱码！
 plots:
   - type: loss_curve
     save: "[exp_id]_loss.png"
   - type: pred_vs_true
     save: "[exp_id]_pred.png"
 ```
+
+> ⚠️ **重要提醒**：
+> - **数据配置**：train/val/test size、数据来源必须记录，后续实验可能换数据集
+> - **噪声配置**：sigma/snr 值、噪声类型、添加公式必须记录，不同实验噪声设定可能不同
+> - **训练参数**：即使是 default 值也要写出来，方便后续对比和复现
+> - **随机种子**：必须记录，确保可复现性
 
 ---
 

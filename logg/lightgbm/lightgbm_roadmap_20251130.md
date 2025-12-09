@@ -147,10 +147,10 @@ Phase 0: Baseline (32k, noiseless) ✅
 
 | MVP | 实验名称 | Phase | 状态 | experiment_id | 链接 |
 |-----|---------|-------|------|---------------|------|
-| MVP-0.1 | 超参数网格搜索 | 0 | ✅ | VIT-20251129-lgb-hyperparam-01 | [E01](./exp_lightgbm_hyperparam_sweep_20251129.md) |
-| MVP-1.1 | Noise Sweep (lr 主轴) | 1 | ✅ | VIT-20251204-lgb-noise-sweep-01 | [E02](./exp_lightgbm_noise_sweep_lr_20251204.md) |
-| MVP-2.1 | 100k Noise Sweep (n=500) | 2 | ✅ | VIT-20251205-lgb-100k-01 | [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) |
-| Summary | 综合实验总结 | - | ✅ | VIT-20251205-lightgbm-summary | [Summary](./exp_lightgbm_summary_20251205.md) |
+| MVP-0.1 | 超参数网格搜索 | 0 | ✅ | VIT-20251129-lgb-hyperparam-01 | [E01](./exp/exp_lightgbm_hyperparam_sweep_20251129.md) |
+| MVP-1.1 | Noise Sweep (lr 主轴) | 1 | ✅ | VIT-20251204-lgb-noise-sweep-01 | [E02](./exp/exp_lightgbm_noise_sweep_lr_20251204.md) |
+| MVP-2.1 | 100k Noise Sweep (n=500) | 2 | ✅ | VIT-20251205-lgb-100k-01 | [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) |
+| Summary | 综合实验总结 | - | ✅ | VIT-20251205-lightgbm-summary | [Summary](./exp/exp_lightgbm_summary_20251205.md) |
 
 ### 待执行 ⏳
 
@@ -492,11 +492,12 @@ R² Degradation vs Noise Level (32k, n=1000):
 |------|------|------|
 | `lightgbm_hub_20251130.md` | Hub | 智库导航 |
 | `lightgbm_roadmap_20251130.md` | Roadmap | 本文件 |
-| `exp_lightgbm_hyperparam_sweep_20251129.md` | Exp | MVP-0.1 |
-| `exp_lightgbm_noise_sweep_lr_20251204.md` | Exp | MVP-1.1 |
-| `exp_lightgbm_100k_noise_sweep_20251205.md` | Exp | MVP-2.1 |
-| `exp_lightgbm_summary_20251205.md` | Summary | E01+E02 综合 |
-| `img/` | 图表 | 6+ 张核心图表 |
+| `exp/exp_lightgbm_hyperparam_sweep_20251129.md` | Exp | MVP-0.1 |
+| `exp/exp_lightgbm_noise_sweep_lr_20251204.md` | Exp | MVP-1.1 |
+| `exp/exp_lightgbm_100k_noise_sweep_20251205.md` | Exp | MVP-2.1 |
+| `exp/exp_lightgbm_100k_tree_limit_20251207.md` | Exp | MVP-2.2 |
+| `exp/exp_lightgbm_summary_20251205.md` | Summary | E01+E02 综合 |
+| `img/` | 图表 | 20+ 张核心图表 |
 
 ## 6.3 变更日志
 

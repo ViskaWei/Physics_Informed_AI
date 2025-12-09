@@ -14,11 +14,11 @@
 | 类型 | 文件 | 说明 |
 |------|------|------|
 | 📍 Roadmap | [`lightgbm_roadmap_20251130.md`](./lightgbm_roadmap_20251130.md) | 实验追踪与执行 |
-| 📗 子实验 | `exp_lightgbm_*.md` | 单实验详情 |
-| E01 | [`exp_lightgbm_hyperparam_sweep_20251129.md`](./exp_lightgbm_hyperparam_sweep_20251129.md) | 超参数优化 (32k) |
-| E02 | [`exp_lightgbm_noise_sweep_lr_20251204.md`](./exp_lightgbm_noise_sweep_lr_20251204.md) | 噪声鲁棒性 (32k) |
-| E03 | [`exp_lightgbm_100k_noise_sweep_20251205.md`](./exp_lightgbm_100k_noise_sweep_20251205.md) | 数据量 Scaling (100k) |
-| Summary | [`exp_lightgbm_summary_20251205.md`](./exp_lightgbm_summary_20251205.md) | 综合实验总结 |
+| 📗 子实验 | `exp/exp_lightgbm_*.md` | 单实验详情 |
+| E01 | [`exp_lightgbm_hyperparam_sweep_20251129.md`](./exp/exp_lightgbm_hyperparam_sweep_20251129.md) | 超参数优化 (32k) |
+| E02 | [`exp_lightgbm_noise_sweep_lr_20251204.md`](./exp/exp_lightgbm_noise_sweep_lr_20251204.md) | 噪声鲁棒性 (32k) |
+| E03 | [`exp_lightgbm_100k_noise_sweep_20251205.md`](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 数据量 Scaling (100k) |
+| Summary | [`exp_lightgbm_summary_20251205.md`](./exp/exp_lightgbm_summary_20251205.md) | 综合实验总结 |
 
 ---
 
@@ -140,8 +140,8 @@
 
 | 来源实验 | Data Size | 单点发现 | 关键数据 |
 |---------|-----------|---------|---------|
-| [E01](./exp_lightgbm_hyperparam_sweep_20251129.md) | 32k | lr 与 R² 相关系数最高 | +0.491 vs 其他 <0.15 |
-| [E02](./exp_lightgbm_noise_sweep_lr_20251204.md) | 32k | 所有 noise level 下 lr=0.1 最优 | 恒定不漂移 |
+| [E01](./exp/exp_lightgbm_hyperparam_sweep_20251129.md) | 32k | lr 与 R² 相关系数最高 | +0.491 vs 其他 <0.15 |
+| [E02](./exp/exp_lightgbm_noise_sweep_lr_20251204.md) | 32k | 所有 noise level 下 lr=0.1 最优 | 恒定不漂移 |
 
 **汇合结论**：
 > **learning_rate 是 LightGBM 最关键的超参数，推荐值为 0.05（noiseless）或 0.1（noisy）**
@@ -158,8 +158,8 @@
 
 | 来源实验 | Data Size | 单点发现 | 关键数据 |
 |---------|-----------|---------|---------|
-| [E02](./exp_lightgbm_noise_sweep_lr_20251204.md) | 32k | 低噪声 LightGBM 领先 | noise=0.1: +4% vs Ridge best |
-| [E02](./exp_lightgbm_noise_sweep_lr_20251204.md) | 32k | 高噪声 Ridge 反超 | noise=1.0: Ridge +4% |
+| [E02](./exp/exp_lightgbm_noise_sweep_lr_20251204.md) | 32k | 低噪声 LightGBM 领先 | noise=0.1: +4% vs Ridge best |
+| [E02](./exp/exp_lightgbm_noise_sweep_lr_20251204.md) | 32k | 高噪声 Ridge 反超 | noise=1.0: Ridge +4% |
 
 **汇合结论**：
 > **noise < 1.0 时用 LightGBM，noise ≥ 1.0 时用 Ridge（最优 α 调参后）**
@@ -176,9 +176,9 @@
 
 | 来源实验 | Noise | 32k R² | 100k R² | 增益 |
 |---------|-------|--------|---------|------|
-| [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) | 0.1 | 0.9456 | 0.9641 | +1.96% |
-| [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) | 0.5 | 0.6740 | 0.7370 | +9.35% |
-| [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) | 1.0 | 0.4505 | 0.5310 | +17.9% |
+| [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 0.1 | 0.9456 | 0.9641 | +1.96% |
+| [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 0.5 | 0.6740 | 0.7370 | +9.35% |
+| [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 1.0 | 0.4505 | 0.5310 | +17.9% |
 
 **汇合结论**：
 > **噪声越大，数据量增益越显著；低噪声下数据量增益有限**
@@ -195,9 +195,9 @@
 
 | 来源实验 | Data Size | Noise | 32k 最优 lr | 100k 最优 lr |
 |---------|-----------|-------|------------|-------------|
-| [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) | 100k | 0.1 | 0.1 | **0.05** |
-| [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) | 100k | 0.5 | 0.1 | 0.1 |
-| [E03](./exp_lightgbm_100k_noise_sweep_20251205.md) | 100k | 1.0 | 0.1 | 0.1 |
+| [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 100k | 0.1 | 0.1 | **0.05** |
+| [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 100k | 0.5 | 0.1 | 0.1 |
+| [E03](./exp/exp_lightgbm_100k_noise_sweep_20251205.md) | 100k | 1.0 | 0.1 | 0.1 |
 
 **汇合结论**：
 > **100k 数据在低噪声（noise≤0.1）下，最优 lr 从 0.1 偏移至 0.05**
