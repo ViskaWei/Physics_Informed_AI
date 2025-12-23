@@ -75,15 +75,21 @@
     └── Q3.3: 是特征表达能力限制？ → ⏳ MVP-3.2
 │
 ├── Q4: 🔴 理论上限是多少？（Phase 16T/L 新增）
-│   ├── Q4.1: Fisher/CRLB 理论上限 R²_max 是多少？ → ⏳ MVP-16T
-│   │   ├── Q4.1.1: 边缘化后 log_g 的 CRLB 下界是多少？
-│   │   └── Q4.1.2: degeneracy (log_g 与 Teff/[M/H] 的信息纠缠) 有多强？
+│   ├── Q4.1: Fisher/CRLB 理论上限 R²_max 是多少？ → ✅ MVP-16T (R²=0.97，但需校准)
+│   │   ├── Q4.1.1: 边缘化后 log_g 的 CRLB 下界是多少？ → ✅ 0.2366 Schur decay
+│   │   ├── Q4.1.2: degeneracy (log_g 与 Teff/[M/H] 的信息纠缠) 有多强？ → ✅ 极强
+│   │   │
+│   │   └── 🆕 Q4.1.3: Fisher ceiling 是否被高估（偏导混参污染）？ → ⏳ MVP-T 系列
+│   │       ├── Q4.1.3.1: 收紧邻居约束后 R²_max 是否下降？ → ⏳ MVP-T1
+│   │       ├── Q4.1.3.2: R²_max 随 noise_level 是否单调下降？ → ⏳ MVP-T0
+│   │       ├── Q4.1.3.3: 用局部线性回归估 Jacobian 结果如何？ → ⏳ MVP-T2
+│   │       └── Q4.1.3.4: noise=1 实际 SNR 是多少？ → ⏳ MVP-T3
 │   │
 │   ├── Q4.2: 线性模型族的上限 (LMMSE) 是多少？ → ⏳ MVP-16L
 │   │   └── Q4.2.1: Ridge 与 LMMSE 差多少？差 < 1% 则线性已到极限
 │   │
-│   └── Q4.3: 结构上限 (Oracle MoE headroom) 是多少？ → ⏳ MVP-16O
-│       └── Q4.3.1: Oracle MoE - Global Ridge > 0.02 则 MoE 值得做
+│   └── Q4.3: 结构上限 (Oracle MoE headroom) 是多少？ → ⏳ MVP-16A-0
+│       └── Q4.3.1: Oracle MoE - Global Ridge ≥ 0.03 则 MoE 值得做 @ noise=1
 │
 ├── Q5: 🔴 现有 ceiling 结论可信吗？（Phase 16B 新增）
 │   ├── Q5.1: 多 seed 重复时 R² 的方差有多大？ → ⏳ MVP-16B
@@ -176,11 +182,32 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 
 | # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
 |---|-----------|------|---------|------|------|
-| **H-16T.1** | CRLB 给出的 MSE_min 可转换为 R²_max 上界 | H3 | R²_max ≥ 0.75 | ✅ **0.9661** | MVP-16T |
+| **H-16T.1** | CRLB 给出的 MSE_min 可转换为 R²_max 上界 | H3 | R²_max ≥ 0.75 | ✅ **0.9661** ⚠️ 待校准 | MVP-16T |
 | **H-16T.2** | degeneracy 显著 (Schur decay < 0.9) | H3 | Schur < 0.9 | ✅ **0.2366** | MVP-16T |
 | **H-16L.1** | LMMSE (Σ_xx^-1 Σ_xy) 是线性模型族上限 | H3.2 | Ridge ≈ LMMSE | ⏳ | MVP-16L |
 | **H-16B.1** | 多 seed 实验确认 Ridge=0.50, LGB=0.57 的统计置信度 | H1 | std < 0.01 | ⏳ | MVP-16B |
 | **H-16B.2** | 扩大 test set (500→5k) 后 ceiling 结论不变 | H1 | ΔR² < 0.01 | ⏳ | MVP-16B |
+
+### 🆕 Phase T: Fisher Ceiling 校准假设（2025-12-23 新增）
+
+> **核心问题**：MVP-16T 得到 R²_max ≈ 0.97 可能是"偏导混参污染"导致的虚高
+
+| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
+|---|-----------|------|---------|------|------|
+| **H-T0.1** | R²_max 随 noise_level 单调下降 | H-16T | 0.2→0.5→1.0→2.0 明显下降 | ⏳ | MVP-T0 |
+| **H-T1.1** | 收紧邻居约束后 R²_max 显著下降 | H-16T | R²_max 从 0.97 降到 <0.85 | ⏳ | MVP-T1 |
+| **H-T2.1** | 局部线性回归 Jacobian 给出更稳定 ceiling | H-16T | 对 radius/K 不敏感 | ⏳ | MVP-T2 |
+| **H-T3.1** | noise=1 实际 SNR ≈ 1（非虚高 SNR） | H-16T | median(\|flux\|)/median(error×σ) ≈ 1 | ⏳ | MVP-T3 |
+
+### 🆕 Phase A: noise=1 MoE 结构红利假设（2025-12-23 新增）
+
+> **核心问题**：noise=1 下 MoE 的结构红利是否还存在？
+
+| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
+|---|-----------|------|---------|------|------|
+| **H-A0.1** | Oracle MoE @ noise=1 有结构红利 | H4 | ΔR² ≥ 0.03 vs Global Ridge | ⏳ | MVP-16A-0 |
+| **H-A1.1** | Gate 特征 @ noise=1 仍有分类信号 | H4.2 | Ca II triplet 等特征可区分 bins | ⏳ | MVP-16A-1 |
+| **H-A2.1** | Soft-gate MoE @ noise=1 能保持 ≥70% oracle 收益 | H4.2 | ρ ≥ 0.7 | ⏳ | MVP-16A-2 |
 
 ## 2.4 Dependency Graph
 
@@ -222,6 +249,8 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 |---|-------|---------|------------|------------|
 | C1 | 传统 ML 性能天花板 | MVP-1.0, 1.1, 1.2 | Ridge=0.50, LGB=0.57 @ 1M, noise=1 | 🟢 高 |
 | C2 | Ridge α 优化空间 | MVP-1.4 | 最优 α=1e4~1e5，倒 U 型曲线，优化提升仅 0.4%~2.5% | 🟢 高 |
+| C3 | SNR 输入表示 | MVP-1.6 | H1.7.1 ❌: SNR ΔR²=+0.015 未达阈值; StandardScaler 严重损害 LightGBM (-0.36) | 🟢 高 |
+| **C4** | **⚠️ Fisher ceiling 可能虚高** | MVP-16T + 理论分析 | R²_max=0.97 可能因"偏导混参污染"被高估，需 MVP-T 系列校准 | 🟡 待验证 |
 | C3 | Whitening/SNR 输入影响 | MVP-1.6 | SNR 对 Ridge +1.5%（未达阈值），StandardScaler 严重损害 LightGBM（-0.36） | 🟢 高 |
 
 ## 3.2 Confluence Details
@@ -267,6 +296,41 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 4. 更大的数据量需要更大的最优 α（正相关）
 
 **汇合结论**: Ridge 的瓶颈不是 α 调参问题，而是线性模型本身的表达能力限制。应转向 NN 方法。
+
+---
+
+### C4: ⚠️ Fisher Ceiling 可能虚高（需校准）
+
+**来源**: MVP-16T 结果 + 理论分析 (2025-12-23)
+
+**问题发现**:
+MVP-16T 计算 R²_max ≈ 0.97，第一反应应该是"哪里把信息算多了"。
+
+**最可疑根因：偏导估计的"混参污染"（confounding）**：
+1. KDTree 找邻居做有限差分时，"其它参数差不多"的容许区间偏大
+2. flux 的变化里混入了其它参数的影响（Teff ↔ logg ↔ [M/H] 强耦合）
+3. 这部分变化被"归因"给当前参数的偏导 → |∂μ/∂θ| 被系统性放大
+4. Fisher I = J^T Σ^-1 J 随梯度平方放大 → **CRLB 异常小** → **R²_max 虚高**
+
+**这同时解释了**：
+- "上限很高"（0.97）：梯度被放大
+- "degeneracy 很强"（Schur=0.24）：cross-term 也很大
+
+**验证方法（MVP-T 系列）**：
+1. **T0 (Monotonicity)**: noise 0.2→1.0→2.0，R²_max 应单调下降
+2. **T1 (Confounding)**: 收紧邻居约束 5-10 倍，看 R²_max 是否大幅下降
+3. **T2 (LLR Jacobian)**: 用局部线性回归估计 Jacobian，天然控制混参
+4. **T3 (Scale audit)**: 确认 noise=1 实际 SNR
+
+**物理可能性**：
+- 即使 noise=1 真的很吵，**7200 波长点**的信息会累积
+- 信息按 I ~ Σ (∂μ/∂θ)² / σ² 求和
+- 单点 SNR 不高 ≠ 参数估计一定差
+- 但 R²≈0.97 意味着 CRLB RMSE 远小于 log_g 分布 std，仍需验证
+
+**决策规则**：
+- 如果 T1 后 R²_max 从 0.97 降到 0.7-0.85 → 坐实"混参污染"，使用校准后的值
+- 如果 T1 后 R²_max 仍 >0.9 → ceiling 可信，headroom 确实很大
 
 ---
 
@@ -416,6 +480,10 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 | 2025-12-23 | 添加 Phase 16 假设组（H-16T, H-16L, H-16B） | §2.3 |
 | 2025-12-23 | 更新依赖图：展示 Phase 16 三件套 | §2.4 |
 | **2025-12-23** | **MVP-16T 完成：H-16T.1, H-16T.2, H3.1 验证通过** | §2.2, §2.3, §3 |
+| **2025-12-23** | **🆕 Phase T/A/NN 大立项：Fisher 校准 + MoE 验证 + NN baseline** | §1.2, §2.3, §3 |
+| 2025-12-23 | 添加 Q4.1.3 问题树（Fisher 可信度）| §1.2 |
+| 2025-12-23 | 添加 H-T/A 假设系列 | §2.3 |
+| 2025-12-23 | 添加 C4 洞见（Fisher ceiling 可能虚高）| §3 |
 | **2025-12-23** | **MVP-1.6 完成：H1.7.1 ❌ REJECTED，洞见 C3 汇合，P4-P6 原则** | §2.3, §3.1, §3.2, §5.1, §5.3 |
 
 ---

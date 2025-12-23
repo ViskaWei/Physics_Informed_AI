@@ -7,7 +7,7 @@
 > **Author:** Viska Wei  
 > **Date:** 2025-12-23  
 > **Project:** `VIT`  
-> **Status:** ✅ Done
+> **Status:** ✅ Done ⚠️ **需校准**（R²_max=0.97 可能因"偏导混参污染"虚高，待 MVP-T 系列验证）
 ---
 ## 🔗 Upstream Links
 

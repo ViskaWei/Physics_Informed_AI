@@ -104,13 +104,25 @@
 | MVP-3.0 | Noise Info Limit | 3 | ⏳ | - | - |
 | MVP-3.1 | Model Capacity | 3 | ⏳ | - | - |
 | MVP-3.2 | Feature Analysis | 3 | ⏳ | - | - |
-| **MVP-16T** | **✅ Fisher/CRLB 理论上限 (P0)** | 16 | ✅ | `SCALING-20251223-fisher-ceiling-01` | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md) |
+| **MVP-16T** | **✅ Fisher/CRLB 理论上限 (⚠️需校准)** | 16 | ✅⚠️ | `SCALING-20251223-fisher-ceiling-01` | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md) |
 | **MVP-16B** | **🔴 Baseline 统计可信度 (P0)** | 16 | 🔴 | `SCALING-20251223-baseline-stats-01` | [Link](./exp/exp_scaling_baseline_stats_20251223.md) |
 | **MVP-16L** | **🟡 LMMSE 线性上限 (P1)** | 16 | ⏳ | `SCALING-20251223-lmmse-ceiling-01` | - |
-| **MVP-16O** | **🔴 Oracle MoE Headroom (P0)** | 16 | 🔴 | → moe roadmap | → moe/exp/ |
-| **MVP-16G** | **🟡 可落地 MoE @ noise=1 (P1)** | 16 | ⏳ | → moe roadmap | → moe/exp/ |
 | **MVP-16W** | **🟡 Whitening 表示 (P1)** | 16 | ⏳ | `SCALING-20251223-whitening-noise1-01` | - |
 | **MVP-16CNN** | **🟢 1D-CNN @ noise=1 (P2)** | 16 | ⏳ | `SCALING-20251223-cnn-noise1-01` | - |
+| | | | | | |
+| **🆕 Phase T: Fisher 校准** | | | | | |
+| **MVP-T0** | **🔴 Noise Monotonicity (P0)** | T | 🔴 | `SCALING-20251223-fisher-noise-sweep-01` | - |
+| **MVP-T1** | **🔴 Confounding Ablation (P0)** | T | 🔴 | `SCALING-20251223-fisher-confound-01` | - |
+| **MVP-T2** | **🟡 LLR Jacobian (P1)** | T | ⏳ | `SCALING-20251223-fisher-llr-01` | - |
+| **MVP-T3** | **🟡 Scale Audit (P1)** | T | ⏳ | `SCALING-20251223-scale-audit-01` | - |
+| | | | | | |
+| **🆕 Phase A: noise=1 MoE** | | | | | |
+| **MVP-16A-0** | **🔴 Oracle MoE @ noise=1 (P0)** | A | 🔴 | `SCALING-20251223-oracle-moe-noise1-01` | - |
+| **MVP-16A-1** | **🟡 Gate-feat Sanity (P1)** | A | ⏳ | `SCALING-20251223-gate-feat-01` | - |
+| **MVP-16A-2** | **🟡 Soft-gate MoE (P1)** | A | ⏳ | `SCALING-20251223-soft-moe-noise1-01` | - |
+| | | | | | |
+| **🆕 Phase NN: 神经网络 Baseline** | | | | | |
+| **MVP-NN-0** | **🔴 1D CNN Whiten (P0)** | NN | 🔴 | `SCALING-20251223-cnn-whiten-01` | - |
 
 **Status Legend:**
 - ⏳ Planned | 🔴 Ready | 🚀 Running | ✅ Done | ❌ Cancelled | ⏸️ Paused
@@ -524,6 +536,155 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 
 ---
 
+## 🆕 Phase T: Fisher Ceiling 校准（2025-12-23 新增）
+
+> **核心问题**：MVP-16T 得到 R²_max ≈ 0.97 可能因"偏导混参污染"被高估
+> 
+> **目标**：校准 Fisher ceiling 到可信区间，为后续叙事奠定基础
+
+### MVP-T0: Noise Monotonicity（🔴 P0）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 R²_max 随 noise_level 单调下降 |
+| **Hypothesis** | H-T0.1: 0.2→0.5→1.0→2.0 时 R²_max 明显下降 |
+| **Method** | 复用 MVP-16T 脚本，扫 noise_level ∈ {0.2, 0.5, 1.0, 2.0} |
+| **Acceptance** | 单调下降趋势明确 |
+| **如果不降** | 要么噪声没进 Σ（bug），要么 error 尺度让 noise=1 根本不"高噪" |
+
+---
+
+### MVP-T1: Confounding Ablation（🔴 P0 最高优先级）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证收紧邻居约束后 R²_max 是否显著下降 |
+| **Hypothesis** | H-T1.1: R²_max 从 0.97 降到 <0.85 |
+| **Method** | 把邻居约束从 (50K, 0.5dex, 0.1dex) 收紧到 (5K, 0.05dex, 0.01dex) |
+| **Acceptance** | R²_max 下降 >10% → 坐实"混参污染" |
+| **如果不降** | ceiling 可信，headroom 确实很大 |
+
+**核心代码修改**:
+```python
+# 原始宽松约束
+NEIGHBOR_SEARCH_RADIUS = {'T_eff': 50.0, 'log_g': 0.5, 'M_H': 0.1}
+
+# 收紧后约束（10倍）
+NEIGHBOR_SEARCH_RADIUS = {'T_eff': 5.0, 'log_g': 0.05, 'M_H': 0.01}
+```
+
+---
+
+### MVP-T2: Local Linear Regression Jacobian（🟡 P1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 用局部线性回归估计 Jacobian，天然控制混参 |
+| **Hypothesis** | H-T2.1: 对 radius/K 不敏感，结果更稳定 |
+| **Method** | 对每个样本 i，在小邻域取 K 个点，拟合 Δflux ≈ J·Δθ |
+| **Acceptance** | R²_max 比 T1 更稳定，且物理上更可信 |
+
+**公式**:
+```
+Δflux_j = flux_j - flux_i  (shape: 7200)
+Δθ_j = θ_j - θ_i          (shape: 3)
+
+拟合: Δflux ≈ J·Δθ  (最小二乘，J shape: 7200×3)
+```
+
+---
+
+### MVP-T3: Scale Audit（🟡 P1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 确认 noise=1 实际 SNR |
+| **Hypothesis** | H-T3.1: median(\|flux\|)/median(error×σ) ≈ 1 |
+| **Method** | 打印 SNR 统计量，确认口径 |
+| **Acceptance** | 如果 SNR >> 1，则 noise=1 并不是"极低 SNR"，R²_max 高可能是真的 |
+
+**检查代码**:
+```python
+snr = np.median(np.abs(flux)) / np.median(error * NOISE_LEVEL)
+print(f"Effective SNR @ noise={NOISE_LEVEL}: {snr:.2f}")
+```
+
+---
+
+## 🆕 Phase A: noise=1 MoE 结构红利（2025-12-23 新增）
+
+> **核心问题**：noise=1 下 MoE 的结构红利是否还存在？
+> 
+> **策略**：先用 Oracle 确认 headroom，再决定是否做 soft gate
+
+### MVP-16A-0: Oracle MoE @ noise=1（🔴 P0 最高优先级）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 不训练 gate，用真值路由，看结构红利 |
+| **Hypothesis** | H-A0.1: ΔR² ≥ 0.03 vs Global Ridge |
+| **Method** | 真值 (Teff×[M/H]) 分 9 bins，每 bin 训练 Ridge expert |
+| **Acceptance** | ΔR² ≥ 0.03 → MoE 还有戏；ΔR² ≈ 0 → 放弃 MoE，转 NN |
+
+**决策规则**:
+- ✅ ΔR² ≥ 0.03: 继续 MVP-16A-1, A-2
+- ❌ ΔR² < 0.03: MoE 路线关闭，专注 NN/表示学习
+
+**可复用**:
+- 低噪 MoE 的 bin 划分逻辑
+- Ridge expert 超参（α ∈ [1e4, 1e5]）
+
+---
+
+### MVP-16A-1: Gate-feat Sanity @ noise=1（🟡 P1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 评估 gate 特征在高噪下的信号 |
+| **Hypothesis** | H-A1.1: Ca II triplet 等特征可区分 bins |
+| **Method** | 不训练 MoE，只评估特征的分类/相关性 |
+| **Risk** | 物理窗特征 SNR 可能崩，导致 gate 输入变成噪声 |
+
+---
+
+### MVP-16A-2: Soft-gate MoE @ noise=1（🟡 P1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 复用低噪验证的 soft routing 配方 |
+| **Hypothesis** | H-A2.1: Soft routing 能保持 ≥70% oracle 收益 |
+| **Method** | 直接复用低噪的 soft gate 架构 |
+| **依赖** | MVP-16A-0 ΔR² ≥ 0.03, MVP-16A-1 特征有信号 |
+
+---
+
+## 🆕 Phase NN: 神经网络 Baseline（2025-12-23 新增）
+
+> **核心问题**：表示学习能否吃掉 headroom？
+> 
+> **目标**：R² 从 0.57 推到 0.65+
+
+### MVP-NN-0: 1D CNN Whiten（🔴 P0 并行优先级）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 CNN + whitening 能否突破 ML ceiling |
+| **Hypothesis** | H-NN-0.1: R² > 0.62 |
+| **Hypothesis** | H-NN-0.2: R² - Ridge > 0.10 |
+| **Input** | flux / (error × noise_level) — whitened |
+| **Model** | 1D ResNet 或 4-8 层 Conv1D + pooling + MLP head |
+| **Training** | 1M data, batch=1024, lr=1e-3, early stopping |
+| **Acceptance** | R² > 0.62 且 > Ridge + 0.10 |
+
+**为什么 whitening 关键**:
+- 每个波长误差不同，whitening 常常比换模型更值钱
+- MVP-1.6 已验证 snr_centered 对 Ridge 有 +0.02 提升
+
+**可选扩展**:
+- Multi-task: 同时预测 Teff, [M/H], log_g（degeneracy 强时通常更稳）
+
+---
+
 # 4. 📊 Progress Tracking
 
 ## 4.1 Kanban View
@@ -532,30 +693,50 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 ┌──────────────────┬──────────────────┬──────────────┬──────────────┬──────────────┐
 │    ⏳ Planned    │     🔴 Ready     │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
 ├──────────────────┼──────────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-1.5 (P0-old) │ **MVP-16B (P0)** │              │ MVP-1.0      │              │
-│ MVP-1.6 (P1)     │ **MVP-16O (P0)** │              │ MVP-1.1      │              │
-│ MVP-1.7 (P1)     │ MVP-1.3 (P0-old) │              │ MVP-1.2      │              │
-│ MVP-1.8 (P2)     │                  │              │ MVP-1.4 ✅   │              │
-│ MVP-16L (P1)     │                  │              │ MVP-16T ✅   │              │
-│ MVP-16L (P1)     │                  │              │              │              │
-│ MVP-16W (P1)     │                  │              │              │              │
-│ MVP-16CNN (P2)   │                  │              │              │              │
+│ MVP-T2 (P1)      │ **MVP-T1 (P0)**  │              │ MVP-1.0      │              │
+│ MVP-T3 (P1)      │ **MVP-T0 (P0)**  │              │ MVP-1.1      │              │
+│ MVP-16A-1 (P1)   │ **MVP-16A-0(P0)**│              │ MVP-1.2      │              │
+│ MVP-16A-2 (P1)   │ **MVP-NN-0(P0)** │              │ MVP-1.4 ✅   │              │
+│ MVP-16L (P1)     │ MVP-1.5 (P0-old) │              │ MVP-1.6 ✅   │              │
+│ MVP-16CNN (P2)   │ MVP-16B (P0-old) │              │ MVP-16T ⚠️   │              │
 │ MVP-2.x          │                  │              │              │              │
 └──────────────────┴──────────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
-### 🔴 Phase 16 Priority Legend（性价比排序）
-- 🔴 **P0 三件套（决定下一步方向）**:
-  - MVP-16T (Fisher 理论上限) → 决定"上限多高"
-  - MVP-16O (Oracle MoE headroom) → 决定"MoE 值不值"
-  - MVP-16B (Baseline 可信度) → 决定"0.50/0.57 可信"
-- 🟡 **P1 (依赖 P0 结果)**:
-  - MVP-16L (LMMSE) → 如果想证明"线性已到极限"
-  - MVP-16W (Whitening) → 如果想探索"表示改进"
-  - MVP-16G (可落地 MoE) → 依赖 MVP-16O
-- 🟢 **P2 (最终冲刺)**:
-  - MVP-16CNN (1D-CNN) → 最可能"真正大幅提升"
-  - MVP-16MoE-CNN → 仅当 16O + 16CNN 都成功
+### 🔴 新 P0 优先级（2025-12-23 更新）
+
+> **核心策略**：先校准 Fisher ceiling，并行验证 MoE headroom 和 NN baseline
+
+**P0 四件套（决定路线）**：
+1. **MVP-T1 (Confounding)** → 校准 Fisher ceiling 是否虚高
+2. **MVP-T0 (Monotonicity)** → sanity check: noise↑ 时 R²_max↓
+3. **MVP-16A-0 (Oracle MoE)** → 决定"noise=1 下 MoE 值不值"
+4. **MVP-NN-0 (1D CNN)** → 验证"表示学习能否吃掉 headroom"
+
+**决策树**：
+```
+MVP-T1 完成后
+├─ R²_max 降到 0.7-0.85 → ceiling 校准成功
+│   └─ 继续用校准后的值做叙事
+└─ R²_max 仍 >0.9 → ceiling 可信
+    └─ 巨大 headroom 确实存在
+
+MVP-16A-0 完成后
+├─ ΔR² ≥ 0.03 → MoE 有戏
+│   └─ 继续 MVP-16A-1, A-2
+└─ ΔR² < 0.03 → MoE 关闭
+    └─ 专注 NN/表示学习
+
+MVP-NN-0 完成后
+├─ R² > 0.62 → NN 能吃 headroom
+│   └─ 形成三段式证据链
+└─ R² ≈ 0.57 → 问题更深
+    └─ 考虑 multi-task 解纠缠
+```
+
+**旧 P0（降级）**：
+- MVP-16B (Baseline 可信度) → 重要但可稍后
+- MVP-1.5 (LightGBM 参数) → 已接近 ceiling，收益有限
 
 ## 4.2 Key Conclusions Snapshot
 
@@ -675,6 +856,11 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 | 2025-12-23 | **MVP-1.6 Whitening 完成**: H1.7.1 ❌ REJECTED, SNR ΔR²=+0.0146 (Ridge) | §2.1, §4 |
 | 2025-12-23 | 添加参考文献：Fisher/CRLB, van Trees, Gaia XP | §3 (MVP-16T) |
 | **2025-12-23** | **MVP-16T ✅ 完成：R²_max=0.9661, Schur=0.2366** | §2.1, §4.1, §6.1 |
+| **2025-12-23** | **🆕 Phase T/A/NN 大立项** | §2.1, §3, §4.1 |
+| 2025-12-23 | 添加 MVP-T0/T1/T2/T3 (Fisher 校准) | §2.1, §3 |
+| 2025-12-23 | 添加 MVP-16A-0/A-1/A-2 (MoE @ noise=1) | §2.1, §3 |
+| 2025-12-23 | 添加 MVP-NN-0 (1D CNN whiten) | §2.1, §3 |
+| 2025-12-23 | 更新 P0 优先级和决策树 | §4.1 |
 
 ---
 
