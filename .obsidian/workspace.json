@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
+                "file": "logg/scaling/scaling_roadmap_20251222.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "exp_scaling_fisher_ceiling_20251223"
+              "title": "scaling_roadmap_20251222"
             }
           }
         ]
@@ -216,10 +216,11 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "1934de817ef7bce4",
+  "active": "ba8d2fa3bd5a3042",
   "lastOpenFiles": [
-    "logg/scaling/scaling_roadmap_20251222.md",
     "logg/scaling/scaling_hub_20251222.md",
+    "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
+    "logg/scaling/scaling_roadmap_20251222.md",
     "tempfit/template_fitting_analysis.md",
     "tempfit",
     "logg/scaling/sessions/coding_prompt_whitening_20251222.md",
@@ -239,7 +240,6 @@
     "logg/scaling/exp/exp_scaling_pca_pls_comparison_20251223.md",
     "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md",
     "logg/scaling/exp/exp_scaling_lgbm_param_extended_20251222.md",
-    "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
     "logg/scaling/exp/exp_scaling_baseline_stats_20251223.md",
     "logg/scaling/sessions",
     "logg/scaling/img",
