@@ -276,3 +276,13 @@
   - ✅ H-16T.2 验证：Schur decay = 0.24 < 0.9 → degeneracy 显著
   - Gap vs Ridge (0.50): **+0.47** | Gap vs LightGBM (0.57): **+0.40**
   - 详见: \`logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md\`
+
+## ❌ Failed (2025-12-23)
+
+- [x] **SCALING-20251223-fisher-ceiling-01**: Fisher/CRLB Theoretical Upper Bound
+  - ❌ **实验失败**：偏导数估计方法存在根本性缺陷
+  - **根因**：BOSZ 数据为连续采样（~40k 唯一参数值），不是规则网格
+  - 邻近点差分法无法正确估计 ∂μ/∂θ，导致 Fisher 矩阵计算不可靠
+  - R²_max = 0.97 的结果**不可信**
+  - 下一步：等待方法论改进（数值微分/局部回归）
+  - 详见: \`logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md\`
