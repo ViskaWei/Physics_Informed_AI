@@ -1,9 +1,9 @@
 # 📌 实验看板（Experiment Kanban）
 
 ---
-> **最后更新：** 2025-12-05  
+> **最后更新：** 2025-12-22  
 > **活跃项目：** VIT / BlindSpot  
-> **本周重点：** **🔴 MoE Phase 12-13: 100k 稳态验证 + Coverage++ + 特征增强** — 目标：0.9310 变成 100k 稳态，full > 0.91
+> **本周重点：** **🔴 Scaling Law: 验证传统 ML 在 1M 数据+高噪声下的性能瓶颈** — 目标：证明 ML 存在天花板，NN 能突破
 
 ---
 
@@ -12,7 +12,7 @@
 | 状态 | 数量 | 说明 |
 |------|------|------|
 | 💡 Inbox | 11 | 待结构化的 idea |
-| ⏳ TODO | **15** | 已分配 ID，待启动 **(+5 MoE Phase 12-13)** |
+| ⏳ TODO | **22** | 已分配 ID，待启动 **(+7 logg_1m Phase 0-1)** |
 | 🚀 Running | 0 | 正在运行 |
 | ✅ Done | 1 | 完成待写 exp.md |
 | 📚 Archived | 19 | 已归档 |
@@ -45,6 +45,9 @@
 
 | experiment_id | MVP | project | topic | 优先级 | 预估时间 | session 来源 | 备注 |
 |---------------|-----|---------|-------|--------|---------|-------------|------|
+|| **🆕 `SCALING-20251222-ridge-1m-01`** | **MVP-1.0** | VIT | **scaling** | **🔴🔴 P0** | ~4h | 立项 2025-12-22 | **Ridge 1M + noise=1 瓶颈验证** |
+|| **🆕 `SCALING-20251222-lgbm-1m-01`** | **MVP-1.1** | VIT | **scaling** | **🔴🔴 P0** | ~6h | 立项 2025-12-22 | **LightGBM 1M + noise=1 瓶颈验证** |
+|| **🆕 `SCALING-20251222-mlp-1m-01`** | **MVP-2.0** | VIT | **scaling** | **🔴 P0** | ~8h | 立项 2025-12-22 | **MLP 1M 验证 NN 突破 ML 瓶颈** |
 | **🆕 `SD-20251204-diff-wmae-01`** | **MVP-0.6** | SpecDiffusion | diffusion | **🔴 P0** | ~3h | MVP-0.5 后续 | **wMAE + residual 结构，s≤0.2 弱噪声降噪** |
 | **🆕 `VIT-20251203-moe-gate-noise-01`** | **MVP-7.1** | VIT | moe | **🔴🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Gate 噪声敏感性曲线 → 决定"硬 MoE 还能不能救"** |
 | **🆕 `VIT-20251203-moe-cond-pp-01`** | **MVP-7.2** | VIT | moe | **🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Conditional Ridge++ → 榨出剩余 20% MoE 差距** |
@@ -62,6 +65,23 @@
 | **🆕 `VIT-20251205-moe-feature-mining-01`** | **MVP-13** | VIT | moe | **🟡 P1** | ~3h | Phase 13 | **Feature mining Bin3/Bin6 → ΔR² ≥ 0.02** |
 | **🆕 `VIT-20251205-moe-embedding-01`** | **MVP-14** | VIT | moe | **🟡 P1** | ~4h | Phase 13 | **1M embedding for gate** |
 | **🆕 `VIT-20251205-moe-lgbm-expert-01`** | **MVP-15** | VIT | moe | **🟡 P1** | ~3h | Phase 13 | **小 LGBM 替换 Bin3/Bin6 expert** |
+
+### 🆕🆕 logg 1M Breakthrough 实验系列（2025-12-22 立项）
+
+> **📍 智库导航**: [`logg/logg_1m/logg_1m_hub_20251222.md`](../logg/logg_1m/logg_1m_hub_20251222.md)  
+> **🗺️ 实验追踪**: [`logg/logg_1m/logg_1m_roadmap_20251222.md`](../logg/logg_1m/logg_1m_roadmap_20251222.md)  
+> **目标**: 在 low-noise 条件下突破 log g 预测精度，验证信息瓶颈假设
+
+| experiment_id | MVP | project | topic | 优先级 | 预估时间 | 备注 |
+|---------------|-----|---------|-------|--------|---------|------|
+| **🆕 `VIT-20251222-logg_1m-baseline-scaling-01`** | **MVP-0.B** | VIT | **logg_1m** | **🔴🔴 P0** | ~4h | **🚀 Ridge+LightGBM @ noise=1.0, 10k→1M scaling** |
+| `VIT-20251222-logg_1m-foundation` | MVP-0.A | VIT | logg_1m | 🔴 P0 | ~2h | Low-noise 定义 |
+| **🆕 `VIT-20251222-logg_1m-fisher`** | **MVP-1.1** | VIT | **logg_1m** | **🔴🔴 P0** | ~3h | **Fisher 理论上限分析 → 决定是否继续优化模型** |
+| **🆕 `VIT-20251222-logg_1m-error_input`** | **MVP-1.2** | VIT | **logg_1m** | **🔴 P0** | ~4h | **SNR/Error 作为输入 → 让模型知道哪些像素可信** |
+| **🆕 `VIT-20251222-logg_1m-normalization`** | **MVP-1.3** | VIT | **logg_1m** | **🔴 P0** | ~4h | **归一化三连对照 → median vs chunk-zscore vs continuum** |
+| **🆕 `VIT-20251222-logg_1m-window`** | **MVP-1.4** | VIT | **logg_1m** | **🔴 P0** | ~4h | **敏感窗口 vs 全谱 → 验证干扰假设** |
+| **🆕 `VIT-20251222-logg_1m-multitask`** | **MVP-1.5** | VIT | **logg_1m** | **🔴 P0** | ~4h | **多任务联合 Teff+FeH+logg → 解耦因素** |
+| `VIT-20251222-logg_1m-msm` | MVP-2.1 | VIT | logg_1m | 🟡 P1 | ~6h | MSM 预训练 → 自监督突破（待 Phase 1 完成） |
 
 ---
 
@@ -226,3 +246,33 @@
 
 
 - [x] VIT-20251207-lgb-100k-tree-01: 100k tree 上限确认，best_iter中位数=2179，推荐n=2500，100k全面反超32k ✅
+
+## ✅ Done (2025-12-22)
+
+- [x] **SCALING-20251222-ml-ceiling-01**: Traditional ML Ceiling @ 1M
+  - Ridge R²=0.50, LightGBM R²=0.57 @ noise=1
+  - 确认传统 ML 性能天花板，100k→1M 增益 <3%
+  - 详见: `logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md`
+
+## ✅ Done (2025-12-22 继续)
+
+- [x] **SCALING-20251222-ridge-alpha-01**: Ridge Alpha Extended Sweep
+  - 100k: 最优 α=3.16e+04, R²=0.4856 (+2.55% vs baseline)
+  - 1M: 最优 α=1.00e+05, R²=0.5017 (+0.42% vs baseline)
+  - ✅ H1.5.1 验证：观察到倒 U 型曲线，峰值后明显下降
+  - 详见: `logg/scaling/exp/exp_scaling_ridge_alpha_extended_20251222.md`
+
+- [x] **SCALING-20251222-whitening-01**: Whitening/SNR Input Experiment
+  - H1.7.1 ❌ REJECTED: SNR vs standardized ΔR² = +0.0146 (Ridge), -0.19 (LightGBM)
+  - ⚠️ 重要发现: LightGBM 必须用 raw 输入，StandardScaler 严重损害性能 (R² 0.55→0.20)
+  - 详见: `logg/scaling/exp/exp_scaling_whitening_snr_20251222.md`
+
+## ✅ Done (2025-12-23)
+
+- [x] **SCALING-20251223-fisher-ceiling-01**: Fisher/CRLB Theoretical Upper Bound
+  - R²_max (median) = **0.9661** (理论上限极高)
+  - Schur decay = **0.2366** (degeneracy 极强，仅保留 24% 信息)
+  - ✅ H-16T.1 验证：R²_max = 0.966 ≥ 0.75 → 存在巨大 headroom
+  - ✅ H-16T.2 验证：Schur decay = 0.24 < 0.9 → degeneracy 显著
+  - Gap vs Ridge (0.50): **+0.47** | Gap vs LightGBM (0.57): **+0.40**
+  - 详见: \`logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md\`

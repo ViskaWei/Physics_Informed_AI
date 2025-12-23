@@ -7,9 +7,13 @@
 ---
 
 # 🔴 P0 — 高优先级（今天/明天）
+1. 检查10k test生成， 结束后再生成noisy
+cat /home/swei20/.cursor/projects/home-swei20-ga-pfsspec-all/terminals/5.txt | tail -20 
+
 
 | # | 任务 | 对应实验 | 状态 | 备注 |
 |---|------|---------|------|------|
+｜0 ｜      ｜         ｜      ｜     ｜
 | 1 | 完成 GTA 双塔融合实验 | VIT-20251201-gta-fusion-01 | ⬜ 待做 | Global + Local concat/FiLM |
 | 2 | 提取 BlindSpot Latent 特征给 GTA | BS-20251201-latent-gta-01 | ⬜ 待做 | 增强 noise=1.0 性能 |
 
@@ -44,37 +48,4 @@
 
 ---
 
-# 💡 从实验结论推导的下一步
-
-## 基于 GTA 实验
-
-> **结论**：Global Feature 126维在 noise=0.1 下达到 $R^2$=0.9588，但 noise=1.0 下降到 0.4883
-
-**推导的下一步**：
-1. 🔴 **P0**: 双塔融合 → Global + Local 可能互补
-2. 🔴 **P0**: 加入 Latent 特征 → 更鲁棒的信息来源
-3. 🟡 **P1**: 测试 F2/F3 → 看统计量/EW 贡献
-
-## 基于 CNN Dilated 实验
-
-> **结论**：dilation=2 时感受野匹配吸收线宽度，性能最优
-
-**推导的下一步**：
-1. 🟡 **P1**: Multi-scale dilation → 组合 1,2,4 可能更好
-2. 🟢 **P2**: 与 Swin attention 对比 → 看是否有互补
-
----
-
-# 📎 快捷命令
-
-| 命令 | 作用 |
-|------|------|
-| `next` | 查看当前计划 |
-| `next add P0/P1 [描述]` | 添加任务 |
-| `next done [序号]` | 完成任务 |
-| `next plan` | AI 智能推荐 |
-
----
-
-*最后更新: 2025-12-01*
 

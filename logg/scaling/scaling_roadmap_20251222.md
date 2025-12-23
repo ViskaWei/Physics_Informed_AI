@@ -1,0 +1,776 @@
+# 🗺️ Experiment Roadmap: Data Scaling
+
+> **Topic:** Data Scaling & Model Capacity  
+> **Author:** Viska Wei  
+> **Created:** 2025-12-22 | **Updated:** 2025-12-22  
+> **Current Phase:** Phase 1
+
+<!-- 
+📝 Language Convention:
+- Headers & section titles: English (keep as-is)
+- Content (objectives, conclusions, notes): Chinese OK
+- Table column headers: English (keep as-is)
+- Table cell content: Chinese OK
+-->
+
+## 🔗 Related Files
+
+| Type | File | Description |
+|------|------|-------------|
+| 🧠 Hub | [`scaling_hub_20251222.md`](./scaling_hub_20251222.md) | Knowledge navigation |
+| 📋 Kanban | [`kanban.md`](../../status/kanban.md) | Global task board |
+| 📗 Experiments | `exp/*.md` | Detailed reports |
+
+## 📑 Contents
+
+- [1. 🎯 Phase Overview](#1--phase-overview)
+- [2. 📋 MVP List](#2--mvp-list)
+- [3. 🔧 MVP Specifications](#3--mvp-specifications)
+- [4. 📊 Progress Tracking](#4--progress-tracking)
+- [5. 🔗 Cross-Repo Integration](#5--cross-repo-integration)
+- [6. 📎 Appendix](#6--appendix)
+
+---
+
+# 1. 🎯 Phase Overview
+
+> **Experiments organized by phase, each with clear objectives**
+
+## 1.1 Phase List
+
+| Phase | Objective | MVPs | Status | Key Output |
+|-------|-----------|------|--------|------------|
+| **Phase 1: ML Ceiling** | 验证传统 ML 在 1M 数据 + noise=1 下的性能瓶颈 | MVP-1.0~1.2 | ✅ | Ridge=0.50, LGB=0.57 |
+| **Phase 1.x: ML Refinement** | 确认结果可信度 + 探索调优上限 | MVP-1.3~1.9 | 🔄 | 最终 ML 上限 |
+| **Phase 2: NN Advantage** | 验证神经网络能突破 ML 瓶颈 | MVP-2.0~2.2 | ⏳ | NN 性能下限 |
+| **Phase 3: Analysis** | 分析瓶颈本质和 scaling 规律 | MVP-3.0~3.2 | ⏳ | 设计原则 |
+| **🔴 Phase 16: Ceiling 三层论证** | 理论上限 → 模型 ceiling → 结构上限 | MVP-16T/B/L/O/W/CNN | 🆕 | 可写入论文的证据链 |
+
+## 1.2 Dependency Graph
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   MVP Experiment Dependencies               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   [Phase 1: ML Ceiling]                                     │
+│   MVP-1.0 Ridge ──┬── MVP-1.2 Scaling Law                  │
+│   MVP-1.1 LightGBM┘                                        │
+│         │                                                   │
+│         ▼                                                   │
+│   [Phase 2: NN Advantage]                                   │
+│   MVP-2.0 MLP ───┬── MVP-2.2 NN Scaling                    │
+│   MVP-2.1 CNN ───┘                                         │
+│         │                                                   │
+│         ▼                                                   │
+│   [Phase 3: Analysis]                                       │
+│   MVP-3.0 Noise Info ── MVP-3.1 Capacity ── MVP-3.2 Feature│
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 1.3 Decision Points
+
+> **Key decision points based on experiment results**
+
+| Point | Trigger | Option A | Option B |
+|-------|---------|----------|----------|
+| D1 | After Phase 1 | If ML R² < 0.6 → 确认瓶颈存在 | If ML R² ≥ 0.7 → 重新评估假设 |
+| D2 | After Phase 2 | If NN R² > ML + 0.1 → 证明 NN 优势 | If ΔR² < 0.05 → 瓶颈可能是物理限制 |
+
+---
+
+# 2. 📋 MVP List
+
+> **Overview of all MVPs for quick lookup and tracking**
+
+## 2.1 Experiment Summary
+
+| MVP | Name | Phase | Status | experiment_id | Report |
+|-----|------|-------|--------|---------------|--------|
+| MVP-1.0 | Ridge 1M Ceiling | 1 | ✅ | `SCALING-20251222-ml-ceiling-01` | [Link](./exp/exp_scaling_ml_ceiling_20251222.md) |
+| MVP-1.1 | LightGBM 1M Ceiling | 1 | ✅ | `SCALING-20251222-ml-ceiling-01` | [Link](./exp/exp_scaling_ml_ceiling_20251222.md) |
+| MVP-1.2 | ML Scaling Law | 1 | ✅ | `SCALING-20251222-ml-ceiling-01` | [Link](./exp/exp_scaling_ml_ceiling_20251222.md) |
+| **MVP-1.3** | **Stats Validation (P0)** | 1.x | 🔴 | `SCALING-20251222-stats-01` | [Link](./exp/exp_scaling_stats_validation_20251222.md) |
+| **MVP-1.4** | **Ridge α Extended (P0)** | 1.x | ✅ | `SCALING-20251222-ridge-alpha-01` | [Link](./exp/exp_scaling_ridge_alpha_extended_20251222.md) |
+| **MVP-1.5** | **LightGBM Param Extended (P0)** | 1.x | ⏳ | `SCALING-20251222-lgbm-param-01` | [Link](./exp/exp_scaling_lgbm_param_extended_20251222.md) |
+| **MVP-1.6** | **Whitening/SNR Input (P1)** | 1.x | ✅ | `SCALING-20251222-whitening-01` | [Link](./exp/exp_scaling_whitening_snr_20251222.md) |
+| **MVP-1.7** | **PCA vs PLS 降维策略 (P1)** | 1.x | 🔴 | `SCALING-20251223-pca-pls-01` | [Link](./exp/exp_scaling_pca_pls_comparison_20251223.md) |
+| MVP-1.8 | MoE 分段建模 (P2) | 1.x | ⏳ | - | - |
+| MVP-1.9 | 物理特征工程 (P2) | 1.x | ⏳ | - | - |
+| MVP-2.0 | MLP 1M Performance | 2 | ⏳ | - | - |
+| MVP-2.1 | CNN 1M Performance | 2 | ⏳ | - | - |
+| MVP-2.2 | NN Scaling Law | 2 | ⏳ | - | - |
+| MVP-3.0 | Noise Info Limit | 3 | ⏳ | - | - |
+| MVP-3.1 | Model Capacity | 3 | ⏳ | - | - |
+| MVP-3.2 | Feature Analysis | 3 | ⏳ | - | - |
+| **MVP-16T** | **🔴 Fisher/CRLB 理论上限 (P0)** | 16 | 🔴 | `SCALING-20251223-fisher-ceiling-01` | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md) |
+| **MVP-16B** | **🔴 Baseline 统计可信度 (P0)** | 16 | 🔴 | `SCALING-20251223-baseline-stats-01` | [Link](./exp/exp_scaling_baseline_stats_20251223.md) |
+| **MVP-16L** | **🟡 LMMSE 线性上限 (P1)** | 16 | ⏳ | `SCALING-20251223-lmmse-ceiling-01` | - |
+| **MVP-16O** | **🔴 Oracle MoE Headroom (P0)** | 16 | 🔴 | → moe roadmap | → moe/exp/ |
+| **MVP-16G** | **🟡 可落地 MoE @ noise=1 (P1)** | 16 | ⏳ | → moe roadmap | → moe/exp/ |
+| **MVP-16W** | **🟡 Whitening 表示 (P1)** | 16 | ⏳ | `SCALING-20251223-whitening-noise1-01` | - |
+| **MVP-16CNN** | **🟢 1D-CNN @ noise=1 (P2)** | 16 | ⏳ | `SCALING-20251223-cnn-noise1-01` | - |
+
+**Status Legend:**
+- ⏳ Planned | 🔴 Ready | 🚀 Running | ✅ Done | ❌ Cancelled | ⏸️ Paused
+
+## 2.2 Configuration Reference
+
+> **Key configurations across all MVPs**
+
+| MVP | Data Size | Noise Level | Model | Key Variable | Acceptance |
+|-----|-----------|-------------|-------|--------------|------------|
+| MVP-1.0 | 1M train | σ=1.0 | Ridge | alpha sweep | R² < 0.6 |
+| MVP-1.1 | 1M train | σ=1.0 | LightGBM | best config | R² < 0.65 |
+| MVP-1.2 | 100k→1M | σ=1.0 | Ridge+LGB | data size | ΔR² < 0.03 |
+| MVP-2.0 | 1M train | σ=1.0 | MLP | architecture | R² > 0.70 |
+| MVP-2.1 | 1M train | σ=1.0 | CNN | architecture | R² > Ridge + 0.15 |
+| MVP-2.2 | 100k→1M | σ=1.0 | MLP+CNN | data size | 持续提升 |
+
+---
+
+# 3. 🔧 MVP Specifications
+
+> **Detailed specs for each MVP, ready for execution**
+
+## Phase 1: ML Ceiling
+
+### MVP-1.0: Ridge 1M Ceiling
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 Ridge 在 1M 数据 + noise=1 下的性能上限 |
+| **Hypothesis** | H1.1.1: Ridge R² < 0.6 |
+| **Data** | mag205_225_lowT_1M (1M train), noise_level=1.0, target=log_g |
+| **Model** | Ridge Regression |
+| **Features** | 全波段光谱 (~4000 维) |
+| **Hyperparams** | alpha ∈ {0.01, 0.1, 1.0, 10, 100, 1000} |
+| **Acceptance** | R² < 0.6 ⟹ 确认瓶颈 |
+| **Early Stop** | N/A (Ridge 无迭代) |
+
+**Expected Result:**
+- Ridge 在 1M 数据下仍然 R² ≈ 0.55，与 100k 差别不大
+- 证明线性模型无法从大数据中获益
+
+**Steps:**
+1. 加载 mag205_225_lowT_1M 全部 5 个 shard
+2. 添加 noise_level=1.0 的高斯噪声
+3. 扫描 alpha 参数
+4. 记录最佳 R²
+
+---
+
+### MVP-1.1: LightGBM 1M Ceiling
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 LightGBM 在 1M 数据 + noise=1 下的性能上限 |
+| **Hypothesis** | H1.2.1: LightGBM R² < 0.65 |
+| **Data** | mag205_225_lowT_1M (1M train), noise_level=1.0, target=log_g |
+| **Model** | LightGBM Regressor |
+| **Features** | 全波段光谱 (~4000 维) |
+| **Hyperparams** | lr=0.05, n_estimators=5000, early_stopping |
+| **Acceptance** | R² < 0.65 ⟹ 确认瓶颈 |
+
+**Expected Result:**
+- LightGBM 略优于 Ridge，但仍受限
+- 增加树数量不再提升性能
+
+---
+
+### MVP-1.2: ML Scaling Law
+
+| Item | Config |
+|------|--------|
+| **Objective** | 对比 100k vs 1M 数据对 ML 方法的影响 |
+| **Hypothesis** | H1.3.1: Ridge ΔR² < 0.02; H1.3.2: LightGBM ΔR² < 0.03 |
+| **Data** | 100k 子集 vs 1M 全集, noise_level=1.0 |
+| **Model** | Ridge + LightGBM (best config from 1.0, 1.1) |
+| **Acceptance** | 边际收益递减明显 |
+
+**Steps:**
+1. 使用 MVP-1.0, 1.1 的最优配置
+2. 分别在 100k 和 1M 上训练
+3. 画 data size vs R² 曲线
+
+---
+
+## Phase 1.x: ML Refinement (P0/P1/P2)
+
+### MVP-1.3: Stats Validation (🔴 P0)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 确认 "plateau" 是真实还是统计假象 |
+| **Hypothesis** | H1.4.1: 多 seed 时 1M vs 500k 差异在误差棒内; H1.4.2: 扩大 test 后趋势不变 |
+| **Method 1** | 多 seed 重复：200k, 500k, 1M 各跑 3-5 次不同 seed |
+| **Method 2** | 扩大 test set：从 500 → 1000+ |
+| **Key Metric** | R² 的 mean ± std |
+| **Acceptance** | 如果 1M vs 500k 差异 < std，则确认 plateau |
+
+**Expected Output:**
+- 确认 plateau 是否真实
+- 提供统计误差棒，指导后续实验的显著性判断
+
+---
+
+### MVP-1.4: Ridge α Extended Sweep (🔴 P0)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 找到 Ridge 在 noise=1 下的真正最优 α |
+| **Hypothesis** | H1.5.1: 最优 α 在 5000~1e8 之间存在峰值后下降 |
+| **Data** | 100k 和 1M 两个数据点 |
+| **α Range** | `logspace(2, 8, 13)`: 1e2, 3e2, 1e3, ..., 1e8 |
+| **Acceptance** | 观察到"峰值后下降"模式 |
+
+**Expected Output:**
+- Ridge 真正最优 α
+- α vs R² 曲线图（应呈现倒 U 型）
+
+---
+
+### MVP-1.5: LightGBM Param Extended (🔴 P0)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 LightGBM 参数空间是否探索完全 |
+| **Hypothesis** | H1.6.1: num_leaves↑ 能提升; H1.6.2: lr↓ 能提升 |
+| **Sweep 1** | num_leaves: 63 → 127 → 255 |
+| **Sweep 2** | learning_rate: 0.05 → 0.02 → 0.01 |
+| **Sweep 3** | min_data_in_leaf: 20 → 100 → 500 |
+| **Control** | 固定训练轮数对比（不用 early stopping）做 sanity check |
+| **Acceptance** | 任一配置 ΔR² > 0.01 |
+
+**Expected Output:**
+- LightGBM 真正最优配置
+- 参数敏感度分析
+
+---
+
+### MVP-1.6: Whitening/SNR Input (🟡 P1)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 Whitening (flux/error) 输入是否提升性能 |
+| **Hypothesis** | H1.7.1: Whitening 能提升 R² > 0.02 |
+| **Input Variants** | 1) raw flux, 2) StandardScaler, 3) flux/error (SNR), 4) (flux-μ)/error |
+| **Models** | Ridge (best α from 1.4) + LightGBM (best config from 1.5) |
+| **Acceptance** | Whitened > StandardScaled |
+
+**Expected Output:**
+- 最优输入表示方式
+- 物理解释：SNR 归一化的意义
+
+---
+
+### MVP-1.7: PCA vs PLS 降维策略 (🟡 P1)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 对比监督降维 (PLS) vs 无监督降维 (PCA)，并探索 PCA 空间选择 |
+| **Hypothesis** | H1.7.2: PLS 优于 PCA（相同维度）; H1.7.3: PCA 可能误伤低方差高信息特征; H1.7.4: Whitened/Denoised space 建 PCA 更稳健 |
+| **experiment_id** | `SCALING-20251223-pca-pls-01` |
+| **Report** | [Link](./exp/exp_scaling_pca_pls_comparison_20251223.md) |
+
+#### 设计 1：PCA + Ridge K Sweep
+
+| 配置项 | 值 |
+|--------|-----|
+| **降维方法** | PCA |
+| **K 值** | 100, 200, 500, 1000 |
+| **下游模型** | Ridge (best α from MVP-1.4) |
+| **关键观察** | K 增大时 R² 是否先升后 plateau |
+
+#### 设计 2：PLS vs PCA 对照
+
+| 配置项 | 值 |
+|--------|-----|
+| **方法 A** | PCA + Ridge |
+| **方法 B** | PLSRegression（监督降维） |
+| **K 值** | 100, 200, 500, 1000 |
+| **理论优势** | PLS 按 X-y 协方差找子空间，更适合"弱信号回归" |
+
+#### 设计 3：PCA 空间选择
+
+| PCA 空间 | 描述 | 推荐程度 |
+|----------|------|----------|
+| **Noisy space** | 直接在含噪光谱上 PCA | 默认，但有风险 |
+| **Whitened space** | PCA((X - μ) / error) | ⭐ 推荐 |
+| **Denoised space** | 平滑后 PCA，再投影 noisy | ⭐ 推荐 |
+
+**⚠️ 核心风险**：
+- PCA 保留的是**方差最大**的方向
+- log_g 敏感特征可能是"**低方差但信息密度高**"的细谱线
+- 高噪声下，PCA 可能把关键信号扔掉
+
+**Expected Output:**
+- K vs R² 曲线图（先升后 plateau？）
+- PLS vs PCA 对比图
+- PCA 空间选择对比图
+- 最优降维策略建议
+
+---
+
+### MVP-1.8: MoE 分段建模 (🟢 P2)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 按 Teff/log_g 分段建模，改善极值区域 |
+| **Method** | 粗分类（按 Teff 区间或 log_g bin）→ 每段独立模型 |
+| **Risk** | 实现复杂，可能过拟合 |
+
+---
+
+### MVP-1.9: 物理特征工程 (🟢 P2)
+
+| Item | Config |
+|------|--------|
+| **Objective** | 尝试物理驱动的特征工程 |
+| **Features** | 等效宽度(EW)、线心/线翼比、局部卷积滤波响应 |
+| **Risk** | 领域知识依赖重 |
+
+---
+
+## Phase 2: NN Advantage
+
+### MVP-2.0: MLP 1M Performance
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 MLP 在 1M 数据下能否突破 ML 瓶颈 |
+| **Hypothesis** | H2.1.1: MLP R² > 0.70 |
+| **Data** | mag205_225_lowT_1M (1M train), noise_level=1.0, target=log_g |
+| **Model** | MLP (3-4 layers, ReLU) |
+| **Hyperparams** | hidden_dim=512, layers=3, batch=1024, lr=1e-3 |
+| **Acceptance** | R² > 0.70 且 > Ridge + 0.10 |
+
+---
+
+### MVP-2.1: CNN 1M Performance
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 CNN 在 1M 数据下的性能 |
+| **Hypothesis** | H2.2.1: CNN R² > Ridge + 0.15 |
+| **Data** | mag205_225_lowT_1M (1M train), noise_level=1.0, target=log_g |
+| **Model** | 1D CNN (dilated convolutions) |
+| **Hyperparams** | 参考 cnn_main 的最优配置 |
+| **Acceptance** | R² > 0.70 |
+
+---
+
+### MVP-2.2: NN Scaling Law
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 NN 的数据 scaling 是否持续有效 |
+| **Data** | 100k / 200k / 500k / 1M |
+| **Model** | MLP + CNN |
+| **Acceptance** | NN 的 R² 持续上升，而 ML 饱和 |
+
+---
+
+## Phase 3: Analysis
+
+### MVP-3.0: Noise Information Limit
+
+| Item | Config |
+|------|--------|
+| **Objective** | 分析 noise=1 时的理论信息上限 |
+| **Method** | 计算理论 SNR，估计最大可能 R² |
+
+---
+
+### MVP-3.1: Model Capacity Analysis
+
+| Item | Config |
+|------|--------|
+| **Objective** | 分析不同模型的有效容量 |
+| **Method** | 对比 parameter count vs performance |
+
+---
+
+### MVP-3.2: Feature Representation
+
+| Item | Config |
+|------|--------|
+| **Objective** | 分析 NN 学到了什么 ML 学不到的特征 |
+| **Method** | 特征可视化，attention map 分析 |
+
+---
+
+## 🔴 Phase 16: Ceiling 三层论证（2025-12-23 新增）
+
+> **核心理念**：先推出理论上限 → 再证明 Ridge/LGBM ceiling → 再展示 MoE/NN 接近上限
+> 
+> **性价比优先三件套**：MVP-16T (Fisher) → MVP-16O (Oracle MoE) → MVP-16B (可信度)
+
+### MVP-16T: Fisher/CRLB 理论上限（🔴 P0 最高优先级）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 计算 noise=1 时的理论可达上限 R²_max，量化 degeneracy |
+| **Hypothesis** | H-16T.1: R²_max ≥ 0.75 (存在大 headroom) |
+| **Hypothesis** | H-16T.2: degeneracy 显著 (log_g 与 Teff/[M/H] 纠缠) |
+
+**方法（最小可行版本）**：
+1. 抽样 N=5k~20k 个参数点（不必用全 1M）
+2. 对每个点，用 BOSZ forward model 在 θ±Δθ 做有限差分，得到 ∂μ/∂θ
+3. 用 error×noise_level 组成 Σ（对角即可）
+4. 计算 Fisher 信息矩阵：I(θ) = (∂μ/∂θ)ᵀ Σ⁻¹ (∂μ/∂θ)
+5. 做 Schur complement，得到每个样本的 Var_min(log_g)
+6. 聚合（均值/分位数），转成 R²_max 上界估计
+
+**关键公式**：
+
+$$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}(\log g)}$$
+
+**输出**：
+- R²_max,CRLB（以及分布：median/90% 分位）
+- degeneracy 指标：Fisher 条件数、log_g 与 Teff/[M/H] 的相关项强度
+
+**止损规则**：
+- 如果 R²_max ≈ 0.6 → "想大幅提升"基本不现实，目标改为"逼近上限 + 不确定度输出"
+- 如果 R²_max ≥ 0.75 → 确实存在大 headroom，值得上 CNN/更强表征
+
+**参考文献**：
+- Fisher/CRLB：统计学经典推导
+- van Trees 不等式（Bayesian CRLB）
+- 天文应用：Gaia XP 光谱参数估计工作
+
+---
+
+### MVP-16B: Baseline 统计可信度（🔴 P0）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 把 "Ridge=0.50 / LGBM=0.57" 做成可信的 ceiling |
+| **Hypothesis** | H-16B.1: 多 seed 确认 std < 0.01 |
+| **Hypothesis** | H-16B.2: 扩大 test 后结论不变 |
+
+**方法 B1（多 seed + 大 test）**：
+- 训练集固定（1M 或 500k），换 5-10 个 seed
+- test 从 500 扩到 5k~20k（至少 5k）
+- 给出均值±std 或 CI
+
+**方法 B2（LGBM 参数空间扩展）**：
+- 扫 num_leaves, max_depth, lr, 更严格的正则
+- 检查 early stopping 是否过早
+- 输出：最优曲线与 plateau 证据
+
+**输出**：
+- R² 分布 + 方差解释
+- LGBM 参数 plateau 证据
+
+---
+
+### MVP-16L: LMMSE 线性上限（🟡 P1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 给 Ridge 一个"可证明的线性上限" |
+| **Hypothesis** | H-16L.1: Ridge ≈ LMMSE (差 < 1%) |
+
+**方法**：
+- 用 1M 数据估计 Σ_xx, Σ_xy
+- 计算最优线性预测器 w* = Σ_xx⁻¹ Σ_xy（或数值正规化）
+- 计算其 test R²（这是"线性模型族"的上限）
+
+**输出**：
+- 如果 Ridge 与 LMMSE 差 < 0.005~0.01，可以写：
+  "Ridge 已接近最优线性可达性能，因此线性模型族不可能再大幅提升"
+
+---
+
+### MVP-16W: Whitening 表示（🟡 P1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 Whitening (flux/error) 在 noise=1 下的提升 |
+| **Hypothesis** | H-16W.1: ΔR² ≥ 0.02 |
+
+**输入变体**：
+1. raw flux
+2. StandardScaler
+3. flux/error (SNR)
+4. (flux-μ)/error
+
+**模型**：Ridge (best α) + LightGBM (best config) + CNN
+
+**决策规则**：
+- 如果 ΔR² ≥ 0.02 → Whitening 应并入所有后续模型（包括 MoE/CNN）
+
+---
+
+### MVP-16CNN: 1D-CNN @ noise=1（🟢 P2）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 CNN 能否从 0.57 往上冲一大截 (0.65~0.75) |
+| **Hypothesis** | H-16CNN.1: CNN R² > 0.65 |
+| **Hypothesis** | H-16CNN.2: CNN R² - Ridge R² > 0.10 |
+
+**MVP 设计建议**：
+1. 输入：whitened spectrum (flux/error)
+2. 架构：小 ResNet1D 或 4-8 层 Conv1D + pooling + MLP head
+3. 训练目标：只做 log_g 或 multi-task (Teff, [M/H], log_g)
+   - multi-task 在 degeneracy 强时通常更稳
+4. 评估：与 R²_max,CRLB 对齐，看 gap 还剩多少
+
+**依赖**：
+- 建议先完成 MVP-16T，确认 R²_max ≥ 0.75 后再投入 CNN
+
+---
+
+# 4. 📊 Progress Tracking
+
+## 4.1 Kanban View
+
+```
+┌──────────────────┬──────────────────┬──────────────┬──────────────┬──────────────┐
+│    ⏳ Planned    │     🔴 Ready     │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
+├──────────────────┼──────────────────┼──────────────┼──────────────┼──────────────┤
+│ MVP-1.5 (P0-old) │ **MVP-16T (P0)** │              │ MVP-1.0      │              │
+│ MVP-1.6 (P1)     │ **MVP-16B (P0)** │              │ MVP-1.1      │              │
+│ MVP-1.7 (P1)     │ **MVP-16O (P0)** │              │ MVP-1.2      │              │
+│ MVP-1.8 (P2)     │ MVP-1.3 (P0-old) │              │ MVP-1.4 ✅   │              │
+│ MVP-16L (P1)     │                  │              │              │              │
+│ MVP-16W (P1)     │                  │              │              │              │
+│ MVP-16CNN (P2)   │                  │              │              │              │
+│ MVP-2.x          │                  │              │              │              │
+└──────────────────┴──────────────────┴──────────────┴──────────────┴──────────────┘
+```
+
+### 🔴 Phase 16 Priority Legend（性价比排序）
+- 🔴 **P0 三件套（决定下一步方向）**:
+  - MVP-16T (Fisher 理论上限) → 决定"上限多高"
+  - MVP-16O (Oracle MoE headroom) → 决定"MoE 值不值"
+  - MVP-16B (Baseline 可信度) → 决定"0.50/0.57 可信"
+- 🟡 **P1 (依赖 P0 结果)**:
+  - MVP-16L (LMMSE) → 如果想证明"线性已到极限"
+  - MVP-16W (Whitening) → 如果想探索"表示改进"
+  - MVP-16G (可落地 MoE) → 依赖 MVP-16O
+- 🟢 **P2 (最终冲刺)**:
+  - MVP-16CNN (1D-CNN) → 最可能"真正大幅提升"
+  - MVP-16MoE-CNN → 仅当 16O + 16CNN 都成功
+
+## 4.2 Key Conclusions Snapshot
+
+> **One-line conclusion per completed MVP, synced to Hub**
+
+| MVP | Conclusion | Key Metric | Synced to Hub |
+|-----|------------|------------|---------------|
+| MVP-1.0 | Ridge 在 1M + noise=1 下达到 R²=0.50 | R²=0.4997 | ✅ |
+| MVP-1.1 | LightGBM 在 1M + noise=1 下达到 R²=0.57 | R²=0.5709 | ✅ |
+| MVP-1.2 | 100k→1M 仅提升 2-3%，边际收益递减 | ΔR²<0.03 | ✅ |
+| MVP-1.3 | TODO: 确认 plateau 统计可信度 | - | ⏳ |
+| MVP-1.4 | 倒 U 型曲线确认，最优 α=1e4~1e5，优化提升仅 0.4%~2.5% | 100k: α=3.16e+04, R²=0.4856; 1M: α=1e+05, R²=0.5017 | ✅ |
+| MVP-1.5 | TODO: 验证 LightGBM 参数极限 | - | ⏳ |
+
+## 4.3 Timeline
+
+| Date | Event | Notes |
+|------|-------|-------|
+| 2025-12-22 | Phase 1 完成 | Ridge=0.50, LGB=0.57 |
+| 2025-12-22 | Phase 1.x 立项 | MVP-1.3~1.9 规划完成 |
+| 2025-12-22 | P0 exp.md 框架创建 | stats, ridge-alpha, lgbm-param |
+| 2025-12-23 | MVP-1.4 完成 | 最优 α=1e4~1e5，H1.5.1 验证 ✅ |
+
+---
+
+# 5. 🔗 Cross-Repo Integration
+
+## 5.1 Experiment Index
+
+> **Links to experiments_index/index.csv**
+
+| experiment_id | project | topic | status | MVP |
+|---------------|---------|-------|--------|-----|
+| `SCALING-20251222-ridge-1m-01` | VIT | scaling | ⏳ | MVP-1.0 |
+| `SCALING-20251222-lgbm-1m-01` | VIT | scaling | ⏳ | MVP-1.1 |
+
+## 5.2 Repository Links
+
+| Repo | Directory | Purpose |
+|------|-----------|---------|
+| VIT | `~/VIT/` | 训练 NN 模型 |
+| This repo | `logg/scaling/` | 知识沉淀 |
+
+## 5.3 Data Paths
+
+| Dataset | Path | Size |
+|---------|------|------|
+| mag205_225_lowT_1M | `/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/` | 93 GB |
+| train_200k_0 | `.../train_200k_0/dataset.h5` | 19 GB |
+| train_200k_1 | `.../train_200k_1/dataset.h5` | 19 GB |
+| train_200k_2 | `.../train_200k_2/dataset.h5` | 19 GB |
+| train_200k_3 | `.../train_200k_3/dataset.h5` | 19 GB |
+| train_200k_4 | `.../train_200k_4/dataset.h5` | 19 GB |
+
+---
+
+# 6. 📎 Appendix
+
+## 6.1 Results Summary
+
+> **Core metrics from all MVPs (to be filled)**
+
+### ML vs NN Performance @ noise=1, 1M data
+
+| Model | Config | $R^2$ | MAE | RMSE | ΔR² vs Ridge |
+|-------|--------|-------|-----|------|--------------|
+| Ridge | α=1e+05 (optimal) | 0.5017 | 0.6345 | - | baseline |
+| LightGBM | (best config) | 0.5709 | - | - | +0.07 |
+| MLP | (best arch) | - | - | - | - |
+| CNN | (best arch) | - | - | - | - |
+
+### Ridge α Sweep Results (MVP-1.4)
+
+| Data Size | Baseline α~3162 R² | Optimal α | Optimal R² | Improvement |
+|-----------|---------------------|-----------|------------|-------------|
+| 100k | 0.4735 | 3.16e+04 | 0.4856 | +2.55% |
+| 1M | 0.4997 | 1.00e+05 | 0.5017 | +0.42% |
+
+### Data Scaling Effect (待填充)
+
+| Data Size | Ridge R² | LGB R² | MLP R² | CNN R² |
+|-----------|----------|--------|--------|--------|
+| 100k | - | - | - | - |
+| 200k | - | - | - | - |
+| 500k | - | - | - | - |
+| 1M | - | - | - | - |
+
+---
+
+## 6.2 File Index
+
+| Type | Path | Description |
+|------|------|-------------|
+| Roadmap | `logg/scaling/scaling_roadmap_20251222.md` | This file |
+| Hub | `logg/scaling/scaling_hub_20251222.md` | Knowledge navigation |
+| MVP-1.0 | `logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md` | ML ceiling |
+| Images | `logg/scaling/img/` | Experiment figures |
+
+---
+
+## 6.3 Changelog
+
+| Date | Change | Sections |
+|------|--------|----------|
+| 2025-12-22 | Created Roadmap | - |
+| 2025-12-22 | Phase 1.x 规划完成 | §1.1, §2.1, §3 |
+| 2025-12-22 | MVP-1.3~1.9 添加 | §2.1, §3 (Phase 1.x) |
+| 2025-12-22 | P0 exp.md 框架创建 | §4 |
+| 2025-12-22 | MVP-1.6 Whitening 立项 | §2.1, §4 |
+| 2025-12-23 | MVP-1.4 完成，结果填充 | §2.1, §4.1, §4.2, §4.3, §6.1 |
+| 2025-12-23 | MVP-1.7 PCA vs PLS 立项 (3 sub-designs) | §2.1, §3 |
+| **2025-12-23** | **🔴 Phase 16 完整大立项：三层论证（理论上限→模型ceiling→结构上限）** | §1.1, §2.1, §3, §4.1 |
+| 2025-12-23 | 添加 MVP-16T/B/L/O/W/CNN 完整规格 | §2.1, §3 (Phase 16) |
+| 2025-12-23 | 更新 Kanban：Phase 16 P0 三件套优先 | §4.1 |
+| 2025-12-23 | **MVP-1.6 Whitening 完成**: H1.7.1 ❌ REJECTED, SNR ΔR²=+0.0146 (Ridge) | §2.1, §4 |
+| 2025-12-23 | 添加参考文献：Fisher/CRLB, van Trees, Gaia XP | §3 (MVP-16T) |
+
+---
+
+> **Template Usage:**
+> 
+> **Roadmap Scope:**
+> - ✅ **Do:** MVP specs, execution tracking, kanban, cross-repo integration, metrics
+> - ❌ **Don't:** Hypothesis management (→ hub.md), insight synthesis (→ hub.md), strategy (→ hub.md)
+> 
+> **Hub vs Roadmap:**
+> - Hub = "What do we know? Where should we go?"
+> - Roadmap = "What experiments are planned? What's the progress?"
+
+---
+
+## 📊 SCALING-20251222-ml-ceiling-01 实验结果
+
+### 核心结论
+传统 ML（Ridge, LightGBM）在 1M 数据 + noise=1 下分别达到 R²=0.50 和 R²=0.57，确认性能天花板存在。
+
+### 关键数字
+| 指标 | 值 |
+|------|-----|
+| Ridge 最佳 R² (1M) | 0.4997 |
+| LightGBM 最佳 R² (1M) | 0.5709 |
+| Ridge ΔR² (1M vs 100k) | +0.0244 |
+| LightGBM ΔR² (1M vs 100k) | +0.0176 |
+
+### 设计启示
+1. **数据量非瓶颈**：100k→1M 仅提升 2-3%，应投资模型改进
+2. **深度学习目标**：突破 R²=0.70 才算有意义提升
+3. **Baseline 确立**：LightGBM R²=0.57 可作为 NN 的 baseline
+
+### MVP 状态更新
+- ✅ MVP-1.0 (Ridge @ 1M): Done
+- ✅ MVP-1.1 (LightGBM @ 1M): Done
+- ✅ MVP-1.2 (Scaling Law): Done
+
+---
+
+## 📊 SCALING-20251222-ridge-alpha-01 实验结果 (MVP-1.4)
+
+### 核心结论
+Ridge 最优 α 在 1e4~1e5 之间，比原 baseline (α=5000) 高 1-2 个数量级。倒 U 型曲线明确存在。
+
+### 关键数字
+| 数据量 | 最优 α | 最优 R² | vs baseline |
+|--------|--------|---------|-------------|
+| 100k | 3.16e+04 | 0.4856 | +2.55% |
+| 1M | 1.00e+05 | 0.5017 | +0.42% |
+
+### H1.5.1 验证结果
+**✅ CONFIRMED** - 观察到明确的倒 U 型曲线：
+- 100k: 峰值后下降 0.4849
+- 1M: 峰值后下降 0.4663
+
+### 设计启示
+1. **Ridge α 应该更大**：推荐 α ∈ [1e4, 1e5]
+2. **α 与数据量正相关**：更多数据 → 更大的最优 α
+3. **优化空间有限**：α 调优仅提升 0.4%~2.5%，说明 Ridge ceiling 确实存在
+
+### MVP-1.4 状态
+- ✅ MVP-1.4 (Ridge α Extended): **Done**
+- 图表位置: `logg/scaling/img/scaling_ridge_alpha_extended.png`
+- 报告位置: `logg/scaling/exp/exp_scaling_ridge_alpha_extended_20251222.md`
+
+---
+
+# 📊 Phase 16 更新 (2025-12-23)
+
+## MVP-16T 完成 ✅
+
+| Item | Result |
+|------|--------|
+| **Status** | ✅ Done |
+| **experiment_id** | SCALING-20251223-fisher-ceiling-01 |
+| **R²_max (median)** | **0.9661** |
+| **R²_max (90%)** | 0.9995 |
+| **Schur decay** | 0.2366 (76% 信息因 degeneracy 损失) |
+| **Fisher 条件数** | 8.65×10⁵ |
+| **Gap vs Ridge** | +0.47 |
+| **Gap vs LightGBM** | +0.40 |
+
+### 假设验证
+
+| Hypothesis | Criteria | Result | Status |
+|------------|----------|--------|--------|
+| H-16T.1: R²_max ≥ 0.75 | ≥ 0.75 | 0.9661 | ✅ |
+| H-16T.2: degeneracy 显著 | Schur < 0.9 | 0.2366 | ✅ |
+
+### 核心结论
+
+1. **理论上限极高**：R²_max ≈ 0.97 远超当前最佳 (0.57)，巨大 headroom 存在
+2. **degeneracy 是主要瓶颈**：边缘化后仅保留 24% Fisher 信息，需要 multi-task 解纠缠
+3. **继续投入 CNN/Transformer 有意义**：理论上限证明提升空间巨大
+
+### 下一步
+
+| Direction | Priority | MVP |
+|-----------|----------|-----|
+| 继续 CNN | 🔴 P0 | MVP-16CNN |
+| Multi-task 解纠缠 | 🟡 P1 | 后续 |
+| Bayesian CRLB (van Trees) | 🟢 P2 | 可选 |
