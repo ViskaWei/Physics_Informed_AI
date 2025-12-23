@@ -110,11 +110,14 @@
 | **MVP-16W** | **🟡 Whitening 表示 (P1)** | 16 | ⏳ | `SCALING-20251223-whitening-noise1-01` | - |
 | **MVP-16CNN** | **🟢 1D-CNN @ noise=1 (P2)** | 16 | ⏳ | `SCALING-20251223-cnn-noise1-01` | - |
 | | | | | | |
-| **🆕 Phase T: Fisher 校准** | | | | | |
-| **MVP-T0** | **🔴 Noise Monotonicity (P0)** | T | 🔴 | `SCALING-20251223-fisher-noise-sweep-01` | - |
-| **MVP-T1** | **🔴 Confounding Ablation (P0)** | T | 🔴 | `SCALING-20251223-fisher-confound-01` | - |
-| **MVP-T2** | **🟡 LLR Jacobian (P1)** | T | ⏳ | `SCALING-20251223-fisher-llr-01` | - |
-| **MVP-T3** | **🟡 Scale Audit (P1)** | T | ⏳ | `SCALING-20251223-scale-audit-01` | - |
+| **❌ Phase T: Fisher 校准（方法失败）** | | | | | |
+| ~~MVP-T0~~ | ~~Noise Monotonicity~~ | T | ❌ | - | 方法失败，取消 |
+| ~~MVP-T1~~ | ~~Confounding Ablation~~ | T | ❌ | - | 方法失败，取消 |
+| **MVP-T2** | **🟡 LLR Jacobian (P1 降级)** | T | ⏳ | `SCALING-20251223-fisher-llr-01` | - |
+| **MVP-T3** | **🟢 Scale Audit (P2 快速)** | T | ⏳ | `SCALING-20251223-scale-audit-01` | - |
+| | | | | | |
+| **🆕 Phase D: 经验上限（替代 Fisher）** | | | | | |
+| **MVP-D0** | **🔴 noise=0 Oracle 上限 (P0)** | D | 🔴 | `SCALING-20251223-noise0-oracle-01` | - |
 | | | | | | |
 | **🆕 Phase A: noise=1 MoE** | | | | | |
 | **MVP-16A-0** | **🔴 Oracle MoE @ noise=1 (P0)** | A | 🔴 | `SCALING-20251223-oracle-moe-noise1-01` | - |
@@ -536,78 +539,85 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 
 ---
 
-## 🆕 Phase T: Fisher Ceiling 校准（2025-12-23 新增）
+## ❌ Phase T: Fisher Ceiling 校准（已失败，重新规划）
 
-> **核心问题**：MVP-16T 得到 R²_max ≈ 0.97 可能因"偏导混参污染"被高估
-> 
-> **目标**：校准 Fisher ceiling 到可信区间，为后续叙事奠定基础
+> **失败原因**：MVP-16T 的方法论存在根本性缺陷
+> - BOSZ 数据是**连续采样**（~40k 唯一值/参数），不是规则网格
+> - 邻近点差分法在非网格数据上**完全失效**
+> - CRLB 跨越 20 个数量级，R²_max=0.97 **不可靠**
 
-### MVP-T0: Noise Monotonicity（🔴 P0）
+### ❌ MVP-T0: Noise Monotonicity → **取消**
 
-| Item | Config |
-|------|--------|
-| **Objective** | 验证 R²_max 随 noise_level 单调下降 |
-| **Hypothesis** | H-T0.1: 0.2→0.5→1.0→2.0 时 R²_max 明显下降 |
-| **Method** | 复用 MVP-16T 脚本，扫 noise_level ∈ {0.2, 0.5, 1.0, 2.0} |
-| **Acceptance** | 单调下降趋势明确 |
-| **如果不降** | 要么噪声没进 Σ（bug），要么 error 尺度让 noise=1 根本不"高噪" |
+**取消原因**：底层方法已失败，扫 noise_level 无意义
 
 ---
 
-### MVP-T1: Confounding Ablation（🔴 P0 最高优先级）
+### ❌ MVP-T1: Confounding Ablation → **取消**
 
-| Item | Config |
-|------|--------|
-| **Objective** | 验证收紧邻居约束后 R²_max 是否显著下降 |
-| **Hypothesis** | H-T1.1: R²_max 从 0.97 降到 <0.85 |
-| **Method** | 把邻居约束从 (50K, 0.5dex, 0.1dex) 收紧到 (5K, 0.05dex, 0.01dex) |
-| **Acceptance** | R²_max 下降 >10% → 坐实"混参污染" |
-| **如果不降** | ceiling 可信，headroom 确实很大 |
-
-**核心代码修改**:
-```python
-# 原始宽松约束
-NEIGHBOR_SEARCH_RADIUS = {'T_eff': 50.0, 'log_g': 0.5, 'M_H': 0.1}
-
-# 收紧后约束（10倍）
-NEIGHBOR_SEARCH_RADIUS = {'T_eff': 5.0, 'log_g': 0.05, 'M_H': 0.01}
-```
+**取消原因**：问题不是"约束太松"，而是**整个差分方法不适用于非网格数据**
 
 ---
 
-### MVP-T2: Local Linear Regression Jacobian（🟡 P1）
+### 🔄 MVP-T2: Local Linear Regression Jacobian → **升级为新方案**
 
 | Item | Config |
 |------|--------|
-| **Objective** | 用局部线性回归估计 Jacobian，天然控制混参 |
-| **Hypothesis** | H-T2.1: 对 radius/K 不敏感，结果更稳定 |
-| **Method** | 对每个样本 i，在小邻域取 K 个点，拟合 Δflux ≈ J·Δθ |
-| **Acceptance** | R²_max 比 T1 更稳定，且物理上更可信 |
+| **Objective** | 用局部多项式回归估计 Jacobian（exp.md 方案 B） |
+| **Hypothesis** | H-T2.1: CRLB 分布合理（无 20 个数量级跨度） |
+| **Method** | 对每个样本 i，找 K 个近邻，拟合 μ(θ) ≈ a + J·Δθ |
+| **Status** | 🟡 P1（降级，等 16A-0 和 NN-0 先跑） |
 
-**公式**:
-```
-Δflux_j = flux_j - flux_i  (shape: 7200)
-Δθ_j = θ_j - θ_i          (shape: 3)
-
-拟合: Δflux ≈ J·Δθ  (最小二乘，J shape: 7200×3)
-```
+**关键改进**：
+- 用最小二乘拟合 J，而不是两点差分
+- 天然处理近邻方向不正交的问题
+- 需要足够多的近邻（K ≥ 10）
 
 ---
 
-### MVP-T3: Scale Audit（🟡 P1）
+### ✅ MVP-T3: Scale Audit → **保留**
 
 | Item | Config |
 |------|--------|
 | **Objective** | 确认 noise=1 实际 SNR |
 | **Hypothesis** | H-T3.1: median(\|flux\|)/median(error×σ) ≈ 1 |
 | **Method** | 打印 SNR 统计量，确认口径 |
-| **Acceptance** | 如果 SNR >> 1，则 noise=1 并不是"极低 SNR"，R²_max 高可能是真的 |
+| **Status** | 🟢 P2（快速验证，5 分钟内完成） |
 
-**检查代码**:
-```python
-snr = np.median(np.abs(flux)) / np.median(error * NOISE_LEVEL)
-print(f"Effective SNR @ noise={NOISE_LEVEL}: {snr:.2f}")
-```
+---
+
+## 🆕 Phase D: 经验上限替代方案（exp.md 方案 D）
+
+> **核心思路**：既然理论 Fisher/CRLB 难以正确计算，改用**经验上限**
+> 
+> **优点**：实践可行，结果可信
+> **缺点**：不是严格的理论上限
+
+### MVP-D0: noise=0 Oracle 上限（🔴 P0 新增）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 用 noise=0 的最佳模型作为理论上限参照 |
+| **Hypothesis** | H-D0.1: noise=0 时 Ridge R² > 0.95 |
+| **Hypothesis** | H-D0.2: headroom = R²(noise=0) - R²(noise=1) > 0.40 |
+| **Data** | 100k + 1M，noise_level = 0（或极小如 0.01） |
+| **Models** | Ridge (best α), LightGBM (best config) |
+| **Method** | 在无噪声数据上训练，记录 R² |
+| **Acceptance** | 输出 noise=0 的 R² 作为经验上限 |
+
+**逻辑**：
+- noise=0 时的 R² 是**所有模型的经验上限**
+- headroom = R²(noise=0) - R²(noise=1) = 可恢复的信息量
+- 如果 headroom > 0.40 → 模型/表示改进有很大空间
+
+**执行步骤**：
+1. 复用 MVP-1.0/1.1 的脚本
+2. 设置 noise_level = 0（或 0.01）
+3. 训练 Ridge (α=1e5) 和 LightGBM
+4. 记录 R²，计算 headroom
+
+**预期结果**：
+- Ridge @ noise=0: R² ≈ 0.98+（接近完美）
+- Headroom = 0.98 - 0.50 = **0.48**（巨大空间）
 
 ---
 
@@ -693,33 +703,32 @@ print(f"Effective SNR @ noise={NOISE_LEVEL}: {snr:.2f}")
 ┌──────────────────┬──────────────────┬──────────────┬──────────────┬──────────────┐
 │    ⏳ Planned    │     🔴 Ready     │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
 ├──────────────────┼──────────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-T2 (P1)      │ **MVP-T1 (P0)**  │              │ MVP-1.0      │              │
-│ MVP-T3 (P1)      │ **MVP-T0 (P0)**  │              │ MVP-1.1      │              │
-│ MVP-16A-1 (P1)   │ **MVP-16A-0(P0)**│              │ MVP-1.2      │              │
-│ MVP-16A-2 (P1)   │ **MVP-NN-0(P0)** │              │ MVP-1.4 ✅   │              │
-│ MVP-16L (P1)     │ MVP-1.5 (P0-old) │              │ MVP-1.6 ✅   │              │
-│ MVP-16CNN (P2)   │ MVP-16B (P0-old) │              │ MVP-16T ⚠️   │              │
+│ MVP-T2 (P1)      │ **MVP-D0 (P0)**  │              │ MVP-1.0      │ MVP-T0       │
+│ MVP-T3 (P2)      │ **MVP-16A-0(P0)**│              │ MVP-1.1      │ MVP-T1       │
+│ MVP-16A-1 (P1)   │ **MVP-NN-0(P0)** │              │ MVP-1.2      │              │
+│ MVP-16A-2 (P1)   │ MVP-16B (P0-old) │              │ MVP-1.4 ✅   │              │
+│ MVP-16L (P1)     │                  │              │ MVP-1.6 ✅   │              │
+│ MVP-16CNN (P2)   │                  │              │ MVP-16T ❌   │              │
 │ MVP-2.x          │                  │              │              │              │
 └──────────────────┴──────────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
-### 🔴 新 P0 优先级（2025-12-23 更新）
+### 🔴 新 P0 优先级（2025-12-23 更新 v2 - Fisher 失败后）
 
-> **核心策略**：先校准 Fisher ceiling，并行验证 MoE headroom 和 NN baseline
+> **核心策略**：放弃 Fisher ceiling，改用经验上限 + 直接验证 MoE/NN
 
-**P0 四件套（决定路线）**：
-1. **MVP-T1 (Confounding)** → 校准 Fisher ceiling 是否虚高
-2. **MVP-T0 (Monotonicity)** → sanity check: noise↑ 时 R²_max↓
-3. **MVP-16A-0 (Oracle MoE)** → 决定"noise=1 下 MoE 值不值"
-4. **MVP-NN-0 (1D CNN)** → 验证"表示学习能否吃掉 headroom"
+**P0 三件套（决定路线）**：
+1. **MVP-D0 (noise=0 Oracle)** → 用经验上限替代理论 ceiling
+2. **MVP-16A-0 (Oracle MoE)** → 决定"noise=1 下 MoE 值不值"
+3. **MVP-NN-0 (1D CNN)** → 验证"表示学习能否吃掉 headroom"
 
 **决策树**：
 ```
-MVP-T1 完成后
-├─ R²_max 降到 0.7-0.85 → ceiling 校准成功
-│   └─ 继续用校准后的值做叙事
-└─ R²_max 仍 >0.9 → ceiling 可信
-    └─ 巨大 headroom 确实存在
+MVP-D0 完成后
+├─ noise=0 R² > 0.95 → 确认理论上可接近很高
+│   └─ headroom = R²(noise=0) - R²(noise=1)
+└─ noise=0 R² ≈ 0.80 → 物理上限本身不高
+    └─ 调整预期
 
 MVP-16A-0 完成后
 ├─ ΔR² ≥ 0.03 → MoE 有戏
@@ -729,14 +738,18 @@ MVP-16A-0 完成后
 
 MVP-NN-0 完成后
 ├─ R² > 0.62 → NN 能吃 headroom
-│   └─ 形成三段式证据链
+│   └─ 形成证据链
 └─ R² ≈ 0.57 → 问题更深
     └─ 考虑 multi-task 解纠缠
 ```
 
-**旧 P0（降级）**：
-- MVP-16B (Baseline 可信度) → 重要但可稍后
-- MVP-1.5 (LightGBM 参数) → 已接近 ceiling，收益有限
+**已取消**：
+- ~~MVP-T0 (Noise Monotonicity)~~ → 方法失败
+- ~~MVP-T1 (Confounding Ablation)~~ → 方法失败
+
+**降级**：
+- MVP-T2 (LLR Jacobian) → P1，等有时间再尝试
+- MVP-16B (Baseline 可信度) → 可稍后
 
 ## 4.2 Key Conclusions Snapshot
 
@@ -861,6 +874,10 @@ MVP-NN-0 完成后
 | 2025-12-23 | 添加 MVP-16A-0/A-1/A-2 (MoE @ noise=1) | §2.1, §3 |
 | 2025-12-23 | 添加 MVP-NN-0 (1D CNN whiten) | §2.1, §3 |
 | 2025-12-23 | 更新 P0 优先级和决策树 | §4.1 |
+| **2025-12-23** | **❌ MVP-16T 失败：方法论缺陷（非规则网格）** | §2.1, §3, §4.1 |
+| 2025-12-23 | 取消 MVP-T0, T1；降级 T2, T3 | §2.1, §3 |
+| 2025-12-23 | 新增 Phase D + MVP-D0 (经验上限) | §2.1, §3 |
+| 2025-12-23 | 更新 P0 为 D0 + 16A-0 + NN-0 三件套 | §4.1 |
 
 ---
 
@@ -964,3 +981,34 @@ Ridge 最优 α 在 1e4~1e5 之间，比原 baseline (α=5000) 高 1-2 个数量
 | 继续 CNN | 🔴 P0 | MVP-16CNN |
 | Multi-task 解纠缠 | 🟡 P1 | 后续 |
 | Bayesian CRLB (van Trees) | 🟢 P2 | 可选 |
+
+---
+
+# ❌ MVP-16T 失败更新 (2025-12-23)
+
+## 状态变更
+
+| 项目 | 原状态 | 新状态 |
+|------|--------|--------|
+| MVP-16T | ✅ Done | ❌ **Failed** |
+
+## 失败根因
+
+1. **数据不是规则网格**：BOSZ 为连续采样，T_eff/log_g/[M/H] 各有 ~40k 唯一值
+2. **邻近点差分法失效**：在非规则网格上无法正确估计 ∂μ/∂θ
+3. **数值异常**：CRLB 跨越 20 个数量级，R²_max 呈双峰分布
+
+## 结果状态
+
+| 指标 | 值 | 可靠性 |
+|------|-----|--------|
+| R²_max (median) | 0.9661 | ❌ **不可信** |
+| Schur decay | 0.2366 | ❌ **不可信** |
+
+## 下一步
+
+- **暂停 MVP-16T**：等待方法论改进
+- 考虑替代方案：
+  - 方案 A：BOSZ 前向模型数值微分
+  - 方案 B：局部多项式回归
+  - 方案 D：经验上限（noise=0 Oracle）
