@@ -28,3 +28,5 @@ Thumbs.db
 *.tmp
 *.temp
 
+
+.obsidian/plugins/chatgpt-md/data.json

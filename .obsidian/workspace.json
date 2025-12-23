@@ -6,6 +6,7 @@
       {
         "id": "e69c64f63e1f5e44",
         "type": "tabs",
+        "dimension": 60.87866108786611,
         "children": [
           {
             "id": "ba8d2fa3bd5a3042",
@@ -13,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/scaling/scaling_roadmap_20251222.md",
+                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "scaling_roadmap_20251222"
+              "title": "exp_scaling_fisher_ceiling_20251223"
             }
           }
         ]
@@ -26,6 +27,7 @@
       {
         "id": "67655dc3eed611d1",
         "type": "tabs",
+        "dimension": 39.12133891213389,
         "children": [
           {
             "id": "440ea80dfc280cb5",
@@ -98,7 +100,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 225.5
+    "width": 403.50312423706055
   },
   "right": {
     "id": "eab51a00943c2f05",
@@ -114,7 +116,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "logg/scaling/scaling_hub_20251222.md",
+                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -124,7 +126,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for scaling_hub_20251222"
+              "title": "Backlinks for exp_scaling_fisher_ceiling_20251223"
             }
           },
           {
@@ -133,12 +135,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "logg/scaling/scaling_hub_20251222.md",
+                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from scaling_hub_20251222"
+              "title": "Outgoing links from exp_scaling_fisher_ceiling_20251223"
             }
           },
           {
@@ -176,13 +178,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "logg/scaling/scaling_hub_20251222.md",
+                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of scaling_hub_20251222"
+              "title": "Outline of exp_scaling_fisher_ceiling_20251223"
             }
           },
           {
@@ -200,7 +202,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 348.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -214,7 +216,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "440ea80dfc280cb5",
+  "active": "1934de817ef7bce4",
   "lastOpenFiles": [
     "logg/scaling/scaling_roadmap_20251222.md",
     "logg/scaling/scaling_hub_20251222.md",
