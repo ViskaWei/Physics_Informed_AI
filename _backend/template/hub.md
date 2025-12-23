@@ -5,13 +5,6 @@
 > **Created:** TODO | **Updated:** TODO  
 > **Status:** 🔄 Exploring / 🎯 Converging / ✅ Stable
 
-<!-- 
-📝 Language Convention:
-- Headers & section titles: English (keep as-is)
-- Content (hypotheses, conclusions, notes): Chinese OK
-- Table column headers: English (keep as-is)
-- Table cell content: Chinese OK
--->
 
 ## 🔗 Related Files
 

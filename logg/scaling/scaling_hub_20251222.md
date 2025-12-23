@@ -5,14 +5,6 @@
 > **Created:** 2025-12-22 | **Updated:** 2025-12-22  
 > **Status:** 🔄 Exploring
 
-<!-- 
-📝 Language Convention:
-- Headers & section titles: English (keep as-is)
-- Content (hypotheses, conclusions, notes): Chinese OK
-- Table column headers: English (keep as-is)
-- Table cell content: Chinese OK
--->
-
 ## 🔗 Related Files
 
 | Type | File | Description |
