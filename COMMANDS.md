@@ -27,7 +27,7 @@
 | `reg` | ✅ | ✅ | ✅ | ❌ | 登记单个实验 |
 | `n` | ✅ | ✅ | ✅ | ✅ | 新建实验计划 |
 | `a` | ❌ | ❌ | ❌ | ✅ | 归档实验结果 |
-| `u` | ❌ | ❌ | ❌ | ✅ | 更新文档 |
+| `u [exp_id]` | ❌ | ❌ | ❌ | ✅ | 🆕 完整更新+同步hub/roadmap+git push |
 | `report` | ❌ | ❌ | ❌ | ✅ | 生成周报 |
 | `card` | ❌ | ❌ | ❌ | ✅ | 创建知识卡片 |
 | `todo` | ❌ | ❌ | ❌ | ✅ | 管理待办 |
@@ -131,21 +131,66 @@ AI: ✅ 已创建: logg/gta/exp_mvp_experiments_20251201.md
 
 ---
 
-### 📝 更新文档
+### 📝 更新文档 🆕
 ```
 触发词: u | U | update | 更新
+变体: 
+  - u [experiment_id] - 完整更新：补全exp+同步hub/roadmap+git push
+  - u [关键词] - 智能追加内容+git push
 ```
 
-**作用**: 智能匹配文件并更新相关章节
+**作用**: 
+1. **完整更新模式** (`u [experiment_id]`): 审查exp报告完整性 → 去代码仓补全遗漏 → 同步hub/roadmap → 自动git push
+2. **智能追加模式** (`u [关键词]`): 匹配文件 → 更新相关章节 → 自动git push
 
-**示例**:
+**示例 1 - 完整更新**:
+```
+用户: u VIT-20251222-scaling-ridge-01
+
+AI: 📝 完整更新实验报告...
+    
+    📖 Step 2: 审查报告完整性
+    | 章节 | 状态 |
+    |------|------|
+    | ⚡ 核心结论速览 | ✅ |
+    | §6.2 实验流程 | ❌ 缺少代码引用 |
+    
+    🔧 Step 3: 补全遗漏内容
+    📁 搜索 ~/VIT/ 仓库...
+    ✅ 找到: ~/VIT/scripts/scaling_ridge_experiment.py
+    ✅ 已补充到 §6.2 实验流程记录
+    
+    📤 Step 4: 同步到 hub.md
+    ✅ §2 假设金字塔: H1.1 状态 → ✅
+    ✅ §3 洞见汇合站: 添加新洞见
+    
+    📤 Step 5: 同步到 roadmap.md
+    ✅ §2.1 实验总览: MVP-1.1 状态 → ✅
+    ✅ §4.2 核心结论快照: 添加条目
+    
+    📦 Step 6: Git Commit + Push
+    ✅ git commit -m "update: VIT-20251222-scaling-ridge-01"
+    ✅ git push
+```
+
+**示例 2 - 智能追加**:
 ```
 用户: u CNN 实验发现 dilation=2 时感受野覆盖吸收线宽度
 
 AI: 📝 更新文档...
     🔍 匹配到: logg/cnn/exp_cnn_dilated_kernel_sweep_20251201.md
     ✅ 已添加到 §4.1 宏观层洞见
+    
+    📦 Git Push...
+    ✅ git commit + push 完成
 ```
+
+**代码仓库路由**:
+| experiment_id 前缀 | 代码仓库 |
+|-------------------|---------|
+| `VIT-*` | `~/VIT/` |
+| `BS-*` | `~/BlindSpotDenoiser/` |
+| `SD-*` | `~/SpecDiffusion/` |
 
 ---
 

@@ -549,17 +549,193 @@ AI: 📝 立项：检测到新主题 diffusion...
 
 ### 触发词
 - `u` / `U` / `update` / `更新`
-- 后面跟着要补充的信息/想法/发现
+- `u [experiment_id]` - 🆕 **完整更新指定实验（补全+同步hub/roadmap+git push）**
+- `u [关键词/描述]` - 智能匹配并追加内容
 
-### 工作流程
+---
 
-#### Step 1: 智能匹配目标文件
+### 🆕 模式 1: `u [experiment_id]` — 完整实验更新流程
+
+**触发条件**：`u` 后面跟着实验 ID（如 `VIT-20251222-scaling-01`）或实验文件路径
+
+**用途**：
+- 补全实验报告中遗漏的内容（如实验流程、代码引用）
+- 自动同步核心发现到 hub.md 和 roadmap.md
+- 完成后自动 git commit + push
+
+#### 工作流程
+
+```
+用户: u VIT-20251222-scaling-01
+    │
+    ├─ Step 1: 定位实验报告
+    │   - 在 logg/ 下搜索匹配的 exp_*.md
+    │   - 确认文件路径
+    │
+    ├─ Step 2: 审查实验报告完整性
+    │   📖 仔细阅读 exp.md 全文
+    │   
+    │   🔍 检查清单：
+    │   - [ ] ⚡ 核心结论速览 是否填写完整？
+    │   - [ ] §2 实验设计 是否有具体参数？
+    │   - [ ] §3 实验图表 是否有图表描述？
+    │   - [ ] §4 关键洞见 是否有分析？
+    │   - [ ] §5.5 关键数字速查 是否有量化结果？
+    │   - [ ] §6.1 数值结果表 是否完整？
+    │   - [ ] §6.2 实验流程记录 是否有代码/命令？
+    │
+    ├─ Step 3: 补全遗漏内容
+    │   
+    │   🔎 如果缺少实验流程/代码：
+    │   - 根据 experiment_id 推断仓库位置：
+    │     - VIT-* → ~/VIT/
+    │     - BS-* → ~/BlindSpotDenoiser/
+    │     - SD-* → ~/SpecDiffusion/
+    │   - 在仓库中搜索相关脚本/配置
+    │   - 补充到 §6.2 实验流程记录
+    │   
+    │   🔎 如果缺少数值结果：
+    │   - 在仓库的 logs/ 或 outputs/ 中查找
+    │   - 补充到 §5.5 和 §6.1
+    │
+    ├─ Step 4: 提炼假设与洞见 → 同步到 hub.md
+    │   
+    │   📤 从 exp.md 提取并更新 hub.md：
+    │   - 核心假设验证结果 → §2 假设金字塔（更新状态 ✅/❌）
+    │   - 重要洞见 → §3 洞见汇合站
+    │   - 设计原则 → §5 设计原则库
+    │   - 关键数字 → §5.2 关键数字速查
+    │
+    ├─ Step 5: 同步数值结果 → roadmap.md
+    │   
+    │   📤 从 exp.md 提取并更新 roadmap.md：
+    │   - 实验条目 → §2.1 实验总览（更新状态为 ✅）
+    │   - 核心结论 → §4.2 核心结论快照
+    │   - 数值结果 → §6.1 数值结果汇总表
+    │
+    └─ Step 6: 自动 Git Commit + Push
+        
+        📦 执行命令：
+        cd /home/swei20/Physics_Informed_AI
+        git add logg/[topic]/
+        git commit -m "update: [experiment_id] 补全报告并同步hub/roadmap"
+        git push
+```
+
+#### 实验仓库定位规则
+
+| experiment_id 前缀 | 代码仓库路径 | 典型脚本位置 |
+|-------------------|-------------|-------------|
+| `VIT-*` | `~/VIT/` | `scripts/`, `experiments/` |
+| `BS-*` | `~/BlindSpotDenoiser/` | `scripts/`, `src/` |
+| `SD-*` | `~/SpecDiffusion/` | `scripts/`, `experiments/` |
+
+#### 代码搜索策略
+
+```bash
+# 在对应仓库中搜索实验相关代码
+cd ~/VIT  # 根据前缀选择仓库
+
+# 搜索实验名称关键词
+grep -r "scaling" scripts/ --include="*.py"
+grep -r "ridge" experiments/ --include="*.py"
+
+# 搜索配置文件
+find . -name "*.yaml" -o -name "*.json" | xargs grep "experiment_name"
+
+# 查找最近修改的相关文件
+find . -name "*.py" -mtime -7 | xargs grep -l "关键词"
+```
+
+#### 示例对话
+
+```
+用户: u VIT-20251222-scaling-ridge-01
+
+AI: 📝 完整更新实验报告...
+
+    🔍 Step 1: 定位实验报告
+    ✅ 找到: logg/scaling/exp/exp_ridge_100k_noise_sweep_20251222.md
+    
+    📖 Step 2: 审查报告完整性
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    | 章节 | 状态 |
+    |------|------|
+    | ⚡ 核心结论速览 | ✅ 已填写 |
+    | §2 实验设计 | ✅ 已填写 |
+    | §3 实验图表 | ⚠️ 缺少图表描述 |
+    | §4 关键洞见 | ✅ 已填写 |
+    | §5.5 关键数字 | ✅ 已填写 |
+    | §6.1 数值结果表 | ✅ 已填写 |
+    | §6.2 实验流程 | ❌ 缺少代码引用 |
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    🔧 Step 3: 补全遗漏内容
+    📁 搜索 ~/VIT/ 仓库...
+    ✅ 找到相关脚本: ~/VIT/scripts/scaling_ridge_experiment.py
+    ✅ 已补充到 §6.2 实验流程记录
+    ✅ 已补充 §3 图表描述
+    
+    📤 Step 4: 同步到 hub.md
+    ✅ logg/scaling/scaling_hub_20251222.md
+       - §2 假设金字塔: H1.1 状态更新为 ✅
+       - §3 洞见汇合站: 添加 "100k数据Ridge最优alpha=10"
+       - §5.2 关键数字: 添加 "R²=0.987 @ α=10"
+    
+    📤 Step 5: 同步到 roadmap.md
+    ✅ logg/scaling/scaling_roadmap_20251222.md
+       - §2.1 实验总览: MVP-1.1 状态 → ✅
+       - §4.2 核心结论快照: 添加条目
+       - §6.1 数值结果表: 添加完整数据
+    
+    📦 Step 6: Git Commit + Push
+    ✅ git add logg/scaling/
+    ✅ git commit -m "update: VIT-20251222-scaling-ridge-01 补全报告并同步hub/roadmap"
+    ✅ git push
+    
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    ✨ 更新完成！
+    
+    📝 已更新文件:
+    - logg/scaling/exp/exp_ridge_100k_noise_sweep_20251222.md
+    - logg/scaling/scaling_hub_20251222.md
+    - logg/scaling/scaling_roadmap_20251222.md
+```
+
+#### hub.md 同步内容映射
+
+| exp.md 来源 | hub.md 目标位置 |
+|------------|----------------|
+| ⚡ 假设验证结果 | §2 假设金字塔（更新状态） |
+| §4 关键洞见 | §3 洞见汇合站 |
+| §5.3 设计启示 | §5.1 已确认原则 |
+| §5.5 关键数字 | §5.2 关键数字速查 |
+
+#### roadmap.md 同步内容映射
+
+| exp.md 来源 | roadmap.md 目标位置 |
+|------------|-------------------|
+| Header 状态 | §2.1 实验总览（状态列） |
+| ⚡ 一句话总结 | §4.2 核心结论快照 |
+| §5.5 关键数字 | §6.1 数值结果汇总表 |
+
+---
+
+### 模式 2: `u [关键词/描述]` — 智能追加内容
+
+**触发条件**：`u` 后面跟着描述性内容（非实验 ID）
+
+**用途**：快速向相关文档追加新发现/想法
+
+#### 工作流程
+
+##### Step 1: 智能匹配目标文件
 根据用户输入的内容，自动匹配最相关的文件：
 - 关键词匹配 → 找到对应 `logg/[topic]/` 目录
-- 内容类型判断 → 决定更新 exp.md 还是 main.md
+- 内容类型判断 → 决定更新 exp.md 还是 hub.md
 - 如果找不到匹配 → 按 `n` 流程创建新文件
 
-#### Step 2: 找到合适的章节位置
+##### Step 2: 找到合适的章节位置
 | 内容类型 | 目标位置 |
 |---------|---------|
 | 新发现/洞见 | exp.md §4 关键洞见 或 **hub.md §3 洞见汇合站** |
@@ -571,12 +747,13 @@ AI: 📝 立项：检测到新主题 diffusion...
 | MVP 进度 | **roadmap.md §4 进度追踪** |
 | 通用笔记 | 相关文件的附录或新建笔记 |
 
-#### Step 3: 更新文件
+##### Step 3: 更新文件并 Git Push
 - 在合适位置插入/追加新内容
 - 保持格式一致
 - 更新"最后更新"时间戳
+- **自动 git commit + push**
 
-### 示例
+#### 示例
 ```
 用户: u CNN 实验发现 dilation=2 时感受野刚好覆盖典型吸收线宽度，
       这可能是性能最优的物理原因
@@ -586,6 +763,10 @@ AI: 📝 更新文档...
     ✅ 已添加到 §4.1 宏观层洞见:
        "dilation=2 时感受野覆盖典型吸收线宽度，物理解释性能最优"
     ✅ 已添加到 §5.4 物理解释
+    
+    📦 Git Push...
+    ✅ git commit -m "update: CNN dilation物理解释"
+    ✅ git push
 ```
 
 ```
@@ -596,6 +777,9 @@ AI: 📝 更新文档...
     ✅ 已添加到 §3 洞见汇合站:
        "alpha=10 效果最好"
     ✅ 已添加到 §5 设计原则库
+    
+    📦 Git Push...
+    ✅ git commit + push 完成
 ```
 
 ```
@@ -603,13 +787,27 @@ AI: 📝 更新文档...
 
 AI: 📝 未找到直接匹配的文件
     🆕 按 `n` 流程创建: logg/NN/exp_attention_pooling_20251201.md
+    
+    📦 Git Push...
+    ✅ git commit + push 完成
 ```
 
-### 匹配优先级
-1. **精确匹配**：用户提到具体实验名/文件名
+#### 匹配优先级
+1. **精确匹配**：用户提到具体实验名/文件名/experiment_id
 2. **主题匹配**：关键词匹配 topic (cnn, ridge, pca...)
 3. **最近编辑**：同主题下最近修改的文件
 4. **创建新文件**：无匹配时
+
+---
+
+### 快捷命令对照
+
+| 命令格式 | 功能 | 自动 Git Push |
+|---------|------|--------------|
+| `u VIT-20251222-xxx-01` | 完整更新：补全+同步hub/roadmap | ✅ 是 |
+| `u logg/scaling/exp_xxx.md` | 完整更新指定文件 | ✅ 是 |
+| `u CNN dilation=2 物理解释` | 智能追加内容 | ✅ 是 |
+| `u ridge alpha=10 最优` | 智能追加内容 | ✅ 是 |
 
 ### ⚠️ 核心理解：归档 ≠ 移动文件
 
@@ -1175,7 +1373,7 @@ AI: 📖 分析实验报告...
 | `reg` | 登记单个实验 | `experiments_index/index.csv` |
 | `n` | 新建实验计划 | `logg/[topic]/exp_*.md` |
 | `a` | 归档实验结果 | `logg/[topic]/exp_*.md` |
-| `u` | 更新文档 | 智能匹配 |
+| `u [exp_id]` | 🆕 完整更新：补全exp+同步hub/roadmap+git push | `logg/[topic]/` |
 | `p` | 生成 Coding Prompt 🆕 | `_backend/template/coding_prompt.md` |
 | `merge` | 合并相似实验 🆕 | `logg/[topic]/exp_[topic]_consolidated_*.md` |
 | `card` | 创建知识卡片 | `logg/[topic]/kc_*.md` |
