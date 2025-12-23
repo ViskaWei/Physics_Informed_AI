@@ -329,6 +329,9 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 | P1 | Ridge α 应更大 | α ∈ [1e4, 1e5] 而非 5000 | MVP-1.4 倒 U 型曲线 | noise=1 场景 |
 | P2 | α 与数据量正相关 | 更多数据 → 更大的最优 α | 100k: α=3e4, 1M: α=1e5 | 线性模型 |
 | P3 | 避免过度正则化 | α > 1e6 时 R² 急剧下降 | MVP-1.4 扫描 | Ridge |
+| **P4** | **LightGBM 必须用 raw 输入** | ❌ 禁止 StandardScaler | MVP-1.6: standardized ΔR²=-0.36 | 树模型 |
+| **P5** | **Ridge 对 scaling 不敏感** | StandardScaler 可用可不用 | MVP-1.6: raw ≈ standardized | 线性模型 |
+| **P6** | **SNR 化效果有限** | 不推荐作为默认输入 | MVP-1.6: ΔR²=+0.015 < 0.02 | 全模型 |
 
 ## 5.2 Pending Principles
 
@@ -349,6 +352,10 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 | Ridge 最优 α (1M) | 1.00e+05 | noise=1 | MVP-1.4 |
 | LightGBM R² (1M, σ=1) | 0.5709 | 1M train | MVP-1.1 |
 | α 调优提升幅度 | 0.4%~2.5% | vs baseline α=5000 | MVP-1.4 |
+| **LightGBM raw vs std ΔR²** | **-0.3567** | StandardScaler 严重损害 | MVP-1.6 |
+| **SNR_centered vs std ΔR² (Ridge)** | +0.0146 | 微小提升，未达阈值 | MVP-1.6 |
+| **最优输入 (Ridge)** | snr_centered | R²=0.5222 | MVP-1.6 |
+| **最优输入 (LightGBM)** | raw | R²=0.5533 | MVP-1.6 |
 
 ---
 
@@ -409,6 +416,7 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 | 2025-12-23 | 添加 Phase 16 假设组（H-16T, H-16L, H-16B） | §2.3 |
 | 2025-12-23 | 更新依赖图：展示 Phase 16 三件套 | §2.4 |
 | **2025-12-23** | **MVP-16T 完成：H-16T.1, H-16T.2, H3.1 验证通过** | §2.2, §2.3, §3 |
+| **2025-12-23** | **MVP-1.6 完成：H1.7.1 ❌ REJECTED，洞见 C3 汇合，P4-P6 原则** | §2.3, §3.1, §3.2, §5.1, §5.3 |
 
 ---
 

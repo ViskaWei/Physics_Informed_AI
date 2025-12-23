@@ -569,6 +569,7 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 | MVP-1.3 | TODO: 确认 plateau 统计可信度 | - | ⏳ |
 | MVP-1.4 | 倒 U 型曲线确认，最优 α=1e4~1e5，优化提升仅 0.4%~2.5% | 100k: α=3.16e+04, R²=0.4856; 1M: α=1e+05, R²=0.5017 | ✅ |
 | MVP-1.5 | TODO: 验证 LightGBM 参数极限 | - | ⏳ |
+| **MVP-1.6** | **H1.7.1 ❌: SNR ΔR²=+0.015 未达阈值; ⚠️ StandardScaler 严重损害 LightGBM (-0.36)** | Ridge snr_centered: R²=0.5222; LightGBM raw: R²=0.5533 | ✅ |
 
 ## 4.3 Timeline
 
@@ -578,6 +579,7 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 | 2025-12-22 | Phase 1.x 立项 | MVP-1.3~1.9 规划完成 |
 | 2025-12-22 | P0 exp.md 框架创建 | stats, ridge-alpha, lgbm-param |
 | 2025-12-23 | MVP-1.4 完成 | 最优 α=1e4~1e5，H1.5.1 验证 ✅ |
+| **2025-12-23** | **MVP-1.6 完成** | H1.7.1 ❌, LightGBM 必须用 raw 输入 |
 
 ---
 
