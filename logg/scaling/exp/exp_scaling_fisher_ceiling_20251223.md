@@ -377,7 +377,29 @@ $$
 ### 6.2.2 执行命令
 
 ```bash
+cd ~/VIT
 python scripts/scaling_fisher_ceiling.py --n-samples 10000
+```
+
+### 6.2.3 核心代码引用
+
+**脚本**: `~/VIT/scripts/scaling_fisher_ceiling.py` (812 行)
+
+**关键函数**:
+- `compute_fisher_info_per_sample()`: 计算单样本 3×3 Fisher 信息矩阵
+- `compute_crlb_from_fisher()`: 从 Fisher 矩阵计算 CRLB 和 Schur complement
+- `compute_r2_max()`: CRLB → R²_max 转换
+
+**核心公式实现**:
+```python
+# Fisher Information Matrix: I = D @ diag(Σ⁻¹) @ D.T
+D_weighted = D * np.sqrt(sigma_inv_diag)  # (3, n_features)
+I = D_weighted @ D_weighted.T  # (3, 3)
+
+# Schur complement: I_gg_eff = I_gg - I_g,η @ I_ηη⁻¹ @ I_η,g
+I_gg_eff = I_gg - I_g_nuisance @ I_nuisance_inv @ I_g_nuisance
+crlb_logg_marginalized = 1.0 / max(I_gg_eff, REGULARIZATION)
+schur_decay = I_gg_eff / I_gg
 ```
 
 ---
