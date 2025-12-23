@@ -1,0 +1,245 @@
+{
+  "main": {
+    "id": "54fcb407b80c7eee",
+    "type": "split",
+    "children": [
+      {
+        "id": "e69c64f63e1f5e44",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ba8d2fa3bd5a3042",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "logg/scaling/scaling_hub_20251222.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "scaling_hub_20251222"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "179767cdcb311f97",
+    "type": "split",
+    "children": [
+      {
+        "id": "b9f94ca2c5a90fbd",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1934de817ef7bce4",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "bfb08af555221e57",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "196b84bee479c12c",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 225.5
+  },
+  "right": {
+    "id": "eab51a00943c2f05",
+    "type": "split",
+    "children": [
+      {
+        "id": "c83f04d4399ecaba",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "aa756b846c07fdd7",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "logg/scaling/scaling_hub_20251222.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for scaling_hub_20251222"
+            }
+          },
+          {
+            "id": "938d67c8df36ca58",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "logg/scaling/scaling_hub_20251222.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from scaling_hub_20251222"
+            }
+          },
+          {
+            "id": "dfb8d25f8b79b234",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "aaf7e420c018ad0b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "63a5774f02dbe350",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "logg/scaling/scaling_hub_20251222.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of scaling_hub_20251222"
+            }
+          },
+          {
+            "id": "95b094f5d53bc452",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "ba8d2fa3bd5a3042",
+  "lastOpenFiles": [
+    "tempfit/template_fitting_analysis.md",
+    "tempfit",
+    "logg/scaling/sessions/coding_prompt_whitening_20251222.md",
+    "logg/scaling/img/scaling_whitening_scatter.png",
+    "logg/scaling/img/scaling_whitening_residual.png",
+    "logg/scaling/img/scaling_whitening_delta.png",
+    "logg/scaling/img/scaling_whitening_comparison.png",
+    "logg/scaling/img/scaling_ridge_pred_vs_true.png",
+    "logg/scaling/img/scaling_ridge_optimal_alpha.png",
+    "logg/scaling/img/scaling_ridge_alpha_extended.png",
+    "logg/scaling/img/scaling_pls_vs_pca.png",
+    "logg/scaling/img/scaling_pca_space_comparison.png",
+    "logg/scaling/img/scaling_pca_pls_pred_vs_true.png",
+    "logg/scaling/exp/exp_scaling_whitening_snr_20251222.md",
+    "logg/scaling/exp/exp_scaling_stats_validation_20251222.md",
+    "logg/scaling/exp/exp_scaling_ridge_alpha_extended_20251222.md",
+    "logg/scaling/exp/exp_scaling_pca_pls_comparison_20251223.md",
+    "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md",
+    "logg/scaling/exp/exp_scaling_lgbm_param_extended_20251222.md",
+    "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
+    "logg/scaling/exp/exp_scaling_baseline_stats_20251223.md",
+    "logg/scaling/sessions",
+    "logg/scaling/scaling_roadmap_20251222.md",
+    "logg/scaling/scaling_hub_20251222.md",
+    "logg/scaling/img",
+    "logg/scaling/exp",
+    "logg/scaling",
+    "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
+    "logg/moe/exp/exp_moe_1m_high_noise_20251223.md",
+    "logg/logg_1m/exp/exp_logg_1m_normalization_20251222.md",
+    "logg/logg_1m/exp/exp_logg_1m_sensitive_window_20251222.md",
+    "logg/logg_1m/exp/exp_logg_1m_multitask_20251222.md",
+    "logg/logg_1m/exp/exp_logg_1m_foundation_protocol_20251222.md",
+    "logg/logg_1m/exp/exp_logg_1m_fisher_upper_bound_20251222.md",
+    "logg/logg_1m/exp/exp_logg_1m_error_input_20251222.md",
+    "logg/logg_1m/exp/exp_logg_1m_baseline_scaling_20251222.md",
+    "logg/logg_1m/logg_1m_roadmap_20251222.md",
+    "logg/logg_1m/logg_1m_hub_20251222.md",
+    "logg/logg_1m/exp",
+    "logg/logg_1m",
+    "logg/benchmark/img/benchmark_noise_vs_r2.py",
+    "data/bosz50k/z0/mag205_225_lowT_1M.md",
+    "data/bosz50k/z0",
+    "data/bosz50k",
+    "test.md"
+  ]
+}
