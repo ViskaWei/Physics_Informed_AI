@@ -28,5 +28,8 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Data files - do not commit
+*.h5
+*.hdf5
 
 .obsidian/plugins/chatgpt-md/data.json
