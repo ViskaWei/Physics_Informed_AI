@@ -336,12 +336,12 @@ TODO
 
 ## 6.3 相关文件
 
-| 类型 | 路径 | 说明 |
-|------|------|------|
-| MoE Hub | `logg/moe/moe_hub_20251203.md` | H-16O, Q10.3 |
-| Scaling Hub | `logg/scaling/scaling_hub_20251222.md` | H4.1 |
-| 本报告 | `logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md` | 当前文件 |
-| 参考：noise=0.2 | `logg/moe/exp/exp_moe_9expert_phys_gate_20251204.md` | 低噪声结果 |
+| 类型           | 路径                                                    | 说明           |
+| ------------ | ----------------------------------------------------- | ------------ |
+| MoE Hub      | `logg/moe/moe_hub_20251203.md`                        | H-16O, Q10.3 |
+| Scaling Hub  | `logg/scaling/scaling_hub_20251222.md`                | H4.1         |
+| 本报告          | `logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md` | 当前文件         |
+| 参考：noise=0.2 | `logg/moe/exp/exp_moe_9expert_phys_gate_20251204.md`  | 低噪声结果        |
 
 ---
 

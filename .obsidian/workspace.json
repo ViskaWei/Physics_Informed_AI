@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/scaling/scaling_roadmap_20251222.md",
+                "file": "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "scaling_roadmap_20251222"
+              "title": "exp_moe_1m_oracle_headroom_20251223"
             }
           }
         ]
@@ -218,8 +218,13 @@
   },
   "active": "ba8d2fa3bd5a3042",
   "lastOpenFiles": [
-    "logg/scaling/scaling_hub_20251222.md",
+    "logg/ridge/ridge_main_20251130.md",
+    "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
+    "logg/moe/exp/exp_moe_1m_high_noise_20251223.md",
+    "logg/moe/moe_hub_20251203.md",
+    "logg/moe/moe_roadmap_20251203.md",
     "logg/scaling/scaling_roadmap_20251222.md",
+    "logg/scaling/scaling_hub_20251222.md",
     "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
     "tempfit/template_fitting_analysis.md",
     "tempfit",
@@ -245,8 +250,6 @@
     "logg/scaling/img",
     "logg/scaling/exp",
     "logg/scaling",
-    "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
-    "logg/moe/exp/exp_moe_1m_high_noise_20251223.md",
     "logg/logg_1m/exp/exp_logg_1m_normalization_20251222.md",
     "logg/logg_1m/exp/exp_logg_1m_sensitive_window_20251222.md",
     "logg/logg_1m/exp/exp_logg_1m_multitask_20251222.md",
@@ -259,9 +262,7 @@
     "logg/logg_1m/exp",
     "logg/logg_1m",
     "logg/benchmark/img/benchmark_noise_vs_r2.py",
-    "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "data/bosz50k/z0",
-    "data/bosz50k",
-    "test.md"
+    "data/bosz50k"
   ]
 }
