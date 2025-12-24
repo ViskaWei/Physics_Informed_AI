@@ -5,23 +5,21 @@
 > **Created:** TODO | **Updated:** TODO  
 > **Status:** 🔄 Exploring / 🎯 Converging / ✅ Stable
 
-
 ## 🔗 Related Files
 
 | Type | File | Description |
 |------|------|-------------|
-| 📍 Roadmap | [`[topic]_roadmap.md`](./[topic]_roadmap.md) | Experiment tracking |
+| 📍 Roadmap | [`[topic]_roadmap.md`](./[topic]_roadmap.md) | Experiment planning & tracking |
 | 📗 Experiments | `exp_*.md` | Detailed reports |
 | 📇 Cards | `card_*.md` | Condensed insights |
 
 ## 📑 Contents
 
 - [1. 🌲 Question Tree](#1--question-tree)
-- [2. 🔺 Hypothesis Pyramid](#2--hypothesis-pyramid)
+- [2. 🎯 Answer Key + Strategic Route](#2--answer-key--strategic-route)
 - [3. 💡 Insight Confluence](#3--insight-confluence)
-- [4. 🧭 Strategic Navigation](#4--strategic-navigation)
-- [5. 📐 Design Principles](#5--design-principles)
-- [6. 📎 Appendix](#6--appendix)
+- [4. 📐 Design Principles](#4--design-principles)
+- [5. 📎 Appendix](#5--appendix)
 
 ---
 
@@ -38,17 +36,23 @@
 ```
 🎯 Top-Level: [Core question]
 │
-├── Q1: [Sub-question 1]
-│   ├── Q1.1: [Detail] → [Status] [Source]
-│   ├── Q1.2: [Detail] → [Status]
-│   └── Q1.3: [Detail] → [Status]
+├── A) [Branch A question]
+│   ├── A.1: [Detail] → [Status] [Source]
+│   ├── A.2: [Detail] → [Status]
+│   └── A.3: [Detail] → [Status]
 │
-├── Q2: [Sub-question 2]
-│   ├── Q2.1: [Detail] → [Status]
-│   └── Q2.2: [Detail] → [Status]
+├── B) [Branch B question]
+│   ├── B.1: [Detail] → [Status]
+│   └── B.2: [Detail] → [Status]
 │
-└── Q3: [Sub-question 3]
-    └── Q3.1: [Detail] → [Status]
+├── C) [Branch C question]
+│   └── C.1: [Detail] → [Status]
+│
+├── D) [Branch D question]
+│   └── D.1: [Detail] → [Status]
+│
+└── E) [Branch E question]
+    └── E.1: [Detail] → [Status]
 
 Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Closed
 ```
@@ -64,57 +68,96 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 
 ---
 
-# 2. 🔺 Hypothesis Pyramid
+# 2. 🎯 Answer Key + Strategic Route
 
-> **Strategic → Tactical → Testable hypotheses, progressively refined**
+> **§1 提出问题，§2 给出当前答案 + 战略推荐**
+>
+> ⚠️ **职责边界**: 只回答"知道什么、该往哪走"，不做执行计划（→ Roadmap）
 
-## 2.1 L1 Strategic Hypotheses
+## 2.0 Strategic Route Recommendation
 
-> **Core beliefs that determine research direction**
+> **基于当前证据的战略推荐**
 
-| # | Hypothesis | Status | If True | If False |
-|---|------------|--------|---------|----------|
-| **H1** | [Core belief 1] | ⏳ | [Implication] | [Alternative] |
-| **H2** | [Core belief 2] | ⏳ | [Implication] | [Alternative] |
+**推荐路线：[Route X]**
 
-## 2.2 L2 Tactical Hypotheses
+| Route | 路线名称 | 当前倾向 | 关键理由 |
+|-------|---------|---------|---------|
+| Route I | [路线 I 名称] | 🟡 待验证 | [理由] |
+| **Route M** | [路线 M 名称] | 🟢 **推荐** | [理由] |
+| Route S | [路线 S 名称] | 🔴 高风险 | [理由] |
 
-> **Concrete implementation paths for strategic hypotheses**
+> 📋 **验证计划**见 [Roadmap §1 Decision Gates](./[topic]_roadmap.md#1--decision-gates)
 
-| # | Hypothesis | Parent | Status | Key MVP |
-|---|------------|--------|--------|---------|
-| **H1.1** | [Refined hypothesis] | H1 | ⏳ | MVP-X |
-| **H1.2** | [Refined hypothesis] | H1 | ⏳ | MVP-X |
-| **H2.1** | [Refined hypothesis] | H2 | ⏳ | MVP-X |
+---
 
-## 2.3 L3 Testable Hypotheses
+## 2.1 Answer Key to Question Tree
 
-> **Each hypothesis maps to a specific experiment with clear acceptance criteria**
+> **逐一回答 §1.2 的问题分支，给出决策含义**
 
-| # | Testable Hypothesis | Parent | Criteria | Result | Source |
-|---|---------------------|--------|----------|--------|--------|
-| **H1.1.1** | [Specific, quantifiable] | H1.1 | [Metric ≥ threshold] | ⏳ | - |
-| **H1.1.2** | [Specific, quantifiable] | H1.1 | [Metric ≥ threshold] | ⏳ | - |
-| **H1.2.1** | [Specific, quantifiable] | H1.2 | [Metric ≥ threshold] | ⏳ | - |
+### A) [Branch A Question]
 
-## 2.4 Dependency Graph
+| Item | Content |
+|------|---------|
+| **Current Answer** | [当前答案，基于已有实验] |
+| **Implication** | [对战略路线的影响] → 倾向 **Route X** |
+| **Confidence** | 🟢 High / 🟡 Medium / 🔴 Low |
+| **Evidence** | exp_001, exp_002 |
+
+### B) [Branch B Question]
+
+| Item | Content |
+|------|---------|
+| **Current Answer** | [当前答案] |
+| **Implication** | [对战略路线的影响] |
+| **Confidence** | 🟢 / 🟡 / 🔴 |
+| **Evidence** | exp_XXX |
+
+### C) [Branch C Question]
+
+| Item | Content |
+|------|---------|
+| **Current Answer** | [当前答案] |
+| **Implication** | [对战略路线的影响] |
+| **Confidence** | 🟢 / 🟡 / 🔴 |
+| **Evidence** | exp_XXX |
+
+### D) [Branch D Question]
+
+| Item | Content |
+|------|---------|
+| **Current Answer** | [当前答案] |
+| **Implication** | [对战略路线的影响] |
+| **Confidence** | 🟢 / 🟡 / 🔴 |
+| **Evidence** | exp_XXX |
+
+### E) [Branch E Question]
+
+| Item | Content |
+|------|---------|
+| **Current Answer** | [当前答案] |
+| **Implication** | [对战略路线的影响] |
+| **Confidence** | 🟢 / 🟡 / 🔴 |
+| **Evidence** | exp_XXX |
+
+---
+
+## 2.2 Route Decision Summary
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                   Hypothesis Pyramid Dependencies           │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   L1: [H1 Strategic]                  [H2 Strategic]        │
-│            │                              │                 │
-│            ├─────────┐                    │                 │
-│            ▼         ▼                    ▼                 │
-│   L2:  [H1.1]     [H1.2]              [H2.1]               │
-│            │         │                    │                 │
-│            ▼         ▼                    ▼                 │
-│   L3: [H1.1.1]   [H1.2.1]            [H2.1.1]              │
-│       [H1.1.2]   [H1.2.2]            [H2.1.2]              │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     当前证据指向                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   📊 Branch A: [答案摘要] ────────────► [Route 倾向]             │
+│   📊 Branch B: [答案摘要] ────────────► [Route 倾向]             │
+│   📊 Branch C: [答案摘要] ────────────► [Route 倾向]             │
+│   📊 Branch D: [答案摘要] ────────────► [Route 倾向]             │
+│   📊 Branch E: [答案摘要] ────────────► [Route 倾向]             │
+│                                                                 │
+│   🎯 综合推荐: Route X                                           │
+│   ⚠️ 待验证: [需要 Roadmap Decision Gate 确认的内容]             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -140,7 +183,6 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 |--------|---------|----------|
 | [exp_001](./exp_001.md) | [Finding 1] | [Data] |
 | [exp_002](./exp_002.md) | [Finding 2] | [Data] |
-| [exp_003](./exp_003.md) | [Finding 3] | [Data] |
 
 **Synthesized Conclusion:**
 > **[2-3 sentence summary]**
@@ -167,73 +209,18 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 
 ---
 
-# 4. 🧭 Strategic Navigation
-
-> **Recommended research directions based on accumulated insights**
-
-## 4.1 Direction Status Overview
-
-```
-┌───────────────────────────────────────────────────────────────┐
-│                    Research Direction Status                  │
-├───────────────────────────────────────────────────────────────┤
-│                                                               │
-│   🟢 High Confidence (multi-exp support)   🟡 Pending         │
-│   ├── Dir A ← 3 experiments                ├── Dir C ← exp_X │
-│   └── Dir B ← 2 experiments                └── Dir D ← exp_Y │
-│                                                               │
-│   🔴 Risky (counter-evidence)              ⚫ Closed          │
-│   └── Dir E ← partially rejected           └── ~~Dir F~~     │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
-
-## 4.2 High Confidence Directions (🟢)
-
-| Direction | Evidence | Next Action | Priority |
-|-----------|----------|-------------|----------|
-| [Dir A] | exp_001, exp_002, exp_003 | [Action] | 🔴 P0 |
-| [Dir B] | exp_004, exp_005 | [Action] | 🟡 P1 |
-
-## 4.3 Pending Directions (🟡)
-
-| Direction | Depends On | Required MVP | Expected Gain |
-|-----------|------------|--------------|---------------|
-| [Dir C] | H1.2 | MVP-X | [Expected] |
-| [Dir D] | H2.1 | MVP-Y | [Expected] |
-
-## 4.4 Risky Directions (🔴)
-
-| Direction | Counter-Evidence | Possible Cause | Continue? |
-|-----------|------------------|----------------|-----------|
-| [Dir E] | exp_007 partial | [Cause] | 🟡 Cautious |
-
-## 4.5 Closed Directions (⚫)
-
-| Direction | Evidence | Reason | Lessons |
-|-----------|----------|--------|---------|
-| ~~Dir F~~ | exp_008 | [Reason] | [Learned] |
-
----
-
-# 5. 📐 Design Principles
+# 4. 📐 Design Principles
 
 > **Reusable principles distilled from experiments**
 
-## 5.1 Confirmed Principles
+## 4.1 Confirmed Principles
 
 | # | Principle | Recommendation | Evidence | Scope |
 |---|-----------|----------------|----------|-------|
 | P1 | **[Name]** | [Do/Don't] | exp_001, exp_002 | [When applicable] |
 | P2 | **[Name]** | [Do/Don't] | exp_003 | [When applicable] |
 
-## 5.2 Pending Principles
-
-| # | Principle | Initial Suggestion | Needs Verification |
-|---|-----------|--------------------|--------------------|
-| P3 | [Name] | [Suggestion] | MVP-X |
-
-## 5.3 Key Numbers Reference
+## 4.2 Key Numbers Reference
 
 > **Quick reference for important values**
 
@@ -242,25 +229,58 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 | [Metric 1] | [Value] | [Config] | exp_XXX |
 | [Metric 2] | [Value] | [Config] | exp_XXX |
 
+## 4.3 Closed Directions
+
+| Direction | Evidence | Reason | Lessons |
+|-----------|----------|--------|---------|
+| ~~[Dir A]~~ | exp_XXX | [Reason] | [Learned] |
+| ~~[Dir B]~~ | exp_XXX | [Reason] | [Learned] |
+
 ---
 
-# 6. 📎 Appendix
+# 5. 📎 Appendix
 
-## 6.1 Domain Background
+## 5.0 Hypothesis Archive
+
+> **战略假设和机制假设存档（从 §2 下放的详细内容）**
+
+<details>
+<summary><b>Strategic Hypotheses (H1–Hn)</b></summary>
+
+| # | Hypothesis | Status | If True | If False | Evidence |
+|---|------------|--------|---------|----------|----------|
+| H1 | [Core belief 1] | ✅/❌/🔄 | [Implication] | [Alternative] | exp_XXX |
+| H2 | [Core belief 2] | ✅/❌/🔄 | [Implication] | [Alternative] | exp_XXX |
+
+</details>
+
+<details>
+<summary><b>Mechanistic Hypotheses (M1–Mn)</b></summary>
+
+| # | Hypothesis | 机制解释 | 验证方式 | Status |
+|---|------------|---------|---------|--------|
+| M1 | [机制假设 1] | [解释] | [实验] | 🔄 |
+| M2 | [机制假设 2] | [解释] | [实验] | 🔄 |
+
+</details>
+
+---
+
+## 5.1 Domain Background
 
 > **Domain knowledge to help interpret conclusions**
 
-### 6.1.1 [Background Topic 1]
+### 5.1.1 [Background Topic 1]
 
 [Explanation]
 
-### 6.1.2 [Background Topic 2]
+### 5.1.2 [Background Topic 2]
 
 [Explanation]
 
 ---
 
-## 6.2 Glossary
+## 5.2 Glossary
 
 | Term | Definition | Notes |
 |------|------------|-------|
@@ -269,29 +289,36 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 
 ---
 
-## 6.3 Changelog
+## 5.3 Changelog
 
 | Date | Change | Sections |
 |------|--------|----------|
 | YYYY-MM-DD | Created Hub | - |
-| YYYY-MM-DD | Added C1 | §3 |
-| YYYY-MM-DD | Updated hypothesis status | §2 |
+| YYYY-MM-DD | Updated Answer Key | §2 |
+| YYYY-MM-DD | Added Insight C1 | §3 |
 
 ---
 
 > **Template Usage:**
 > 
-> **Hub Scope:**
-> - ✅ **Do:** Question mapping, hypothesis management, insight synthesis, strategic navigation, design principles
-> - ❌ **Don't:** Experiment tracking (→ roadmap.md), daily backlog (→ kanban.md)
+> ## Hub vs Roadmap 职责分工
 > 
-> **Update Triggers:**
-> - After completing a batch of experiments → update §3
-> - After hypothesis verification → update §2
-> - After discovering/closing directions → update §4
-> - After distilling principles → update §5
+> | 问题 | Hub | Roadmap |
+> |------|-----|---------|
+> | 我们知道什么？ | ✅ §2 Answer Key | |
+> | 该往哪走？ | ✅ §2 Strategic Route | |
+> | 怎么验证？（Decision Gates） | | ✅ §1 |
+> | 做哪些实验？ | | ✅ §2, §3 |
+> | 进度如何？ | | ✅ §4 |
+> | 学到了什么洞见？ | ✅ §3 Confluence | |
+> | 设计原则是什么？ | ✅ §4 Principles | |
 > 
-> **Hub vs Roadmap:**
-> - Hub = "What do we know? Where should we go?"
-> - Roadmap = "What experiments are planned? What's the progress?"
+> ## Hub Scope
+> - ✅ **Do:** Question Tree, Answer Key, Strategic Route, Insight Confluence, Design Principles
+> - ❌ **Don't:** Decision Gates, MVP specs, progress tracking (→ roadmap.md)
+> 
+> ## Update Triggers
+> - After experiment → update §2 Answer Key (if answer changes), §3 (add insight)
+> - After hypothesis verification → update §5.0 Hypothesis Archive
+> - After distilling principles → update §4
 
