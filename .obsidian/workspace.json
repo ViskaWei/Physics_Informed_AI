@@ -6,7 +6,7 @@
       {
         "id": "e69c64f63e1f5e44",
         "type": "tabs",
-        "dimension": 60.87866108786611,
+        "dimension": 45.15384615384615,
         "children": [
           {
             "id": "ba8d2fa3bd5a3042",
@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/scaling/scaling_hub_20251222.md",
-                "mode": "source",
+                "file": "logg/ridge/ridge_hub_20251223.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "scaling_hub_20251222"
+              "title": "ridge_hub_20251223"
             }
           }
         ],
@@ -56,7 +56,7 @@
       {
         "id": "67655dc3eed611d1",
         "type": "tabs",
-        "dimension": 39.12133891213389,
+        "dimension": 54.84615384615385,
         "children": [
           {
             "id": "440ea80dfc280cb5",
@@ -245,53 +245,53 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "140d5ff8eb31ed3e",
+  "active": "1934de817ef7bce4",
   "lastOpenFiles": [
+    "tempfit/img/pred_vs_true_noisy.png",
+    "tempfit/img/bias_vs_true_noisy.png",
+    "tempfit/img/bias_std_vs_snr_noisy.png",
+    "tempfit/img",
+    "logg/scaling/img/gate_feat_violin_nai.png",
+    "logg/scaling/img/gate_feat_violin_caii.png",
+    "logg/scaling/img/gate_feat_snr_comparison.png",
+    "logg/scaling/img/gate_feat_f_statistic.png",
+    "logg/scaling/img/gate_feat_confusion.png",
+    "logg/scaling/img/gate_feat_classification_curve.png",
+    "logg/scaling/exp/exp_scaling_nn_baseline_framework_20251224.md",
+    "logg/scaling/exp/exp_scaling_gate_feat_sanity_20251224.md",
+    "logg/moe/img/moe_sample_distribution.png",
+    "logg/moe/img/moe_perbin_r2_grouped.png",
+    "logg/benchmark/benchmark_hub_20251205.md.bak",
+    "data/bosz50k/z0/grid_data_report.txt",
+    "logg/cnn/cnn_main_20251201.md",
+    "logg/moe/exp/exp_moe_nn_experts_20251204.md",
+    "logg/scaling/exp/exp_scaling_oracle_moe_noise1_20251223.md",
+    "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
+    "logg/scaling/scaling_roadmap_20251222.md",
+    "logg/scaling/scaling_hub_20251222.md",
+    "logg/moe/moe_hub_20251203.md",
     "logg/master_hub.md",
     "logg/_hub_graph.md",
     "logg/scaling/scaling_roadmap_20251222.md.bak",
     "logg/scaling/scaling_hub_20251222.md.bak",
-    "logg/scaling/img/scaling_oracle_moe_pred_vs_true.png",
-    "logg/scaling/img/scaling_oracle_moe_perbin_r2.png",
-    "logg/scaling/img/scaling_oracle_moe_perbin_comparison.png",
-    "logg/scaling/img/scaling_oracle_moe_comparison.png",
-    "logg/scaling/img/moe_sample_distribution.png",
-    "logg/scaling/img/moe_perbin_r2_grouped.png",
-    "logg/scaling/img/moe_oracle_dashboard.png",
-    "logg/scaling/img/moe_noise_amplification.png",
-    "logg/scaling/img/moe_mae_heatmap.png",
-    "logg/scaling/img/moe_delta_r2_heatmap.png",
     "logg/scaling/exp/exp_scaling_ridge_1ktest_20251224.md",
-    "logg/scaling/exp/exp_scaling_oracle_moe_noise1_20251223.md",
     "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md.bak",
     "logg/ridge/ridge_roadmap_20251223.md",
     "conflict-files-obsidian-git.md",
     "logg/ridge/ridge_hub_20251223.md",
-    "logg/scaling/scaling_hub_20251222.md",
-    "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
     "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md",
     "logg/ridge/exp/exp_ridge_100k_noise_sweep_20251205.md",
     "logg/ridge/ridge_main_20251130.md",
     "logg/moe/exp/exp_moe_1m_high_noise_20251223.md",
-    "logg/moe/moe_hub_20251203.md",
     "logg/moe/moe_roadmap_20251203.md",
-    "logg/scaling/scaling_roadmap_20251222.md",
     "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
     "tempfit/template_fitting_analysis.md",
     "tempfit",
     "logg/scaling/sessions/coding_prompt_whitening_20251222.md",
     "logg/scaling/exp/exp_scaling_whitening_snr_20251222.md",
     "logg/scaling/exp/exp_scaling_stats_validation_20251222.md",
-    "logg/scaling/exp/exp_scaling_ridge_alpha_extended_20251222.md",
-    "logg/scaling/exp/exp_scaling_pca_pls_comparison_20251223.md",
-    "logg/scaling/exp/exp_scaling_lgbm_param_extended_20251222.md",
-    "logg/scaling/exp/exp_scaling_baseline_stats_20251223.md",
     "logg/scaling/sessions",
     "logg/scaling/img",
-    "logg/scaling/exp",
-    "logg/scaling",
-    "logg/logg_1m/exp/exp_logg_1m_normalization_20251222.md",
-    "logg/logg_1m/exp",
-    "logg/logg_1m"
+    "logg/scaling/exp"
   ]
 }
