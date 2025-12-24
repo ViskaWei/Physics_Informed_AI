@@ -17,13 +17,13 @@
 
 | Type | File | Description |
 |------|------|-------------|
-| 🧠 Hub | [`[topic]_hub.md`](./[topic]_hub.md) | Knowledge navigation |
+| 🧠 Hub | [`[topic]_hub.md`](./[topic]_hub.md) | Knowledge & strategy |
 | 📋 Kanban | [`kanban.md`](../../status/kanban.md) | Global task board |
 | 📗 Experiments | `exp_*.md` | Detailed reports |
 
 ## 📑 Contents
 
-- [1. 🎯 Phase Overview](#1--phase-overview)
+- [1. 🚦 Decision Gates](#1--decision-gates)
 - [2. 📋 MVP List](#2--mvp-list)
 - [3. 🔧 MVP Specifications](#3--mvp-specifications)
 - [4. 📊 Progress Tracking](#4--progress-tracking)
@@ -32,47 +32,97 @@
 
 ---
 
-# 1. 🎯 Phase Overview
+# 1. 🚦 Decision Gates
 
-> **Experiments organized by phase, each with clear objectives**
+> **Hub 推荐战略方向，Roadmap 定义怎么验证**
+>
+> ⚠️ **职责边界**: 只做验证计划，不做战略分析（→ Hub）
 
-## 1.1 Phase List
+## 1.1 Current Strategic Route (from Hub)
 
-| Phase | Objective | MVPs | Status | Key Output |
-|-------|-----------|------|--------|------------|
-| **Phase 0: Baseline** | Establish baseline | MVP-0.x | ⏳ | Baseline metrics |
-| **Phase 1: [Topic]** | [Objective] | MVP-1.x | ⏳ | [Output] |
-| **Phase 2: [Topic]** | [Objective] | MVP-2.x | ⏳ | [Output] |
-| **Phase 3: [Topic]** | [Objective] | MVP-3.x | ⏳ | [Output] |
+> **来自 Hub §2 的战略推荐**
 
-## 1.2 Dependency Graph
+| Route | 路线名称 | Hub 推荐 | 需要验证 |
+|-------|---------|---------|---------|
+| Route I | [路线 I 名称] | 🟡 待验证 | Gate-1 |
+| **Route M** | [路线 M 名称] | 🟢 **推荐** | Gate-2 |
+| Route S | [路线 S 名称] | 🔴 高风险 | Gate-3 |
+
+> 📖 **战略推荐理由**见 [Hub §2 Answer Key](./[topic]_hub.md#2--answer-key--strategic-route)
+
+---
+
+## 1.2 Gate Definitions
+
+> **做什么实验能过哪个决策门？**
+
+### Gate-1: [Gate 名称]
+
+| Item | Content |
+|------|---------|
+| **验证什么** | [验证哪个假设/问题] |
+| **对应 MVP** | MVP-X.X |
+| **Outcome A** | If [条件] → [Route 选择] |
+| **Outcome B** | If [条件] → [Route 选择] |
+| **Status** | ⏳ Pending / 🚀 Running / ✅ Done |
+
+### Gate-2: [Gate 名称]
+
+| Item | Content |
+|------|---------|
+| **验证什么** | [验证哪个假设/问题] |
+| **对应 MVP** | MVP-X.X, MVP-X.X |
+| **Outcome A** | If [条件] → [Action] |
+| **Outcome B** | If [条件] → [Action] |
+| **Status** | ⏳ / 🚀 / ✅ |
+
+### Gate-3: [Gate 名称]
+
+| Item | Content |
+|------|---------|
+| **验证什么** | [验证哪个假设/问题] |
+| **对应 MVP** | MVP-X.X |
+| **Outcome A** | If [条件] → [Action] |
+| **Outcome B** | If [条件] → [Action] |
+| **Status** | ⏳ / 🚀 / ✅ |
+
+---
+
+## 1.3 This Week's Focus
+
+> **本周要做的 2-3 个 MVP（对应 Gate 验证）**
+
+| Priority | MVP | 对应 Gate | Why First | Status |
+|----------|-----|-----------|-----------|--------|
+| 🔴 P0 | MVP-X.X: [Name] | Gate-X | [理由] | ⏳ |
+| 🔴 P0 | MVP-X.X: [Name] | Gate-X | [理由] | ⏳ |
+| 🟡 P1 | MVP-X.X: [Name] | Gate-X | [理由] | ⏳ |
+
+---
+
+## 1.4 Gate Progress Flow
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                   MVP Experiment Dependencies               │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   [Phase 0: Baseline]                                       │
-│         │                                                   │
-│         ├──────────────┬──────────────┐                     │
-│         ▼              ▼              ▼                     │
-│   [Phase 1]      [Phase 2]      [Phase 3]                  │
-│         │              │              │                     │
-│         └──────────────┼──────────────┘                     │
-│                        ▼                                    │
-│              [Phase Final: Integration]                     │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    Gate Progress Flow                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   Hub 推荐: Route M (表征/模型)                                  │
+│                    ↓                                            │
+│   ┌─────────────────────────────────────┐                       │
+│   │ Gate-1: [Gate 名称]                  │ Status: ⏳            │
+│   │ MVP: MVP-X.X                         │                       │
+│   └─────────────────────────────────────┘                       │
+│          ↓ [Outcome A]        ↓ [Outcome B]                     │
+│    [Action A]            [Action B]                             │
+│          │                    │                                 │
+│   ┌──────┴──────┐      ┌──────┴──────┐                         │
+│   │ Gate-2      │      │ Gate-3      │                         │
+│   │ Status: ⏳  │      │ Status: ⏳  │                         │
+│   └─────────────┘      └─────────────┘                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
-
-## 1.3 Decision Points
-
-> **Key decision points based on experiment results**
-
-| Point | Trigger | Option A | Option B |
-|-------|---------|----------|----------|
-| D1 | After MVP-1.0 | If ΔR² ≥ 0.03 → Phase 2 | If < 0.03 → Stop |
-| D2 | After MVP-2.0 | If [condition] → [action] | If [condition] → [action] |
 
 ---
 
@@ -82,12 +132,13 @@
 
 ## 2.1 Experiment Summary
 
-| MVP | Name | Phase | Status | experiment_id | Report |
-|-----|------|-------|--------|---------------|--------|
-| MVP-0.0 | [Baseline] | 0 | ⏳ | - | - |
-| MVP-1.0 | [Exp name] | 1 | ⏳ | `[ID]` | [Link](./exp_xxx.md) |
-| MVP-1.1 | [Exp name] | 1 | ⏳ | `[ID]` | - |
-| MVP-2.0 | [Exp name] | 2 | ⏳ | `[ID]` | - |
+| MVP | Name | Phase | Gate | Status | experiment_id | Report |
+|-----|------|-------|------|--------|---------------|--------|
+| MVP-0.0 | [Baseline] | 0 | - | ✅ | `[ID]` | [Link](./exp_xxx.md) |
+| MVP-1.0 | [Exp name] | 1 | - | ✅ | `[ID]` | [Link](./exp_xxx.md) |
+| MVP-2.0 | [Exp name] | 2 | Gate-1 | ⏳ | - | - |
+| MVP-2.1 | [Exp name] | 2 | Gate-2 | ⏳ | - | - |
+| MVP-2.2 | [Exp name] | 2 | Gate-3 | ⏳ | - | - |
 
 **Status Legend:**
 - ⏳ Planned | 🔴 Ready | 🚀 Running | ✅ Done | ❌ Cancelled | ⏸️ Paused
@@ -100,7 +151,7 @@
 |-----|-----------|----------|-------|--------------|------------|
 | MVP-0.0 | [train/test] | [dim] | [model] | - | baseline |
 | MVP-1.0 | [train/test] | [dim] | [model] | [var] | [criteria] |
-| MVP-1.1 | [train/test] | [dim] | [model] | [var] | [criteria] |
+| MVP-2.0 | [train/test] | [dim] | [model] | [var] | [criteria] |
 
 ---
 
@@ -133,39 +184,42 @@
 | Item | Config |
 |------|--------|
 | **Objective** | [What question to answer?] |
-| **Hypothesis** | H1.1 |
 | **Data** | [Data config] |
 | **Model** | [Model config] |
 | **Features** | [Feature config] |
 | **Acceptance** | [Expected range] |
-| **Exception** | [How to interpret anomalies] |
-
-**→ Hypothesis Impact:** If result is [X], then [implication for hypothesis/design]
-
-**Steps:**
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
 
 ---
 
-### MVP-1.1: [Experiment Name]
+## Phase 2: Gate Verification
+
+> **用于验证 Decision Gates 的实验**
+
+### MVP-2.0: [Gate-1 验证实验]
 
 | Item | Config |
 |------|--------|
-| **Objective** | [One-line goal] |
-| **Depends On** | MVP-1.0 |
+| **Objective** | [验证 Gate-1 的问题] |
+| **Gate** | Gate-1 |
 | **Data** | [Data config] |
 | **Model** | [Model config] |
-| **Acceptance** | [Expected range] |
+| **Acceptance** | [Outcome A/B 的判定标准] |
+
+**→ Gate Impact:** 
+- If R² ≥ X.XX → [Outcome A: 选择 Route X]
+- If R² < X.XX → [Outcome B: 选择 Route Y]
 
 ---
 
-## Phase 2: [Phase Name]
+### MVP-2.1: [Gate-2 验证实验]
 
-### MVP-2.0: [Experiment Name]
-
-(Continue with same format...)
+| Item | Config |
+|------|--------|
+| **Objective** | [验证 Gate-2 的问题] |
+| **Gate** | Gate-2 |
+| **Data** | [Data config] |
+| **Model** | [Model config] |
+| **Acceptance** | [Outcome A/B 的判定标准] |
 
 ---
 
@@ -177,29 +231,36 @@
 ┌──────────────┬──────────────┬──────────────┬──────────────┬──────────────┐
 │  ⏳ Planned  │   🔴 Ready   │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
 ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-2.0      │ MVP-1.1      │ MVP-1.0      │ MVP-0.0      │              │
-│ MVP-2.1      │              │              │              │              │
-│ MVP-3.0      │              │              │              │              │
+│ MVP-2.1      │ MVP-2.0      │              │ MVP-0.0      │              │
+│ MVP-2.2      │              │              │ MVP-1.0      │              │
+│              │              │              │ MVP-1.1      │              │
 └──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
-## 4.2 Key Conclusions Snapshot
+## 4.2 Gate Progress
+
+| Gate | MVP | Status | Result | Outcome |
+|------|-----|--------|--------|---------|
+| Gate-1 | MVP-2.0 | ⏳ | - | - |
+| Gate-2 | MVP-2.1, MVP-2.2 | ⏳ | - | - |
+| Gate-3 | MVP-2.3 | ⏳ | - | - |
+
+## 4.3 Key Conclusions Snapshot
 
 > **One-line conclusion per completed MVP, synced to Hub**
 
 | MVP | Conclusion | Key Metric | Synced to Hub |
 |-----|------------|------------|---------------|
-| MVP-0.0 | [Conclusion] | R²=X.XX | ✅ §3.1 |
-| MVP-1.0 | [Conclusion] | ΔR²=+X.XX | ✅ §3.2 |
+| MVP-0.0 | [Conclusion] | R²=X.XX | ✅ §2.1 A) |
+| MVP-1.0 | [Conclusion] | ΔR²=+X.XX | ✅ §2.1 B) |
 
-## 4.3 Timeline
+## 4.4 Timeline
 
 | Date | Event | Notes |
 |------|-------|-------|
 | YYYY-MM-DD | MVP-0.0 done | baseline |
-| YYYY-MM-DD | MVP-1.0 start | - |
-| YYYY-MM-DD | MVP-1.0 done | ΔR²=+X.XX |
-| YYYY-MM-DD | Decision D1 | Continue Phase 2 |
+| YYYY-MM-DD | MVP-1.0 done | - |
+| YYYY-MM-DD | Gate-1 验证开始 | - |
 
 ---
 
@@ -212,7 +273,7 @@
 | experiment_id | project | topic | status | MVP |
 |---------------|---------|-------|--------|-----|
 | `[PROJECT]-[DATE]-[topic]-01` | VIT / BlindSpot | [topic] | ✅ | MVP-1.0 |
-| `[PROJECT]-[DATE]-[topic]-02` | VIT / BlindSpot | [topic] | 🚀 | MVP-1.1 |
+| `[PROJECT]-[DATE]-[topic]-02` | VIT / BlindSpot | [topic] | 🚀 | MVP-2.0 |
 
 ## 5.2 Repository Links
 
@@ -270,23 +331,33 @@
 | Date | Change | Sections |
 |------|--------|----------|
 | YYYY-MM-DD | Created Roadmap | - |
-| YYYY-MM-DD | MVP-1.0 done | §4.1, §4.2 |
-| YYYY-MM-DD | Added Phase 2 | §1, §2, §3 |
+| YYYY-MM-DD | Added Decision Gates | §1 |
+| YYYY-MM-DD | MVP-2.0 done, Gate-1 passed | §1.2, §4 |
 
 ---
 
 > **Template Usage:**
 > 
-> **Roadmap Scope:**
-> - ✅ **Do:** MVP specs, execution tracking, kanban, cross-repo integration, metrics
-> - ❌ **Don't:** Hypothesis management (→ hub.md), insight synthesis (→ hub.md), strategy (→ hub.md)
+> ## Hub vs Roadmap 职责分工
 > 
-> **Update Triggers:**
+> | 问题 | Hub | Roadmap |
+> |------|-----|---------|
+> | 我们知道什么？ | ✅ §2 Answer Key | |
+> | 该往哪走？ | ✅ §2 Strategic Route | |
+> | 怎么验证？（Decision Gates） | | ✅ §1 |
+> | 做哪些实验？ | | ✅ §2, §3 |
+> | 本周做什么？ | | ✅ §1.3 This Week's Focus |
+> | 进度如何？ | | ✅ §4 |
+> | 学到了什么洞见？ | ✅ §3 Confluence | |
+> | 设计原则是什么？ | ✅ §4 Principles | |
+> 
+> ## Roadmap Scope
+> - ✅ **Do:** Decision Gates, MVP specs, execution tracking, progress, cross-repo integration
+> - ❌ **Don't:** Insight synthesis (→ hub.md), strategic reasoning (→ hub.md)
+> 
+> ## Update Triggers
 > - Planning new MVP → update §2, §3
 > - MVP status change → update §4
-> - After experiment → record conclusion to §4.2, sync to Hub
-> 
-> **Hub vs Roadmap:**
-> - Hub = "What do we know? Where should we go?"
-> - Roadmap = "What experiments are planned? What's the progress?"
+> - Gate result → update §1.2, §4.2, sync conclusion to Hub §2
+> - New Gate needed → update §1.2
 
