@@ -204,11 +204,14 @@ cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/[topic]/exp_[name]_YYYYMMDD.md"
 ### 2.1 数据
 | 配置项 | 值 |
 |--------|-----|
-| **数据来源** | [具体来源] |
+| **数据来源** | [来源名称，如 APOGEE DR17] |
+| **数据路径** | `[完整路径，如 ~/VIT/data/xxx.h5]` |
+| **数据大小** | [文件大小 或 总样本数，如 2.3GB / 100k samples] |
 | **训练样本数** | [N] |
 | **验证样本数** | [N] |
 | **测试样本数** | [N] |
 | **特征维度** | [N] |
+| **预处理** | [简述，如：归一化[0,1] / 标准化 / 无] |
 
 ### 2.2 噪声配置
 | 配置项 | 值 |
@@ -351,7 +354,9 @@ config_file: "configs/exp/xxx.yaml"
 
 # ⚠️ 数据配置（必须详细记录！后续实验可能有变化）
 data:
-  source: "[数据来源，如 APOGEE DR17 / 合成数据 / xxx.h5]"
+  source: "[数据来源名称，如 APOGEE DR17 / 合成数据]"
+  path: "[完整路径，如 ~/VIT/data/apogee_100k.h5]"
+  size: "[文件大小 或 总样本数，如 2.3GB / 100k samples]"
   train_size: N       # 训练样本数
   val_size: N         # 验证样本数（如有）
   test_size: N        # 测试样本数
@@ -359,6 +364,7 @@ data:
   wavelength_range: "[起始, 结束]"  # 波长范围（如有）
   target: "log_g"     # 预测目标
   aux_features: []    # 辅助特征（如 Teff, Fe_H）
+  preprocessing: "[简述预处理方式，如：归一化到[0,1] / 标准化(mean=0,std=1) / 无]"
 
 # ⚠️ 噪声配置（必须详细记录！）
 noise:
@@ -403,7 +409,7 @@ plots:
 ```
 
 > ⚠️ **重要提醒**：
-> - **数据配置**：train/val/test size、数据来源必须记录，后续实验可能换数据集
+> - **数据配置**：来源、路径、大小、train/val/test size、预处理方式都必须记录（后续实验可能换数据集）
 > - **噪声配置**：sigma/snr 值、噪声类型、添加公式必须记录，不同实验噪声设定可能不同
 > - **训练参数**：即使是 default 值也要写出来，方便后续对比和复现
 > - **随机种子**：必须记录，确保可复现性

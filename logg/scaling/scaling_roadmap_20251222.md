@@ -122,11 +122,16 @@
 |                                 |                                  |       |        |                                         |                                                            |
 | **🆕 Phase A: noise=1 MoE**     |                                  |       |        |                                         |                                                            |
 | **MVP-16A-0**                   | **🔴 Oracle MoE @ noise=1 (P0)** | A     | ✅     | `SCALING-20251223-oracle-moe-noise1-01` | [exp](./exp/exp_scaling_oracle_moe_noise1_20251223.md)     |
-| **MVP-16A-1**                   | **🟡 Gate-feat Sanity (P1)**     | A     | ⏳      | `SCALING-20251223-gate-feat-01`         | -                                                          |
+| **MVP-16A-1**                   | **✅ Gate-feat Sanity (P1)**     | A     | ✅      | `SCALING-20251223-gate-feat-01`         | -                                                          |
 | **MVP-16A-2**                   | **🟡 Soft-gate MoE (P1)**        | A     | ⏳      | `SCALING-20251223-soft-moe-noise1-01`   | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
-| **🆕 Phase NN: 神经网络 Baseline**  |                                  |       |        |                                         |                                                            |
-| **MVP-NN-0**                    | **🔴 1D CNN Whiten (P0)**        | NN    | 🔴     | `SCALING-20251223-cnn-whiten-01`        | -                                                          |
+| **🆕 Phase NN: 神经网络 Baseline (2025-12-24 大立项)** |                                  |       |        |                                         |                                                            |
+| **MVP-NN-0**                    | **🔴 可靠基线框架 (P0)**        | NN    | 🔴     | `SCALING-20251224-nn-baseline-framework-01` | [Link](./exp/exp_scaling_nn_baseline_framework_20251224.md) |
+| **MVP-MLP-1**                   | **🔴 最小可行 MLP (P0)**        | NN    | ⏳     | `SCALING-20251224-mlp-baseline-01`      | -                                                          |
+| **MVP-CNN-1**                   | **🟡 最小 1D CNN (P1)**         | NN    | ⏳     | `SCALING-20251224-cnn-baseline-01`      | -                                                          |
+| **MVP-CNN-2**                   | **🟡 多尺度 CNN (P1)**          | NN    | ⏳     | `SCALING-20251224-cnn-multiscale-01`    | -                                                          |
+| **MVP-Compare**                 | **三件套同评估**                | NN    | ⏳     | `SCALING-20251224-nn-compare-01`        | -                                                          |
+| **MVP-MoE-CNN-0**               | **🟢 MoE-CNN (P2, 条件启动)**   | NN    | ⏳     | `SCALING-20251224-moe-cnn-oracle-01`    | -                                                          |
 
 **Status Legend:**
 - ⏳ Planned | 🔴 Ready | 🚀 Running | ✅ Done | ❌ Cancelled | ⏸️ Paused
@@ -683,30 +688,135 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 
 ---
 
-## 🆕 Phase NN: 神经网络 Baseline（2025-12-23 新增）
+## 🆕 Phase NN: 神经网络 Baseline（2025-12-24 大立项）
 
-> **核心问题**：表示学习能否吃掉 headroom？
+> **核心问题**：单模型 NN 能否接近/超过 Oracle MoE 的 0.62？
 > 
-> **目标**：R² 从 0.57 推到 0.65+
+> **目标**：判断 (1) 结构不对 还是 (2) 输入/训练策略不对
+> 
+> **参考**：Oracle MoE @ noise=1 = **0.62**（结构性 headroom 存在）
 
-### MVP-NN-0: 1D CNN Whiten（🔴 P0 并行优先级）
+### 🔑 总原则（避免"结构不对，堆数据没用"）
+
+**三个容易踩坑的点必须锁死**：
+
+| # | 坑点 | 解决方案 |
+|---|------|---------|
+| 1 | **输入 whitening** | `x = flux / (error * noise_level)` 或双通道 `[flux, error]` |
+| 2 | **输出目标尺度** | `y = (logg - mean) / std` 标准化回归 |
+| 3 | **评估稳定性** | 固定 test ≥ 20k，固定 seed |
+
+---
+
+### MVP-NN-0: 可靠基线框架（一天内完成）
 
 | Item | Config |
 |------|--------|
-| **Objective** | 验证 CNN + whitening 能否突破 ML ceiling |
-| **Hypothesis** | H-NN-0.1: R² > 0.62 |
-| **Hypothesis** | H-NN-0.2: R² - Ridge > 0.10 |
-| **Input** | flux / (error × noise_level) — whitened |
-| **Model** | 1D ResNet 或 4-8 层 Conv1D + pooling + MLP head |
-| **Training** | 1M data, batch=1024, lr=1e-3, early stopping |
-| **Acceptance** | R² > 0.62 且 > Ridge + 0.10 |
+| **Objective** | 建立 NN 训练管线 + 保证输入/评估没问题 |
+| **Data** | stratify split (按 Teff/logg/[M/H] 分桶分层抽样) |
+| **Input Variants** | A: `flux_whiten = flux / (error × σ)` (推荐) <br> B: 双通道 `[flux, error]` |
+| **Loss** | MSE（先别加物理项） |
+| **Optimizer** | AdamW + cosine/step LR + early stopping (val R² 3-5 epoch 不涨就停) |
+| **Training Scale** | **100k** 做 smoke test（别直接 1M） |
+| **Acceptance** | 能在 100k 上稳定复现 Ridge/LGBM 水平，train/val 曲线正常 |
+| **experiment_id** | `SCALING-20251224-nn-baseline-framework-01` |
 
-**为什么 whitening 关键**:
-- 每个波长误差不同，whitening 常常比换模型更值钱
-- MVP-1.6 已验证 snr_centered 对 Ridge 有 +0.02 提升
+---
 
-**可选扩展**:
-- Multi-task: 同时预测 Teff, [M/H], log_g（degeneracy 强时通常更稳）
+### MVP-MLP-1: 最小可行 MLP + 明确止损
+
+| Item | Config |
+|------|--------|
+| **Objective** | 快速验证"全局 MLP 是否注定不行" |
+| **Hypothesis** | H-MLP1.1: 100k→1M 提升 < +0.02 R² → MLP 归纳偏置不对 |
+| **Input** | **4096 维** (BOSZ 光谱长度) |
+| **Architecture** | `Linear(4096→2048)→GELU→Dropout` → `2048→1024` → `1024→512` → `512→1` |
+| **Regularization** | weight_decay=1e-4, dropout=0.1, **LayerNorm 放第一层后** |
+| **Training** | 100k 先训练到收敛 (10-20 epochs)，再同结构上 1M |
+| **Record** | train R², val R², test R², 收敛 step 数 |
+| **experiment_id** | `SCALING-20251224-mlp-baseline-01` |
+
+**🚨 MLP 止损信号（非常明确）**：
+- 如果 **100k→1M 提升 < +0.02 R²** 且 val 曲线 plateau 很早：
+  → 结论：**MLP 架构归纳偏置不对**，不要再在 MLP 上花时间
+- 如果提升明显（+0.05 以上），才值得继续优化 MLP
+
+---
+
+### MVP-CNN-1: 最小 1D CNN（验证"局部结构"带来质变）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 看 CNN 能否明显超过 MLP / 接近 0.62 |
+| **Hypothesis** | H-CNN1.1: CNN 100k 明显超过 MLP (≥+0.05 R²) |
+| **Input** | 强烈建议 `flux_whiten`（或双通道） |
+| **Architecture** | Stem: Conv1d(1→32, k=7) + GELU <br> Block × 4: Conv1d(32→64, k=5, dilation=1) → Conv1d(64→64, k=5, dilation=2) + 残差 + LayerNorm/GroupNorm <br> Pool: Global average pooling <br> Head: MLP 64→128→1 |
+| **Training** | 先 100k，如果比 MLP 好很多（+0.05+）再上 1M |
+| **experiment_id** | `SCALING-20251224-cnn-baseline-01` |
+
+**CNN 止损信号**：
+- 如果 CNN 100k 也不如 Ridge/LGBM，且怎么调 LR/正则都不行：
+  → 80% 可能是 **输入/whitening/训练细节有 bug**，而不是 CNN 不行
+
+---
+
+### MVP-CNN-2: 多尺度 / 大感受野（专打 noise=1）
+
+| Item | Config |
+|------|--------|
+| **Objective** | noise=1 核心：单条谱线信息不稳，需跨更宽波段累积证据 |
+| **Hypothesis** | H-CNN2.1: 多尺度 CNN R² ≥ 0.60（逼近 Oracle MoE 0.62） |
+| **增强方式 1** | dilation schedule: [1, 2, 4, 8] |
+| **增强方式 2** | 多分支卷积核: k = [3, 7, 15] 并行分支后 concat（类似 Inception1D） |
+| **experiment_id** | `SCALING-20251224-cnn-multiscale-01` |
+
+---
+
+### MVP-Compare: 三件套同评估
+
+| Item | Config |
+|------|--------|
+| **Objective** | 在同一固定 test set 上比较，决定下一步路线 |
+| **Models** | (1) Global Ridge/LGBM（已有） <br> (2) Oracle MoE = 0.62（已做） <br> (3) Global CNN（本次做） |
+| **Decision** | - CNN ≥ 0.62 → 单模型 CNN 已吃掉结构红利，MoE 不必须 <br> - CNN 接近 0.62（差<0.02）→ 先做强 CNN，不急着 MoE <br> - CNN 明显低于 0.62（差≥0.05）→ MoE-CNN 才是正道 |
+
+---
+
+### MVP-MoE-CNN-0: 最保守 MoE-CNN（仅当 global CNN 明显打不过 oracle 时启动）
+
+| Item | Config |
+|------|--------|
+| **Objective** | 验证 CNN expert 是否比 Ridge expert 更强 |
+| **Hypothesis** | H-MoE-CNN.1: MoE(CNN experts) > MoE(Ridge experts) |
+| **Experts** | 每个 bin 一个小 CNN（就是 MVP-CNN-1 的 CNN） |
+| **Routing** | 先用 **真值路由（oracle）** 验证 CNN expert 效果 |
+| **后续** | 然后再做 soft gate（复用之前成熟的 soft routing） |
+| **experiment_id** | `SCALING-20251224-moe-cnn-oracle-01` |
+
+---
+
+### 📋 NN Baseline 必须记录的 5 个数字（写结论用）
+
+| # | 指标 | 说明 |
+|---|------|------|
+| 1 | **100k → 1M 的 ΔR²** | 每个模型一个，判断数据规模收益 |
+| 2 | **plateau epoch** | 训练到 plateau 需要多少 step/epoch |
+| 3 | **per-bin R²** | 特别是最差的几个 bin |
+| 4 | **whitening 敏感度** | 有无 whitening 的差距 |
+| 5 | **vs Oracle gap** | global CNN vs Oracle MoE 的差距 |
+
+---
+
+### 🎯 推荐执行顺序
+
+| 顺序 | MVP | 目的 | 时间预估 |
+|------|-----|------|---------|
+| 1 | MVP-NN-0 | 框架搭建 | 半天 |
+| 2 | MVP-MLP-1 @100k + @1M | 快速止损/确认"MLP 不吃数据" | 1天 |
+| 3 | MVP-CNN-1 @100k | 确认归纳偏置对不对 | 半天 |
+| 4 | MVP-CNN-1 @1M | 看"大力出奇迹"是否成立 | 1天 |
+| 5 | MVP-CNN-2 | 多尺度 CNN（如需） | 1天 |
+| 6 | MVP-MoE-CNN-0 | 仅当 global CNN < 0.60 | 视情况 |
 
 ---
 
@@ -718,13 +828,13 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 ┌──────────────────┬──────────────────┬──────────────┬──────────────┬──────────────┐
 │    ⏳ Planned    │     🔴 Ready     │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
 ├──────────────────┼──────────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-T2 (P1)      │ **MVP-D0 (P0)**  │              │ MVP-1.0      │ MVP-T0       │
-│ MVP-T3 (P2)      │ **MVP-16A-0(P0)**│              │ MVP-1.1      │ MVP-T1       │
-│ MVP-16A-1 (P1)   │ **MVP-NN-0(P0)** │              │ MVP-1.2      │              │
-│ MVP-16A-2 (P1)   │ MVP-16B (P0-old) │              │ MVP-1.4 ✅   │              │
-│ MVP-16L (P1)     │                  │              │ MVP-1.6 ✅   │              │
-│ MVP-16CNN (P2)   │                  │              │ MVP-16T ❌   │              │
-│ MVP-2.x          │                  │              │              │              │
+│ MVP-CNN-1 (P1)   │ **MVP-NN-0(P0)** │              │ MVP-1.0      │ MVP-T0       │
+│ MVP-CNN-2 (P1)   │ **MVP-MLP-1(P0)**│              │ MVP-1.1      │ MVP-T1       │
+│ MVP-MoE-CNN-0    │ MVP-D0 (P0)      │              │ MVP-1.2      │              │
+│ MVP-16A-1 (P1)   │ MVP-16B (P0)     │              │ MVP-1.4 ✅   │              │
+│ MVP-16A-2 (P1)   │                  │              │ MVP-1.6 ✅   │              │
+│ MVP-16L (P1)     │                  │              │ MVP-16T ❌   │              │
+│ MVP-T2 (降级)    │                  │              │ MVP-16A-0 ✅ │              │
 └──────────────────┴──────────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -1069,3 +1179,49 @@ Ridge 最优 α 在 1e4~1e5 之间，比原 baseline (α=5000) 高 1-2 个数量
 | **2025-12-23** | **🔄 Ridge 基准修正：1k test → R²=0.46 (原 500 test R²=0.50)** | 全文 |
 | **2025-12-24** | **✅ Ridge Alpha Sweep (1k test): Best α=100k, R²=0.4551** | §2.1, MVP-1.0 |
 | **2025-12-24** | **✅ Y-Scaling 实验: MinMaxScaler 对 R² 无影响** | §2.1, MVP-1.0 |
+
+---
+
+## 2025-12-24 Update: MVP-16A-1 Completed
+
+### SCALING-20251223-gate-feat-01
+
+| Metric | Result |
+|--------|--------|
+| Gate 9-class Accuracy | **87.8%** ✅ (>> 60% threshold) |
+| F1 (macro) | 88.2% |
+| Ca II F-statistic | **25,618** ✅ (>> 10 threshold) |
+| Top F-statistic (PCA_1) | 287,966 |
+| Avg SNR @ noise=1 | **6.21** ✅ (>> 1.0 threshold) |
+| Total Gate Features | 37 (27 physical + 10 PCA) |
+
+**Noise Sweep Results**:
+
+| noise_level | accuracy | f1_macro |
+|-------------|----------|----------|
+| 0.0 | 98.3% | 98.3% |
+| 0.2 | 96.8% | 96.7% |
+| 0.5 | 92.5% | 92.7% |
+| **1.0** | **88.3%** | **88.7%** |
+| 2.0 | 75.1% | 76.0% |
+
+**Hypothesis Verification**:
+
+| Hypothesis | Criteria | Result | Status |
+|------------|----------|--------|--------|
+| H-A1.1 (Accuracy) | > 60% | 87.8% | ✅ PASS |
+| H-A1.1 (F-stat) | > 10 | 25,618 | ✅ PASS |
+| SNR threshold | > 1.0 | 6.21 | ✅ PASS |
+
+**🔥 Decision**: ✅ GATE FEATURES USABLE @ noise=1 - Continue to MVP-16A-2 (Soft-gate MoE)
+
+**Key Insight**: This was expected to be a "sanity check failure" showing gate features collapse at noise=1, but the result is surprisingly positive! Physical window features remain highly discriminative even under high noise conditions.
+
+**Top 5 Most Discriminative Features** (by F-statistic):
+1. PCA_1: 287,966 (global spectral shape)
+2. PCA_3: 103,485
+3. MgI_8806_mean: 83,547
+4. MgI_8807_mean: 80,703
+5. CaII_8542_mean: 71,738
+
+**Report**: [exp_scaling_gate_feat_sanity_20251224.md](./exp/exp_scaling_gate_feat_sanity_20251224.md)

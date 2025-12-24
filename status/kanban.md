@@ -43,11 +43,34 @@
 
 > 已分配 experiment_id，等待启动
 
+### 🆕🆕 Phase NN: NN Baseline 实验系列（2025-12-24 大立项）
+
+> **📍 智库导航**: [`logg/scaling/scaling_hub_20251222.md`](../logg/scaling/scaling_hub_20251222.md) §2.3 H-NN  
+> **🗺️ 实验追踪**: [`logg/scaling/scaling_roadmap_20251222.md`](../logg/scaling/scaling_roadmap_20251222.md) Phase NN  
+> **目标**: 快速判断 NN 能否接近/超过 Oracle MoE (0.62)，如果不能，是结构不对还是输入/训练不对
+
+| experiment_id | MVP | project | topic | 优先级 | 预估时间 | 备注 |
+|---------------|-----|---------|-------|--------|---------|------|
+| **🆕 `SCALING-20251224-nn-baseline-framework-01`** | **MVP-NN-0** | VIT | **scaling** | **🔴🔴 P0** | ~半天 | **🚀 可靠基线框架：验证输入/评估没问题** |
+| **🆕 `SCALING-20251224-mlp-baseline-01`** | **MVP-MLP-1** | VIT | **scaling** | **🔴🔴 P0** | ~1天 | **MLP 100k+1M 止损判断：归纳偏置对不对** |
+| **🆕 `SCALING-20251224-cnn-baseline-01`** | **MVP-CNN-1** | VIT | **scaling** | **🔴 P0** | ~1.5天 | **CNN 100k+1M：验证局部结构带来质变** |
+| `SCALING-20251224-cnn-multiscale-01` | MVP-CNN-2 | VIT | scaling | 🟡 P1 | ~1天 | 多尺度 CNN（仅当 CNN-1 < 0.60） |
+| `SCALING-20251224-nn-compare-01` | MVP-Compare | VIT | scaling | 🔴 P0 | ~2h | 三件套同评估：Ridge/LGB/CNN/Oracle |
+| `SCALING-20251224-moe-cnn-oracle-01` | MVP-MoE-CNN-0 | VIT | scaling | 🟢 P2 | 视情况 | MoE-CNN（仅当 global CNN < 0.60 明显） |
+
+**执行顺序**:
+1. MVP-NN-0 (框架搭建) → 2. MVP-MLP-1 @100k+1M (止损判断) → 3. MVP-CNN-1 @100k → 4. MVP-CNN-1 @1M → 5. MVP-Compare
+6. 仅当 global CNN < 0.60: MVP-CNN-2 或 MVP-MoE-CNN-0
+
+---
+
+### 其他 TODO
+
 | experiment_id | MVP | project | topic | 优先级 | 预估时间 | session 来源 | 备注 |
 |---------------|-----|---------|-------|--------|---------|-------------|------|
-|| **🆕 `SCALING-20251222-ridge-1m-01`** | **MVP-1.0** | VIT | **scaling** | **🔴🔴 P0** | ~4h | 立项 2025-12-22 | **Ridge 1M + noise=1 瓶颈验证** |
-|| **🆕 `SCALING-20251222-lgbm-1m-01`** | **MVP-1.1** | VIT | **scaling** | **🔴🔴 P0** | ~6h | 立项 2025-12-22 | **LightGBM 1M + noise=1 瓶颈验证** |
-|| **🆕 `SCALING-20251222-mlp-1m-01`** | **MVP-2.0** | VIT | **scaling** | **🔴 P0** | ~8h | 立项 2025-12-22 | **MLP 1M 验证 NN 突破 ML 瓶颈** |
+|| ~~**🆕 `SCALING-20251222-ridge-1m-01`**~~ | ~~**MVP-1.0**~~ | ~~VIT~~ | ~~**scaling**~~ | ~~**🔴🔴 P0**~~ | ~~~4h~~ | ~~立项 2025-12-22~~ | ✅ Done |
+|| ~~**🆕 `SCALING-20251222-lgbm-1m-01`**~~ | ~~**MVP-1.1**~~ | ~~VIT~~ | ~~**scaling**~~ | ~~**🔴🔴 P0**~~ | ~~~6h~~ | ~~立项 2025-12-22~~ | ✅ Done |
+|| ~~**🆕 `SCALING-20251222-mlp-1m-01`**~~ | ~~**MVP-2.0**~~ | ~~VIT~~ | ~~**scaling**~~ | ~~**🔴 P0**~~ | ~~~8h~~ | ~~立项 2025-12-22~~ | → 替换为 MVP-MLP-1 |
 | **🆕 `SD-20251204-diff-wmae-01`** | **MVP-0.6** | SpecDiffusion | diffusion | **🔴 P0** | ~3h | MVP-0.5 后续 | **wMAE + residual 结构，s≤0.2 弱噪声降噪** |
 | **🆕 `VIT-20251203-moe-gate-noise-01`** | **MVP-7.1** | VIT | moe | **🔴🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Gate 噪声敏感性曲线 → 决定"硬 MoE 还能不能救"** |
 | **🆕 `VIT-20251203-moe-cond-pp-01`** | **MVP-7.2** | VIT | moe | **🔴 P0** | ~2h | GPT 脑暴 2025-12-03 | **🆕 Conditional Ridge++ → 榨出剩余 20% MoE 差距** |

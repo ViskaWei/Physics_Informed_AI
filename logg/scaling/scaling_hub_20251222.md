@@ -241,7 +241,7 @@ Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Clos
 | # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
 |---|-----------|------|---------|------|------|
 | **H-A0.1** | Oracle MoE @ noise=1 有结构红利 | H4 | ΔR² ≥ 0.03 vs Global Ridge | ✅ +0.16 | MVP-16A-0 |
-| **H-A1.1** | Gate 特征 @ noise=1 仍有分类信号 | H4.2 | Ca II triplet 等特征可区分 bins | ⏳ | MVP-16A-1 |
+| **H-A1.1** | Gate 特征 @ noise=1 仍有分类信号 | H4.2 | Ca II triplet 等特征可区分 bins | ✅ Acc=87.8% | MVP-16A-1 |
 | **H-A2.1** | Soft-gate MoE @ noise=1 能保持 ≥70% oracle 收益 | H4.2 | ρ ≥ 0.7 | ⏳ | MVP-16A-2 |
 
 ### 🆕 Phase NN: NN Baseline 假设（2025-12-24 新增）
@@ -754,3 +754,53 @@ MVP-16T 计算 R²_max ≈ 0.97，第一反应应该是"哪里把信息算多了
 | **2025-12-23** | **✅ MVP-16A-0 完成：Oracle MoE ΔR²=+0.16, C5 洞见汇合** | §2.3, §3, §3.1, §3.2 |
 | **2025-12-23** | **🔄 Ridge 基准修正：R²=0.46 (1k test，原 0.50 for 500 test)** | §3.1 (C1) |
 | **2025-12-24** | **✅ Ridge Alpha Sweep (1k test): Best α=100k, R²=0.4551, Y-scaling 无效** | §3.1 (C1) |
+
+---
+
+## 📁 Data Source Quick Reference (2025-12-24)
+
+| 属性 | 值 |
+|------|-----|
+| **Dataset** | BOSZ 50000 合成光谱 |
+| **Root** | `/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/` |
+| **Train** | 5 shards × 200k = 1M samples |
+| **Test** | test_1k_0 (1000 samples) |
+| **Features** | 4096 (MR arm) |
+| **Target** | log_g ∈ [1.0, 5.0] |
+| **Noise** | σ=1.0 (heteroscedastic Gaussian) |
+
+**Data Files**:
+- Train: `train_200k_{0-4}/dataset.h5` (19 GB each)
+- Test: `test_1k_0/dataset.h5` (128 MB, pre-noised)
+
+---
+
+## 2025-12-24 核心发现
+
+### Gate Feature Sanity Check @ noise=1 (MVP-16A-1) ✅ 完成
+
+**🔑 Key Insight**: Gate 特征在 noise=1 高噪声条件下仍具有极强的 bin 区分能力，远超预期！
+
+| Metric | Expected | Actual | Status |
+|--------|----------|--------|--------|
+| 9-class Accuracy | > 60% (pass) or < 40% (fail) | **87.8%** | ✅ 远超预期 |
+| Ca II F-statistic | > 10 | **25,618** | ✅ 远超预期 |
+| Avg SNR @ noise=1 | > 1.0 | **6.21** | ✅ 信号充足 |
+
+**意外发现**：
+1. **PCA 特征最强**：PCA_1 F-stat = 287,966，全局光谱形状在 bin 区分中贡献最大
+2. **Mg I 比 Ca II 更强**：可能因为窗口更窄，信号更集中
+3. **噪声容忍度高**：即使 noise=2.0，准确率仍达 75.1%（远超 40% 失败阈值）
+4. **SNR 几乎不随噪声变化**：noise=0.2 和 noise=1.0 的窗口 SNR 几乎相同
+
+**设计原则更新**：
+
+| Principle | Description |
+|-----------|-------------|
+| **P-A1.1** | 物理窗口特征在 noise=1 下仍可用于 gate routing |
+| **P-A1.2** | PCA 特征对 bin 区分贡献最大，应包含在 gate 输入中 |
+| **P-A1.3** | 37 维 gate 特征足够区分 9 个 bins (Acc=88%) |
+
+**决策**：✅ 继续 MVP-16A-2 (Soft-gate MoE 开发)
+
+**Report**: [exp_scaling_gate_feat_sanity_20251224.md](./exp/exp_scaling_gate_feat_sanity_20251224.md)

@@ -1076,3 +1076,54 @@ Step 4: 评估
 | 2025-12-07 | 待创建实验报告链接标注为 (待创建) | §2.1 |
 | **2025-12-09** | **🟢 MVP-12A 完成！100k R²=0.9400 稳态复现** | §1.1, §1.2, §2.1, §4.1, §4.2, §4.3, §5.1 |
 | 2025-12-09 | 更新 MVP-13/14/15：在 32k 上操作 | §2.2 |
+
+---
+
+## 🆕 Oracle MoE @ noise=1 验证完成 (2025-12-24)
+
+### 实验 ID: SCALING-20251223-oracle-moe-noise1-01
+
+### 核心问题
+- MoE 在 noise=1 下还有没有结构红利？
+- ΔR² ≥ 0.03 → MoE 有戏；ΔR² < 0.03 → 放弃
+
+### 结果
+
+| Model | R² | 备注 |
+|-------|---:|------|
+| Global Ridge | 0.4611 | baseline (α=100k) |
+| **Oracle MoE** | **0.6249** | 9 experts |
+| **ΔR²** | **+0.1637** | ✅ 远超 0.03 |
+
+### Per-bin 分析
+
+- **所有 9 bin 都优于全局模型**
+- **Metal-poor bins 受益最大**: ΔR² = 0.17-0.19
+- **Metal-rich bins 表现最好**: R² = 0.82-0.87
+
+### 高噪声放大结构红利
+
+| Noise Level | ΔR² (Oracle - Global) |
+|-------------|:---------------------:|
+| σ=0.2 | ~0.05 |
+| σ=1.0 | **+0.16** |
+
+### 决策
+
+✅ **MoE 路线继续！**
+
+| 下一步 | 描述 |
+|--------|------|
+| MVP-16A-1 | Trainable gate with physical features (Ca II, Na I, PCA) |
+| MVP-16A-2 | Gate 优化和部署 |
+
+### 相关文件
+
+| 类型 | 路径 |
+|------|------|
+| Script | `~/VIT/scripts/scaling_oracle_moe_noise1.py` |
+| Report | `logg/scaling/exp/exp_scaling_oracle_moe_noise1_20251223.md` |
+
+---
+
+*Updated: 2025-12-24*

@@ -213,6 +213,72 @@ log_L -= 0.5 * np.sum((spec.flux[mask] - cont[mask] * temp.flux[mask]) ** 2 / sp
 
 ---
 
-*文档生成日期: 2025-12-22*
+## 8. 大规模实验结果 (1000 样本)
+
+### 8.1 实验配置
+
+| 参数 | 值 |
+|------|------|
+| 数据集 | BOSZ 50000 (z=0) |
+| 样本数 | 1000 |
+| T_eff 范围 | 3750 - 6000 K |
+| log_g 范围 | 1.0 - 5.0 dex |
+| M_H 范围 | -2.5 - 0.75 dex |
+| 星等范围 | 20.5 - 22.5 mag |
+| 曝光次数 | 12 次 × 900s |
+| 模式 | noisy (含噪声) |
+
+### 8.2 拟合结果统计
+
+| 参数 | R² | MAE | Bias | Std |
+|------|-----|-----|------|-----|
+| **T_eff** | 0.7159 | 261.25 K | +54.73 K | 355.10 K |
+| **log_g** | 0.4039 | 0.66 dex | -0.07 dex | 0.88 dex |
+| **M_H** | 0.8448 | 0.27 dex | +0.14 dex | 0.34 dex |
+
+**统计信息：**
+- 总样本数：1000
+- 成功拟合：997 (99.7%)
+
+### 8.3 结果分析
+
+1. **[M/H] 拟合效果最好**：R² = 0.84，这是因为金属丰度对光谱特征（吸收线强度）有明显影响
+2. **log_g 拟合效果较差**：R² = 0.40，表面重力对光谱的影响相对较弱，尤其在低 SNR 情况下
+3. **T_eff 有正向偏差**：+54.7 K，可能与低温恒星的模板网格稀疏有关
+
+### 8.4 诊断图
+
+#### 预测值 vs 真实值
+
+![Predicted vs True](img/pred_vs_true_noisy.png)
+
+#### 残差 vs 真实值
+
+![Bias vs True](img/bias_vs_true_noisy.png)
+
+#### Bias 和 Std vs SNR
+
+![Bias Std vs SNR](img/bias_std_vs_snr_noisy.png)
+
+### 8.5 关键发现
+
+1. **SNR 依赖性**：如预期，低 SNR 样本的拟合误差更大
+2. **Bias 随 SNR 变化**：在低 SNR 区域，T_eff 和 log_g 有更明显的系统偏差
+3. **成功率高**：99.7% 的样本成功拟合，说明算法稳定性好
+
+---
+
+## 9. 数据路径
+
+| 内容 | 路径 |
+|------|------|
+| 拟合结果 | `/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/test_1k_0/fit_results_noisy.npz` |
+| 测试数据集 | `/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/test_1k_0/dataset.h5` |
+| 拟合脚本 | `/home/swei20/ga_pfsspec_all/modules/stellar/nb/viska/stellar_param_fit_fast.py` |
+| 绘图脚本 | `/home/swei20/ga_pfsspec_all/modules/stellar/nb/viska/plot_fitting_results.py` |
+
+---
+
+*文档更新日期: 2025-12-23*
 *分析基于: pfsspec-stellar v0.1.1*
 

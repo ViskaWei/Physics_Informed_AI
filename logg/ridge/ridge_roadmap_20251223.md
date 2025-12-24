@@ -502,3 +502,43 @@
 > - ✅ **Do:** Decision Gates, MVP specs, execution tracking, progress, cross-repo integration
 > - ❌ **Don't:** Insight synthesis (→ hub.md), strategic reasoning (→ hub.md)
 
+
+---
+
+## 🆕 Ridge Baseline Consolidation (2025-12-24)
+
+### 实验总结
+
+| Experiment | Config | Best α | R² | Status |
+|------------|--------|:------:|---:|:------:|
+| Alpha Sweep (500 test) | 1M, StandardScaler | 100,000 | 0.5017 | ✅ |
+| Alpha Sweep (1k test) | 1M, StandardScaler | 100,000 | **0.4551** | ✅ 标准 |
+| Y-Scaling | 1M, +MinMaxScaler(y) | 100,000 | 0.4551 | ✅ 无效 |
+
+### 最终基准线
+
+| 指标 | 值 | 备注 |
+|------|-----|------|
+| **Standard R²** | **0.4551** | 1M train, 1k test, α=100k |
+| MAE | 0.6605 | |
+| RMSE | ~0.80 | |
+
+### Alpha 选择指南
+
+| Data Size | Optimal α | R² |
+|-----------|:---------:|---:|
+| 100k | 31,623 | 0.4856 |
+| 1M | **100,000** | **0.4551** |
+
+### 与 Oracle MoE 对比
+
+| Model | R² | ΔR² |
+|-------|---:|----:|
+| Global Ridge | 0.4551~0.4611 | baseline |
+| Oracle MoE (9 bins) | 0.6249 | **+0.16** |
+
+**结论**: Ridge 有明确上限，MoE 分层建模可突破 ~16%。
+
+---
+
+*Updated: 2025-12-24*
