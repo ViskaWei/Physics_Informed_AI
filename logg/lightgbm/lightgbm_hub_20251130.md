@@ -4,8 +4,34 @@
 > **主题名称：** LightGBM for $\log g$ Prediction  
 > **作者：** Viska Wei  
 > **创建日期：** 2025-11-30  
-> **最后更新：** 2025-12-05  
-> **状态：** 🎯 收敛中
+> **最后更新：** 2025-12-24  
+> **状态：** 🎯 收敛中  
+> **Layer:** L2 (Topic Hub)
+
+---
+
+## 🔗 Hub Dependencies
+
+> **定义本 Hub 与其他 Hub 的引用关系，供自动传播使用**
+> 
+> 📋 完整依赖图见 [`../_hub_graph.md`](../_hub_graph.md)
+
+### 📤 Parent Hubs (引用本 Hub 的上层)
+
+<!-- 当本 Hub 的 §5.3 Key Numbers 更新时，自动同步到以下 hubs -->
+
+| Parent Hub | 引用的数据 | 同步章节 |
+|------------|-----------|---------|
+| [`moe_hub`](../moe/moe_hub_20251203.md) | LightGBM Expert 对比 | §5.3 Key Numbers |
+| [`scaling_hub`](../scaling/scaling_hub_20251222.md) | LightGBM scaling, R² @ all scales | §5.3 Key Numbers |
+| [`benchmark_hub`](../benchmark/benchmark_hub_20251205.md) | R² @ all noise levels, 最优配置 | §5.3 Key Numbers |
+| [`master_hub`](../master_hub.md) | 战略结论 (via L1 hubs) | §2 Strategic Questions |
+
+### 📥 Child Hubs (本 Hub 引用的下层)
+
+| Child Hub | 引用的数据 |
+|-----------|-----------|
+| (无，L2 是最底层) | - |
 
 ---
 
