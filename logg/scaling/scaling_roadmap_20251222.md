@@ -86,46 +86,46 @@
 
 ## 2.1 Experiment Summary
 
-| MVP | Name | Phase | Status | experiment_id | Report |
-|-----|------|-------|--------|---------------|--------|
-| MVP-1.0 | Ridge 1M Ceiling | 1 | ✅ | `SCALING-20251222-ml-ceiling-01` | [Link](./exp/exp_scaling_ml_ceiling_20251222.md) |
-| MVP-1.1 | LightGBM 1M Ceiling | 1 | ✅ | `SCALING-20251222-ml-ceiling-01` | [Link](./exp/exp_scaling_ml_ceiling_20251222.md) |
-| MVP-1.2 | ML Scaling Law | 1 | ✅ | `SCALING-20251222-ml-ceiling-01` | [Link](./exp/exp_scaling_ml_ceiling_20251222.md) |
-| **MVP-1.3** | **Stats Validation (P0)** | 1.x | 🔴 | `SCALING-20251222-stats-01` | [Link](./exp/exp_scaling_stats_validation_20251222.md) |
-| **MVP-1.4** | **Ridge α Extended (P0)** | 1.x | ✅ | `SCALING-20251222-ridge-alpha-01` | [Link](./exp/exp_scaling_ridge_alpha_extended_20251222.md) |
-| **MVP-1.5** | **LightGBM Param Extended (P0)** | 1.x | ⏳ | `SCALING-20251222-lgbm-param-01` | [Link](./exp/exp_scaling_lgbm_param_extended_20251222.md) |
-| **MVP-1.6** | **Whitening/SNR Input (P1)** | 1.x | ✅ | `SCALING-20251222-whitening-01` | [Link](./exp/exp_scaling_whitening_snr_20251222.md) |
-| **MVP-1.7** | **PCA vs PLS 降维策略 (P1)** | 1.x | 🔴 | `SCALING-20251223-pca-pls-01` | [Link](./exp/exp_scaling_pca_pls_comparison_20251223.md) |
-| MVP-1.8 | MoE 分段建模 (P2) | 1.x | ⏳ | - | - |
-| MVP-1.9 | 物理特征工程 (P2) | 1.x | ⏳ | - | - |
-| MVP-2.0 | MLP 1M Performance | 2 | ⏳ | - | - |
-| MVP-2.1 | CNN 1M Performance | 2 | ⏳ | - | - |
-| MVP-2.2 | NN Scaling Law | 2 | ⏳ | - | - |
-| MVP-3.0 | Noise Info Limit | 3 | ⏳ | - | - |
-| MVP-3.1 | Model Capacity | 3 | ⏳ | - | - |
-| MVP-3.2 | Feature Analysis | 3 | ⏳ | - | - |
-| **MVP-16T** | **✅ Fisher/CRLB 理论上限 (⚠️需校准)** | 16 | ✅⚠️ | `SCALING-20251223-fisher-ceiling-01` | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md) |
-| **MVP-16B** | **🔴 Baseline 统计可信度 (P0)** | 16 | 🔴 | `SCALING-20251223-baseline-stats-01` | [Link](./exp/exp_scaling_baseline_stats_20251223.md) |
-| **MVP-16L** | **🟡 LMMSE 线性上限 (P1)** | 16 | ⏳ | `SCALING-20251223-lmmse-ceiling-01` | - |
-| **MVP-16W** | **🟡 Whitening 表示 (P1)** | 16 | ⏳ | `SCALING-20251223-whitening-noise1-01` | - |
-| **MVP-16CNN** | **🟢 1D-CNN @ noise=1 (P2)** | 16 | ⏳ | `SCALING-20251223-cnn-noise1-01` | - |
-| | | | | | |
-| **❌ Phase T: Fisher 校准（方法失败）** | | | | | |
-| ~~MVP-T0~~ | ~~Noise Monotonicity~~ | T | ❌ | - | 方法失败，取消 |
-| ~~MVP-T1~~ | ~~Confounding Ablation~~ | T | ❌ | - | 方法失败，取消 |
-| **MVP-T2** | **🟡 LLR Jacobian (P1 降级)** | T | ⏳ | `SCALING-20251223-fisher-llr-01` | - |
-| **MVP-T3** | **🟢 Scale Audit (P2 快速)** | T | ⏳ | `SCALING-20251223-scale-audit-01` | - |
-| | | | | | |
-| **🆕 Phase D: 经验上限（替代 Fisher）** | | | | | |
-| **MVP-D0** | **🔴 noise=0 Oracle 上限 (P0)** | D | 🔴 | `SCALING-20251223-noise0-oracle-01` | - |
-| | | | | | |
-| **🆕 Phase A: noise=1 MoE** | | | | | |
-| **MVP-16A-0** | **🔴 Oracle MoE @ noise=1 (P0)** | A | 🔴 | `SCALING-20251223-oracle-moe-noise1-01` | - |
-| **MVP-16A-1** | **🟡 Gate-feat Sanity (P1)** | A | ⏳ | `SCALING-20251223-gate-feat-01` | - |
-| **MVP-16A-2** | **🟡 Soft-gate MoE (P1)** | A | ⏳ | `SCALING-20251223-soft-moe-noise1-01` | - |
-| | | | | | |
-| **🆕 Phase NN: 神经网络 Baseline** | | | | | |
-| **MVP-NN-0** | **🔴 1D CNN Whiten (P0)** | NN | 🔴 | `SCALING-20251223-cnn-whiten-01` | - |
+| MVP                             | Name                             | Phase | Status | experiment_id                           | Report                                                     |
+| ------------------------------- | -------------------------------- | ----- | ------ | --------------------------------------- | ---------------------------------------------------------- |
+| MVP-1.0                         | Ridge 1M Ceiling                 | 1     | ✅      | `SCALING-20251222-ml-ceiling-01`        | [Link](./exp/exp_scaling_ml_ceiling_20251222.md)           |
+| MVP-1.1                         | LightGBM 1M Ceiling              | 1     | ✅      | `SCALING-20251222-ml-ceiling-01`        | [Link](./exp/exp_scaling_ml_ceiling_20251222.md)           |
+| MVP-1.2                         | ML Scaling Law                   | 1     | ✅      | `SCALING-20251222-ml-ceiling-01`        | [Link](./exp/exp_scaling_ml_ceiling_20251222.md)           |
+| **MVP-1.3**                     | **Stats Validation (P0)**        | 1.x   | 🔴     | `SCALING-20251222-stats-01`             | [Link](./exp/exp_scaling_stats_validation_20251222.md)     |
+| **MVP-1.4**                     | **Ridge α Extended (P0)**        | 1.x   | ✅      | `SCALING-20251222-ridge-alpha-01`       | [Link](./exp/exp_scaling_ridge_alpha_extended_20251222.md) |
+| **MVP-1.5**                     | **LightGBM Param Extended (P0)** | 1.x   | ⏳      | `SCALING-20251222-lgbm-param-01`        | [Link](./exp/exp_scaling_lgbm_param_extended_20251222.md)  |
+| **MVP-1.6**                     | **Whitening/SNR Input (P1)**     | 1.x   | ✅      | `SCALING-20251222-whitening-01`         | [Link](./exp/exp_scaling_whitening_snr_20251222.md)        |
+| **MVP-1.7**                     | **PCA vs PLS 降维策略 (P1)**         | 1.x   | 🔴     | `SCALING-20251223-pca-pls-01`           | [Link](./exp/exp_scaling_pca_pls_comparison_20251223.md)   |
+| MVP-1.8                         | MoE 分段建模 (P2)                    | 1.x   | ⏳      | -                                       | -                                                          |
+| MVP-1.9                         | 物理特征工程 (P2)                      | 1.x   | ⏳      | -                                       | -                                                          |
+| MVP-2.0                         | MLP 1M Performance               | 2     | ⏳      | -                                       | -                                                          |
+| MVP-2.1                         | CNN 1M Performance               | 2     | ⏳      | -                                       | -                                                          |
+| MVP-2.2                         | NN Scaling Law                   | 2     | ⏳      | -                                       | -                                                          |
+| MVP-3.0                         | Noise Info Limit                 | 3     | ⏳      | -                                       | -                                                          |
+| MVP-3.1                         | Model Capacity                   | 3     | ⏳      | -                                       | -                                                          |
+| MVP-3.2                         | Feature Analysis                 | 3     | ⏳      | -                                       | -                                                          |
+| **MVP-16T**                     | **✅ Fisher/CRLB 理论上限 (⚠️需校准)**   | 16    | ✅⚠️    | `SCALING-20251223-fisher-ceiling-01`    | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md)       |
+| **MVP-16B**                     | **🔴 Baseline 统计可信度 (P0)**       | 16    | 🔴     | `SCALING-20251223-baseline-stats-01`    | [Link](./exp/exp_scaling_baseline_stats_20251223.md)       |
+| **MVP-16L**                     | **🟡 LMMSE 线性上限 (P1)**           | 16    | ⏳      | `SCALING-20251223-lmmse-ceiling-01`     | -                                                          |
+| **MVP-16W**                     | **🟡 Whitening 表示 (P1)**         | 16    | ⏳      | `SCALING-20251223-whitening-noise1-01`  | -                                                          |
+| **MVP-16CNN**                   | **🟢 1D-CNN @ noise=1 (P2)**     | 16    | ⏳      | `SCALING-20251223-cnn-noise1-01`        | -                                                          |
+|                                 |                                  |       |        |                                         |                                                            |
+| **❌ Phase T: Fisher 校准（方法失败）**  |                                  |       |        |                                         |                                                            |
+| ~~MVP-T0~~                      | ~~Noise Monotonicity~~           | T     | ❌      | -                                       | 方法失败，取消                                                    |
+| ~~MVP-T1~~                      | ~~Confounding Ablation~~         | T     | ❌      | -                                       | 方法失败，取消                                                    |
+| **MVP-T2**                      | **🟡 LLR Jacobian (P1 降级)**      | T     | ⏳      | `SCALING-20251223-fisher-llr-01`        | -                                                          |
+| **MVP-T3**                      | **🟢 Scale Audit (P2 快速)**       | T     | ⏳      | `SCALING-20251223-scale-audit-01`       | -                                                          |
+|                                 |                                  |       |        |                                         |                                                            |
+| **🆕 Phase D: 经验上限（替代 Fisher）** |                                  |       |        |                                         |                                                            |
+| **MVP-D0**                      | **🔴 noise=0 Oracle 上限 (P0)**    | D     | 🔴     | `SCALING-20251223-noise0-oracle-01`     | -                                                          |
+|                                 |                                  |       |        |                                         |                                                            |
+| **🆕 Phase A: noise=1 MoE**     |                                  |       |        |                                         |                                                            |
+| **MVP-16A-0**                   | **🔴 Oracle MoE @ noise=1 (P0)** | A     | 🔴     | `SCALING-20251223-oracle-moe-noise1-01` | -                                                          |
+| **MVP-16A-1**                   | **🟡 Gate-feat Sanity (P1)**     | A     | ⏳      | `SCALING-20251223-gate-feat-01`         | -                                                          |
+| **MVP-16A-2**                   | **🟡 Soft-gate MoE (P1)**        | A     | ⏳      | `SCALING-20251223-soft-moe-noise1-01`   | -                                                          |
+|                                 |                                  |       |        |                                         |                                                            |
+| **🆕 Phase NN: 神经网络 Baseline**  |                                  |       |        |                                         |                                                            |
+| **MVP-NN-0**                    | **🔴 1D CNN Whiten (P0)**        | NN    | 🔴     | `SCALING-20251223-cnn-whiten-01`        | -                                                          |
 
 **Status Legend:**
 - ⏳ Planned | 🔴 Ready | 🚀 Running | ✅ Done | ❌ Cancelled | ⏸️ Paused

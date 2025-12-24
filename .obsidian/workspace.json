@@ -100,7 +100,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 403.50312423706055
+    "width": 406.50312423706055
   },
   "right": {
     "id": "eab51a00943c2f05",
@@ -219,8 +219,8 @@
   "active": "ba8d2fa3bd5a3042",
   "lastOpenFiles": [
     "logg/scaling/scaling_hub_20251222.md",
-    "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
     "logg/scaling/scaling_roadmap_20251222.md",
+    "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
     "tempfit/template_fitting_analysis.md",
     "tempfit",
     "logg/scaling/sessions/coding_prompt_whitening_20251222.md",
