@@ -40,14 +40,14 @@
             "id": "140d5ff8eb31ed3e",
             "type": "leaf",
             "state": {
-              "type": "split-diff-view",
+              "type": "markdown",
               "state": {
-                "aFile": "logg/ridge/ridge_hub_20251223.md",
-                "bFile": "logg/ridge/ridge_hub_20251223.md",
-                "aRef": ""
+                "file": "logg/scaling/scaling_hub_20251222.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "diff",
-              "title": "Diff: ridge_hub_20251223"
+              "icon": "lucide-file",
+              "title": "scaling_hub_20251222"
             }
           }
         ],
