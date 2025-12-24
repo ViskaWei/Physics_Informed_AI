@@ -14,12 +14,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
+                "file": "logg/ridge/ridge_hub_20251223.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "exp_moe_1m_oracle_headroom_20251223"
+              "title": "ridge_hub_20251223"
             }
           }
         ]
@@ -218,8 +218,9 @@
   },
   "active": "ba8d2fa3bd5a3042",
   "lastOpenFiles": [
-    "logg/ridge/ridge_main_20251130.md",
     "logg/moe/exp/exp_moe_1m_oracle_headroom_20251223.md",
+    "logg/ridge/ridge_hub_20251223.md",
+    "logg/ridge/ridge_main_20251130.md",
     "logg/moe/exp/exp_moe_1m_high_noise_20251223.md",
     "logg/moe/moe_hub_20251203.md",
     "logg/moe/moe_roadmap_20251203.md",
@@ -258,7 +259,6 @@
     "logg/logg_1m/exp/exp_logg_1m_error_input_20251222.md",
     "logg/logg_1m/exp/exp_logg_1m_baseline_scaling_20251222.md",
     "logg/logg_1m/logg_1m_roadmap_20251222.md",
-    "logg/logg_1m/logg_1m_hub_20251222.md",
     "logg/logg_1m/exp",
     "logg/logg_1m",
     "logg/benchmark/img/benchmark_noise_vs_r2.py",
