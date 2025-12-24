@@ -108,7 +108,6 @@
 | **MVP-16B**                     | **🔴 Baseline 统计可信度 (P0)**       | 16    | 🔴     | `SCALING-20251223-baseline-stats-01`    | [Link](./exp/exp_scaling_baseline_stats_20251223.md)       |
 | **MVP-16L**                     | **🟡 LMMSE 线性上限 (P1)**           | 16    | ⏳      | `SCALING-20251223-lmmse-ceiling-01`     | -                                                          |
 | **MVP-16W**                     | **🟡 Whitening 表示 (P1)**         | 16    | ⏳      | `SCALING-20251223-whitening-noise1-01`  | -                                                          |
-| **MVP-16A-0** 🆕               | **✅ Oracle MoE Structure Bonus (P0)** | 16    | ✅      | `SCALING-20251223-oracle-moe-noise1-01` | [Link](./exp/exp_scaling_oracle_moe_noise1_20251223.md)    |
 | **MVP-16CNN**                   | **🟢 1D-CNN @ noise=1 (P2)**     | 16    | ⏳      | `SCALING-20251223-cnn-noise1-01`        | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
 | **❌ Phase T: Fisher 校准（方法失败）**  |                                  |       |        |                                         |                                                            |
@@ -121,7 +120,7 @@
 | **MVP-D0**                      | **🔴 noise=0 Oracle 上限 (P0)**    | D     | 🔴     | `SCALING-20251223-noise0-oracle-01`     | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
 | **🆕 Phase A: noise=1 MoE**     |                                  |       |        |                                         |                                                            |
-| **MVP-16A-0**                   | **🔴 Oracle MoE @ noise=1 (P0)** | A     | ✅     | `SCALING-20251223-oracle-moe-noise1-01` | [exp](./exp/exp_scaling_oracle_moe_noise1_20251223.md)     |
+| **MVP-16A-0**                   | **🔴 Oracle MoE @ noise=1 (P0)** | A     | 🔴     | `SCALING-20251223-oracle-moe-noise1-01` | -                                                          |
 | **MVP-16A-1**                   | **🟡 Gate-feat Sanity (P1)**     | A     | ⏳      | `SCALING-20251223-gate-feat-01`         | -                                                          |
 | **MVP-16A-2**                   | **🟡 Soft-gate MoE (P1)**        | A     | ⏳      | `SCALING-20251223-soft-moe-noise1-01`   | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
@@ -339,19 +338,6 @@
 
 ---
 
-**🆕 MVP-16A-0 Oracle MoE 结果 (2025-12-23 已完成):**
-
-| Metric | Value |
-|--------|-------|
-| Global Ridge R² | 0.4611 (1k test) |
-| Oracle MoE R² | **0.6249** |
-| **ΔR²** | **+0.1637** (>>0.03 阈值) |
-| Decision | ✅ MoE 路线继续 |
-
-> **结论**: Oracle MoE 在 noise=1 + 1M 数据下展示强结构红利，所有 9 个 bin 都优于全局 Ridge。
-
----
-
 ### MVP-1.9: 物理特征工程 (🟢 P2)
 
 | Item | Config |
@@ -514,7 +500,6 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 ---
 
 ### MVP-16W: Whitening 表示（🟡 P1）
-| **MVP-16A-0** 🆕               | **✅ Oracle MoE Structure Bonus (P0)** | 16    | ✅      | `SCALING-20251223-oracle-moe-noise1-01` | [Link](./exp/exp_scaling_oracle_moe_noise1_20251223.md)    |
 
 | Item | Config |
 |------|--------|
@@ -772,14 +757,13 @@ MVP-NN-0 完成后
 
 | MVP | Conclusion | Key Metric | Synced to Hub |
 |-----|------------|------------|---------------|
-| MVP-1.0 | Ridge 在 1M + noise=1 下达到 R²=0.46 | R²=0.46 (1k test) | ✅ |
+| MVP-1.0 | Ridge 在 1M + noise=1 下达到 R²=0.50 | R²=0.4997 | ✅ |
 | MVP-1.1 | LightGBM 在 1M + noise=1 下达到 R²=0.57 | R²=0.5709 | ✅ |
 | MVP-1.2 | 100k→1M 仅提升 2-3%，边际收益递减 | ΔR²<0.03 | ✅ |
 | MVP-1.3 | TODO: 确认 plateau 统计可信度 | - | ⏳ |
 | MVP-1.4 | 倒 U 型曲线确认，最优 α=1e4~1e5，优化提升仅 0.4%~2.5% | 100k: α=3.16e+04, R²=0.4856; 1M: α=1e+05, R²=0.5017 | ✅ |
 | MVP-1.5 | TODO: 验证 LightGBM 参数极限 | - | ⏳ |
 | **MVP-1.6** | **H1.7.1 ❌: SNR ΔR²=+0.015 未达阈值; ⚠️ StandardScaler 严重损害 LightGBM (-0.36)** | Ridge snr_centered: R²=0.5222; LightGBM raw: R²=0.5533 | ✅ |
-| **MVP-16A-0** | **🔥 Oracle MoE 结构红利巨大！ΔR²=+0.16 >> 0.03 阈值，所有 9 bins 均正向提升** | Oracle R²=0.6249, Global R²=0.4611, ΔR²=+0.1637 | ✅ |
 
 ## 4.3 Timeline
 
@@ -789,8 +773,7 @@ MVP-NN-0 完成后
 | 2025-12-22 | Phase 1.x 立项 | MVP-1.3~1.9 规划完成 |
 | 2025-12-22 | P0 exp.md 框架创建 | stats, ridge-alpha, lgbm-param |
 | 2025-12-23 | MVP-1.4 完成 | 最优 α=1e4~1e5，H1.5.1 验证 ✅ |
-| 2025-12-23 | MVP-1.6 完成 | H1.7.1 ❌, LightGBM 必须用 raw 输入 |
-| **2025-12-24** | **MVP-16A-0 完成** | 🔥 Oracle MoE ΔR²=+0.16, H-A0.1 ✅, H4.1.1 ✅, H4.1.2 ✅ |
+| **2025-12-23** | **MVP-1.6 完成** | H1.7.1 ❌, LightGBM 必须用 raw 输入 |
 
 ---
 
@@ -913,7 +896,7 @@ MVP-NN-0 完成后
 ## 📊 SCALING-20251222-ml-ceiling-01 实验结果
 
 ### 核心结论
-传统 ML（Ridge, LightGBM）在 1M 数据 + noise=1 下分别达到 R²=0.46 和 R²=0.57，确认性能天花板存在。
+传统 ML（Ridge, LightGBM）在 1M 数据 + noise=1 下分别达到 R²=0.50 和 R²=0.57，确认性能天花板存在。
 
 ### 关键数字
 | 指标 | 值 |
@@ -1063,9 +1046,3 @@ Ridge 最优 α 在 1e4~1e5 之间，比原 baseline (α=5000) 高 1-2 个数量
 
 **Decision**: ✅ STRONG STRUCTURE BONUS confirmed at noise=1, 1M scale.
 
-| 2025-12-23 | 更新 P0 优先级和决策树 | §4.1 |
-| **2025-12-23** | **❌ MVP-16T 失败：方法论缺陷（非规则网格）** | §2.1, §3, §4.1 |
-| **2025-12-23** | **✅ MVP-16A-0 完成：Oracle MoE ΔR²=+0.16 >> 0.03** | §2.1, MVP-1.8 |
-| **2025-12-23** | **🔄 Ridge 基准修正：1k test → R²=0.46 (原 500 test R²=0.50)** | 全文 |
-| **2025-12-24** | **✅ Ridge Alpha Sweep (1k test): Best α=100k, R²=0.4551** | §2.1, MVP-1.0 |
-| **2025-12-24** | **✅ Y-Scaling 实验: MinMaxScaler 对 R² 无影响** | §2.1, MVP-1.0 |
