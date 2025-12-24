@@ -247,6 +247,7 @@
   },
   "active": "1934de817ef7bce4",
   "lastOpenFiles": [
+    "data/bosz50k/z0/grid_full.md",
     "tempfit/img/pred_vs_true_noisy.png",
     "tempfit/img/bias_vs_true_noisy.png",
     "tempfit/img/bias_std_vs_snr_noisy.png",
@@ -260,7 +261,6 @@
     "logg/scaling/exp/exp_scaling_nn_baseline_framework_20251224.md",
     "logg/scaling/exp/exp_scaling_gate_feat_sanity_20251224.md",
     "logg/moe/img/moe_sample_distribution.png",
-    "logg/moe/img/moe_perbin_r2_grouped.png",
     "logg/benchmark/benchmark_hub_20251205.md.bak",
     "data/bosz50k/z0/grid_data_report.txt",
     "logg/cnn/cnn_main_20251201.md",
