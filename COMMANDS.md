@@ -247,20 +247,91 @@ AI: 📊 生成简短报告 (过去 4 小时)...
 
 ---
 
-### 📇 知识卡片
+### 📇 知识卡片 (Card)
 ```
 触发词: card | 卡片 | kc
 ```
 
-**作用**: 创建浓缩版知识卡片 `logg/[topic]/kc_*.md`
+**定义**: Card 是**可复用的阶段性知识**，不是实验报告，不是 hub，不是 roadmap
+- ✅ **做**: 跨多个实验的结构性认知、理论依据、可指导决策的结论
+- ❌ **不做**: 指导下一步实验（这是 hub 的职责）
+
+**位置规则**:
+- 单主题 (如 fisher) → 在实验父文件夹下: `logg/scaling/card/`
+- 跨主题 (如 ridge 涉及多个文件夹) → 在 `logg/card/`
+
+**模板**: `_backend/template/card.md`
+
+**工作流程**:
+```
+用户: card [关键词/描述]
+    │
+    ├─ Step 1: 确定 Card 位置
+    │   - 解析关键词 → 判断是单主题还是跨主题
+    │   - 单主题 → logg/[parent_topic]/card/
+    │   - 跨主题 → logg/card/
+    │   - 若 card/ 目录不存在 → 自动创建
+    │
+    ├─ Step 2: 检索所有相关实验
+    │   - 在相关 logg/[topic]/exp/ 中搜索
+    │   - 提取核心结论、关键数字
+    │
+    ├─ Step 3: 按 card.md 模板生成卡片
+    │   - 🧠 Card ID｜一句话结论
+    │   - 1️⃣ 数学/理论依据
+    │   - 2️⃣ 实验结果（关键证据）
+    │   - 3️⃣ 实验链接
+    │
+    └─ Step 4: 保存 + Git Commit
+        card_[name]_YYYYMMDD.md
+```
 
 **示例**:
 ```
-用户: card CNN dilation 实验结论
+用户: card Fisher 理论上限
 
 AI: 📇 创建知识卡片...
-    ✅ 已创建: logg/cnn/kc_cnn_dilation_20251201.md
+    
+    🔍 检索相关实验:
+    - logg/scaling/exp/exp_scaling_fisher_ceiling_v2_20251224.md
+    - logg/scaling/exp/exp_scaling_fisher_multi_mag_20251224.md
+    
+    📂 确定位置: logg/scaling/card/ (单主题 fisher → scaling)
+    
+    ✅ 已创建: logg/scaling/card/card_fisher_ceiling_20251225.md
+    
+    📝 Card 预览:
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🧠 Card F1｜log g 理论上限 R²_max = 0.89，当前模型仅利用 64%
+    
+    1️⃣ 理论依据: Fisher/CRLB，高斯噪声下的最优估计
+    2️⃣ 关键结果: R²_max(median)=0.89, LightGBM=0.57
+    3️⃣ 来源: 2 个实验
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+```
+用户: card ridge 最优 alpha
+
+AI: 📇 创建知识卡片...
+    
+    🔍 检索相关实验:
+    - logg/ridge/exp/exp_ridge_alpha_extended_20251224.md
+    - logg/scaling/exp/exp_scaling_ridge_100k_20251222.md
+    - logg/benchmark/exp/exp_ridge_100k_noise_sweep_20251205.md
+    
+    📂 确定位置: logg/card/ (跨主题: ridge, scaling, benchmark)
+    
+    ✅ 已创建: logg/card/card_ridge_alpha_optimal_20251225.md
+```
+
+**Card vs Hub vs Exp**:
+
+| 类型 | 职责 | 指导下一步？ |
+|------|------|-------------|
+| Card | 可复用的阶段性知识、结构性认知 | ❌ 不指导 |
+| Hub | 问题树、假设、战略导航 | ✅ 指导 |
+| Exp | 单次实验的详细记录 | ⚠️ 仅建议 |
 
 ---
 

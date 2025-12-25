@@ -45,7 +45,7 @@ _backend/template/
 ├── session.md        # GPT 会话归档模板
 ├── kanban.md         # 看板模板
 ├── next.md           # 每日计划模板
-└── knowledge_card.md # 知识卡片模板
+└── card.md           # 知识卡片模板（跨多个 exp 的结构性认知）
 ```
 
 ### File Naming Convention
@@ -1013,7 +1013,7 @@ Physics_Informed_AI/
 │   ├── main.md
 │   ├── exp.md
 │   ├── next.md
-│   └── knowledge_card.md   # 🆕 浓缩知识卡片模板
+│   └── card.md             # 知识卡片模板（跨多个 exp 的结构性认知）
 └── scripts/
     ├── register_experiment.py    # 🆕 实验登记
     ├── scan_vit_experiments.py   # 🆕 VIT 扫描
@@ -1184,30 +1184,147 @@ AI: 📊 检查实验更新...
 
 ---
 
-## 📇 知识卡片 (Knowledge Card)
+## 📇 知识卡片 (Card)
 
 ### 触发词
 - `card` / `卡片` / `kc`
 
-### 用途
-比 exp.md 更短的知识条目，用于快速提炼实验发现。
+### 定义
+Card 是**可复用的阶段性知识**，跨多个实验的结构性认知
+- ✅ **做**: 理论依据、可指导决策的结论、关键证据
+- ❌ **不做**: 指导下一步实验（这是 hub 的职责）
 
 ### 模板
-`template/knowledge_card.md`
+`_backend/template/card.md`
+
+### Card 位置规则（重要！）
+
+| 场景 | 位置 | 示例 |
+|------|------|------|
+| 单主题 (如 fisher) | 实验父文件夹下 | `logg/scaling/card/` |
+| 跨主题 (如 ridge 涉及多个) | logg 下 | `logg/card/` |
+
+**位置判断逻辑**:
+```
+1. 解析关键词 → 找到相关的实验目录
+2. 如果所有相关实验都在同一个父目录 → 在该父目录下建 card/
+3. 如果相关实验跨多个父目录 → 在 logg/card/ 下建
+4. 若 card/ 目录不存在 → 自动创建
+```
+
+### 工作流程
+
+```
+用户: card [关键词/描述]
+    │
+    ├─ Step 1: 确定 Card 位置
+    │   - 解析关键词 → 判断是单主题还是跨主题
+    │   - 单主题 → logg/[parent_topic]/card/
+    │   - 跨主题 → logg/card/
+    │   - 若 card/ 目录不存在 → 自动创建
+    │
+    ├─ Step 2: 检索所有相关实验
+    │   - 在相关 logg/[topic]/exp/ 中搜索
+    │   - 提取核心结论、关键数字
+    │   - 列出找到的实验供参考
+    │
+    ├─ Step 3: 按 card.md 模板生成卡片
+    │   - 🧠 Card ID｜一句话结论
+    │   - 1️⃣ 数学/理论依据
+    │   - 2️⃣ 实验结果（关键证据）
+    │   - 3️⃣ 实验链接
+    │
+    └─ Step 4: 保存 + Git Commit
+        card_[name]_YYYYMMDD.md
+```
+
+### Card 模板结构
+
+```markdown
+# 🧠 Card <ID>｜<一句话结论>
+
+> **结论（可指导决策）**
+> <一句话写清"结构性认知"，不是指标复述>
+
+---
+
+## 1️⃣ 数学 / 理论依据
+
+* **假设**：<线性 / 高斯噪声 / 可辨识性 / 独立性等>
+* **关键结论**：<Fisher 上限 / 子空间维数 / 不可突破性 / scaling 关系>
+* **含义**：<理论上为什么会这样>
+
+---
+
+## 2️⃣ 实验结果（关键证据）
+
+* **图**：<图名或编号>
+* **关键结果**：<1–2 条核心数值或趋势>
+
+---
+
+## 3️⃣ 实验链接
+
+| 来源 | 路径 |
+|------|------|
+| exp_1 | `logg/[topic]/exp/exp_xxx.md` |
+| exp_2 | `logg/[topic]/exp/exp_yyy.md` |
+```
 
 ### 示例对话
+
 ```
-用户: card CNN dilation 实验结论
+用户: card Fisher 理论上限
 
 AI: 📇 创建知识卡片...
-    ✅ 已创建: logg/cnn/kc_cnn_dilation_20251201.md
     
-    内容预览:
-    🎯 问题: dilation rate 对 CNN 性能的影响
-    📊 关键结果: dilation=2 最优，R²=0.992
-    💡 洞见: 感受野匹配吸收线宽度
-    ➡️ 下一步: 测试 multi-scale dilation
+    🔍 检索相关实验:
+    - logg/scaling/exp/exp_scaling_fisher_ceiling_v2_20251224.md
+    - logg/scaling/exp/exp_scaling_fisher_multi_mag_20251224.md
+    
+    📂 确定位置: logg/scaling/card/ (单主题 fisher → scaling)
+    
+    ✅ 已创建: logg/scaling/card/card_fisher_ceiling_20251225.md
+    
+    📝 Card 预览:
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🧠 Card F1｜log g 理论上限 R²_max = 0.89，当前模型仅利用 64%
+    
+    1️⃣ 理论依据: Fisher/CRLB，高斯噪声下的最优估计
+    2️⃣ 关键结果: R²_max(median)=0.89, LightGBM=0.57
+    3️⃣ 来源: 2 个实验
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
+
+```
+用户: card ridge 最优 alpha
+
+AI: 📇 创建知识卡片...
+    
+    🔍 检索相关实验:
+    - logg/ridge/exp/exp_ridge_alpha_extended_20251224.md
+    - logg/scaling/exp/exp_scaling_ridge_100k_20251222.md
+    - logg/benchmark/exp/exp_ridge_100k_noise_sweep_20251205.md
+    
+    📂 确定位置: logg/card/ (跨主题: ridge, scaling, benchmark)
+    
+    ✅ 已创建: logg/card/card_ridge_alpha_optimal_20251225.md
+```
+
+### Card vs Hub vs Exp
+
+| 类型 | 职责 | 指导下一步？ | 检索范围 |
+|------|------|-------------|---------|
+| **Card** | 可复用的阶段性知识、结构性认知 | ❌ 不指导 | 跨多个 exp |
+| **Hub** | 问题树、假设、战略导航 | ✅ 指导 | 单主题全局 |
+| **Exp** | 单次实验的详细记录 | ⚠️ 仅建议 | 单次实验 |
+
+### Card 使用规则（强烈建议）
+
+* **一句话结论必须能决定"下一步做不做某类实验"**
+* **理论 ≠ 证明，只是"为什么合理"**
+* **实验只放"支持结论的最小证据"**
+* **Card 不包含"下一步"章节**（这是 hub 的职责）
 
 ---
 
@@ -1408,7 +1525,7 @@ AI: 📖 分析实验报告...
 | `u [exp_id]` | 🆕 完整更新：补全exp+同步hub/roadmap+git push | `logg/[topic]/` |
 | `p` | 生成 Coding Prompt 🆕 | `_backend/template/coding_prompt.md` |
 | `merge` | 合并相似实验 🆕 | `logg/[topic]/exp_[topic]_consolidated_*.md` |
-| `card` | 创建知识卡片 | `logg/[topic]/kc_*.md` |
+| `card` | 创建知识卡片（跨多个 exp 检索） | `logg/[topic]/card/` 或 `logg/card/` |
 | `todo` | 管理待办 | `status/next_steps.md` |
 | `report` | 生成报告 | `reports/drafts/` |
 | `session` | GPT 会话归档 | `logg/[topic]/sessions/` |
@@ -1581,7 +1698,7 @@ logg/[topic]/exp_[topic]_consolidated_YYYYMMDD.md
     │
     ├─ [merge] → consolidated.md (综合报告)
     │
-    ├─ [card] → knowledge_card.md (单点知识提炼)
+    ├─ [card] → logg/[topic]/card/ 或 logg/card/（跨多个 exp 的结构性认知）
     │
     └─ [report] → gpt_brainstorm.md (给 GPT 的报告)
 ```
@@ -1894,8 +2011,8 @@ kanban.md Archived + exp.md
 │          前300行=核心信息，附录=流程+完整数据                  │
 ├─────────────────────────────────────────────────────────────┤
 │ Layer 5: 📇 知识卡片层                                       │
-│          logg/[topic]/card_*.md                             │
-│          把成熟结果浓缩成 1 页                               │
+│          logg/[topic]/card/ 或 logg/card/                   │
+│          跨多个实验的结构性认知，不指导下一步                 │
 ├─────────────────────────────────────────────────────────────┤
 │ Layer 6: 📅 日常节奏层                                       │
 │          status/next_steps.md + next.md                     │
@@ -1939,7 +2056,7 @@ GPT 讨论 (Layer 1)
     ▼
 提炼结论 (Layer 5)
     │
-    ├─ [card] → knowledge_card.md
+    ├─ [card] → logg/[topic]/card/ 或 logg/card/（跨多个 exp 的结构性认知）
     ├─ 设计原则 → hub.md §5 设计原则库
     │
     ▼
@@ -1962,7 +2079,7 @@ GPT 讨论 (Layer 1)
 | **Layer 2b** | **roadmap.md** | **MVP 规格、进度、数值结果** | 每个 MVP 状态变更时 |
 | Layer 3 | kanban.md + coding_prompt | 实验队列 + 执行 prompt | 每天多次 |
 | Layer 4 | exp.md | 前300行=核心洞见，附录=流程+数据 | 每个实验完成后 |
-| Layer 5 | card.md | 成熟结论提炼 | 重要结论稳定后 |
+| Layer 5 | logg/[topic]/card/ 或 logg/card/ | 跨多个 exp 的结构性认知，不指导下一步 | 重要结论稳定后 |
 | Layer 6 | next_steps.md | 今日/明日计划 | 每天 |
 
 ### Hub vs Roadmap 职责边界（重要）🆕

@@ -1,10 +1,11 @@
 # 📘 Gate Feature Sanity Check @ noise=1
-> **Name:** TODO | **ID:** `VIT-20251224-scaling-01`  
-> **Topic:** `scaling` | **MVP:** MVP-16A | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** 🔄
+> **Name:** Gate Feature Sanity Check | **ID:** `SCALING-20251223-gate-feat-01`  
+> **Topic:** `scaling` | **MVP:** MVP-16A-1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** ✅ 完成
 ```
 💡 实验目的  
-决定：影响的决策
+决定：Gate 特征在 noise=1 下是否仍可用于 MoE routing
+结果：✅ 可用 (Accuracy=88%, 远超 60% 阈值)
 ```
 
 ---
@@ -196,3 +197,28 @@ python scripts/scaling_gate_feat_sanity.py
 | 结果 | `~/VIT/results/scaling_gate_feat/` |
 | 图表 | `/home/swei20/Physics_Informed_AI/logg/scaling/img/gate_feat_*.png` |
 | 报告 | 本文件 |
+
+### 6.5 代码引用
+
+| 参考脚本 | 可复用函数 | 说明 |
+|---------|-----------|------|
+| `~/VIT/scripts/scaling_gate_feat_sanity.py` | `extract_gate_features()` | 37 维物理窗口特征提取 |
+| `~/VIT/scripts/scaling_gate_feat_sanity.py` | `compute_f_statistics()` | 类间/类内方差比计算 |
+| `~/VIT/scripts/scaling_gate_feat_sanity.py` | `run_noise_sweep()` | 多噪声水平扫描 |
+| `~/VIT/scripts/scaling_oracle_moe_noise1.py` | `assign_bins()`, `load_all_shards()` | 数据加载 + bin 分配 |
+
+**关键配置 (脚本内)**:
+```python
+# 物理窗口配置
+PHYSICAL_WINDOWS = {
+    'CaII_8498': {'center': 8498, 'half_width': 10},
+    'CaII_8542': {'center': 8542, 'half_width': 12},
+    'CaII_8662': {'center': 8662, 'half_width': 12},
+    'NaI_8183': {'center': 8183, 'half_width': 8},
+    'NaI_8195': {'center': 8195, 'half_width': 8},
+    'MgI_8806': {'center': 8806, 'half_width': 5},
+    'MgI_8807': {'center': 8807, 'half_width': 5},
+    'MgI_8808': {'center': 8808, 'half_width': 5},
+}
+N_PCA_COMPONENTS = 10
+```
