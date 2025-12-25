@@ -72,14 +72,34 @@
 
 ## 📊 Figures
 
-![R²_max vs Magnitude](img/fisher_multi_mag_r2max.png)
-*Figure 1: R²_max (median and 90%) as a function of magnitude/SNR*
+### Figure 1: R²_max vs Magnitude
+![R²_max vs Magnitude](../img/fisher_multi_mag_r2max.png)
 
-![Schur Decay vs Magnitude](img/fisher_multi_mag_schur.png)
-*Figure 2: Schur decay showing constant degeneracy across SNR levels*
+**描述**: R²_max (median 和 90% 分位) 随 magnitude/SNR 变化曲线
+**关键观察**: 
+- SNR > 20 时 R²_max 接近 1
+- 临界 SNR ≈ 4 (mag=22)
+- 信息悬崖在 SNR < 2 (mag=23)
 
-![R²_max vs SNR Trend](img/fisher_multi_mag_snr_trend.png)
-*Figure 3: Continuous R²_max trend with SNR (log scale)*
+---
+
+### Figure 2: Schur Decay vs Magnitude
+![Schur Decay vs Magnitude](../img/fisher_multi_mag_schur.png)
+
+**描述**: Schur decay 展示参数纠缠随 SNR 的恒定性
+**关键观察**: 
+- Schur decay ≈ 0.68-0.69 恒定
+- 纠缠由光谱物理决定，与 SNR 无关
+
+---
+
+### Figure 3: R²_max vs SNR Trend
+![R²_max vs SNR Trend](../img/fisher_multi_mag_snr_trend.png)
+
+**描述**: R²_max 随 SNR 的连续变化趋势 (log scale)
+**关键观察**: 
+- 阶梯式下降明显
+- SNR=4 是关键拐点
 
 ---
 
