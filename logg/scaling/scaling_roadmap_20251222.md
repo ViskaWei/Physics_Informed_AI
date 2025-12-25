@@ -127,7 +127,7 @@
 | **MVP-16A-2**                   | **🟡 Soft-gate MoE (P1)**        | A     | ⏳      | `SCALING-20251223-soft-moe-noise1-01`   | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
 | **🆕 Phase NN: 神经网络 Baseline (2025-12-24 大立项)** |                                  |       |        |                                         |                                                            |
-| **MVP-NN-0**                    | **🔴 可靠基线框架 (P0)**        | NN    | 🔴     | `SCALING-20251224-nn-baseline-framework-01` | [Link](./exp/exp_scaling_nn_baseline_framework_20251224.md) |
+| **MVP-NN-0**                    | **✅ 可靠基线框架 (P0)**        | NN    | ✅     | `SCALING-20251224-nn-baseline-framework-01` | [Link](./exp/exp_scaling_nn_baseline_framework_20251224.md) |
 | **MVP-MLP-1**                   | **🔴 最小可行 MLP (P0)**        | NN    | ⏳     | `SCALING-20251224-mlp-baseline-01`      | -                                                          |
 | **MVP-CNN-1**                   | **🟡 最小 1D CNN (P1)**         | NN    | ⏳     | `SCALING-20251224-cnn-baseline-01`      | -                                                          |
 | **MVP-CNN-2**                   | **🟡 多尺度 CNN (P1)**          | NN    | ⏳     | `SCALING-20251224-cnn-multiscale-01`    | -                                                          |
@@ -834,15 +834,15 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 ┌──────────────────┬──────────────────┬──────────────┬──────────────┬──────────────┐
 │    ⏳ Planned    │     🔴 Ready     │  🚀 Running  │    ✅ Done   │  ❌ Cancelled │
 ├──────────────────┼──────────────────┼──────────────┼──────────────┼──────────────┤
-│ MVP-CNN-1 (P1)   │ **MVP-NN-0(P0)** │              │ MVP-1.0      │ MVP-T0       │
-│ MVP-CNN-2 (P1)   │ **MVP-MLP-1(P0)**│              │ MVP-1.1      │ MVP-T1       │
-│ MVP-MoE-CNN-0    │ MVP-D0 (P0)      │              │ MVP-1.2      │              │
-│ MVP-16A-2 (P1)   │ MVP-16B (P0)     │              │ MVP-1.4 ✅   │              │
+│ MVP-CNN-1 (P1)   │ **MVP-MLP-1(P0)**│              │ MVP-1.0      │ MVP-T0       │
+│ MVP-CNN-2 (P1)   │ MVP-D0 (P0)      │              │ MVP-1.1      │ MVP-T1       │
+│ MVP-MoE-CNN-0    │ MVP-16B (P0)     │              │ MVP-1.2      │              │
+│ MVP-16A-2 (P1)   │                  │              │ MVP-1.4 ✅   │              │
 │ MVP-16L (P1)     │                  │              │ MVP-1.6 ✅   │              │
-│ MVP-T2 (降级)    │                  │              │ MVP-16T ❌   │              │
-│                  │                  │              │ MVP-16T-V2✅ │              │
+│ MVP-T2 (降级)    │                  │              │ MVP-16T-V2✅ │              │
 │                  │                  │              │ MVP-16A-0 ✅ │              │
 │                  │                  │              │ MVP-16A-1 ✅ │              │
+│                  │                  │              │**MVP-NN-0✅**│              │
 └──────────────────┴──────────────────┴──────────────┴──────────────┴──────────────┘
 ```
 
@@ -899,6 +899,7 @@ MVP-NN-0 完成后
 | **MVP-1.6** | **H1.7.1 ❌: SNR ΔR²=+0.015 未达阈值; ⚠️ StandardScaler 严重损害 LightGBM (-0.36)** | Ridge snr_centered: R²=0.5222; LightGBM raw: R²=0.5533 | ✅ |
 | **MVP-16A-0** | **🔥 Oracle MoE 结构红利巨大！ΔR²=+0.16 >> 0.03 阈值，所有 9 bins 均正向提升** | Oracle R²=0.6249, Global R²=0.4611, ΔR²=+0.1637 | ✅ |
 | **MVP-16T V2** | **✅ 理论上限 R²_max=0.89，headroom +32% vs LightGBM，继续投入 CNN 值得** | R²_max=0.8914, Schur=0.6906, CRLB跨2.9数量级 | ✅ |
+| **MVP-NN-0** | **✅ MLP 达到 Ridge baseline (R²=0.467)；❌ Whitening 预处理失败导致 R²≈0；CNN 弱于 MLP** | MLP_100k R²=0.4671, CNN_100k R²=0.4122, vs Oracle gap=-0.15 | ✅ |
 
 ## 4.3 Timeline
 
@@ -911,6 +912,7 @@ MVP-NN-0 完成后
 | 2025-12-23 | MVP-1.6 完成 | H1.7.1 ❌, LightGBM 必须用 raw 输入 |
 | **2025-12-24** | **MVP-16A-0 完成** | 🔥 Oracle MoE ΔR²=+0.16, H-A0.1 ✅, H4.1.1 ✅, H4.1.2 ✅ |
 | **2025-12-24** | **MVP-16T V2 完成** | ✅ R²_max=0.8914, Schur=0.6906, H-16T.1 ✅, H-16T.2 ✅ |
+| **2025-12-24** | **MVP-NN-0 完成** | ✅ MLP=0.467, CNN=0.412; ❌ Whitening 失败 |
 
 ---
 
@@ -1017,6 +1019,7 @@ MVP-NN-0 完成后
 | 2025-12-23 | 更新 P0 为 D0 + 16A-0 + NN-0 三件套 | §4.1 |
 | **2025-12-24** | **🔄 MVP-16T-V2 立项：使用规则网格数据 grid_mag215_lowT 重做 Fisher** | §2.1, §3 |
 | **2025-12-24** | **✅ MVP-16T-V2 完成：R²_max=0.8914, Schur=0.6906, 结果可信** | §2.1, §4.2, §4.3 |
+| **2025-12-25** | **✅ MVP-NN-0 完成：MLP=0.467≈Ridge, CNN=0.412; Whitening 失败** | §2.1, §4.1, §4.2, §4.3 |
 
 ---
 

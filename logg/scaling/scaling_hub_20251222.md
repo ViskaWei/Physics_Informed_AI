@@ -59,7 +59,7 @@
 | **C5:** Fisher ceiling (V2) 显示 noise=1 下 R²_max~0.89 | ✅ 强 | V2 规则网格修复后数值合理 | 低 baseline 不是"信息已被噪声抹平" |
 | **C6:** Oracle MoE 在 noise=1 下结构红利更大（ΔR²≈+0.16） | ✅ 强 | Oracle MoE~0.62 vs Ridge~0.46 | "结构化/分域"是高噪声场景主要增益来源 |
 | **C7:** Gate 信号在 noise=1 下仍很强（9-class Acc~88%） | ✅ 强 | gate sanity check | MoE 主要风险（gate 不可落地）已显著降低 |
-| **C8:** 当前单模型 NN baseline 未超过强 ML baseline | 🟡 中 | MLP≈Ridge，CNN 更弱 | 不能假设"上 NN 就会更好"，需更强归纳偏置 |
+| **C8:** 当前单模型 NN baseline 未超过强 ML baseline | ✅ 强 | MLP R²=0.467≈Ridge；CNN R²=0.412 更弱；Whitening 导致 R²≈0 | NN 需 flux_only 输入 + 更强归纳偏置 |
 | **C9:** Fisher/CRLB V2 计算框架已验证正确 | ✅ 强 | 数值自洽 + 框架审核 | 理论上限可信，支撑决策 |
 | **C10:** 最优估计器应使用 Σ⁻¹ 加权（weighted loss） | 🟡 中 | Fisher 框架理论 | 当前 ML 可能未利用误差信息 |
 | **C11:** 应按 mag/SNR 分桶评估，而非全局 R² | ✅ 强 | Multi-Mag 趋势 | 全局 R² 掩盖区域差异 |
@@ -204,6 +204,7 @@
 | P4 | **Ridge 对 scaling 不敏感** | StandardScaler 可用可不用 | raw ≈ standardized | 线性模型 |
 | P5 | **高噪声优先分域** | 结构化/分域比堆数据划算 | Oracle MoE ΔR²=+0.16 | noise≥1 |
 | P6 | **Gate 特征优先用 PCA+物理窗口** | 37 维 gate 足够区分 9 bins | Acc=88% | MoE routing |
+| **P7** | **NN 必须用 flux_only 输入** | ❌ 禁止 whitening (flux/error) | whitening 导致 R²≈0 | 所有 NN |
 
 ---
 
@@ -229,7 +230,8 @@
 | 2025-12-23 | C6 确认：Oracle MoE ΔR²=+0.16 | MoE 路线继续 |
 | 2025-12-24 | C7 确认：Gate Acc=88% @ noise=1 | Gate 可落地性大幅提升 |
 | 2025-12-24 | C8 初步：单模型 NN 未超 baseline | NN 路线需更强归纳偏置 |
-| **2025-12-24** | **Hub v2 重构：精简假设→结论账本，分 Lane** | 提升可读性 |
+| 2025-12-24 | Hub v2 重构：精简假设→结论账本，分 Lane | 提升可读性 |
+| **2025-12-25** | **P7 新增：NN 必须用 flux_only 输入；Whitening 导致训练崩溃** | 所有 NN 实验必须遵守 |
 | **2025-12-25** | **C9-C11 新增：Fisher 框架验证 + error-aware + 分桶评估** | 扩展知识账本 |
 | **2025-12-25** | **I7-I8 新增：error-aware 训练 + 分桶评估洞见** | 指导 P0 优先级 |
 | **2025-12-25** | **DG5-DG6 新增：error-aware 验证 + efficiency 分桶** | P0 路线图 |
