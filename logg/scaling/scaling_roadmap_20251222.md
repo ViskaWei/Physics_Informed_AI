@@ -104,14 +104,15 @@
 | MVP-3.0                         | Noise Info Limit                 | 3     | ⏳      | -                                       | -                                                          |
 | MVP-3.1                         | Model Capacity                   | 3     | ⏳      | -                                       | -                                                          |
 | MVP-3.2                         | Feature Analysis                 | 3     | ⏳      | -                                       | -                                                          |
-| **MVP-16T**                     | **✅ Fisher/CRLB 理论上限 (⚠️需校准)**   | 16    | ✅⚠️    | `SCALING-20251223-fisher-ceiling-01`    | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md)       |
+| **MVP-16T (V1)**                | **❌ Fisher/CRLB (失败-非网格数据)**     | 16    | ❌      | `SCALING-20251223-fisher-ceiling-01`    | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md)       |
+| **MVP-16T (V2)** ✅             | **✅ Fisher/CRLB (规则网格数据)**        | 16    | ✅     | `SCALING-20251224-fisher-ceiling-02`    | [Link](./exp/exp_scaling_fisher_ceiling_v2_20251224.md)    |
 | **MVP-16B**                     | **🔴 Baseline 统计可信度 (P0)**       | 16    | 🔴     | `SCALING-20251223-baseline-stats-01`    | [Link](./exp/exp_scaling_baseline_stats_20251223.md)       |
 | **MVP-16L**                     | **🟡 LMMSE 线性上限 (P1)**           | 16    | ⏳      | `SCALING-20251223-lmmse-ceiling-01`     | -                                                          |
 | **MVP-16W**                     | **🟡 Whitening 表示 (P1)**         | 16    | ⏳      | `SCALING-20251223-whitening-noise1-01`  | -                                                          |
 | **MVP-16A-0** 🆕               | **✅ Oracle MoE Structure Bonus (P0)** | 16    | ✅      | `SCALING-20251223-oracle-moe-noise1-01` | [Link](./exp/exp_scaling_oracle_moe_noise1_20251223.md)    |
 | **MVP-16CNN**                   | **🟢 1D-CNN @ noise=1 (P2)**     | 16    | ⏳      | `SCALING-20251223-cnn-noise1-01`        | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
-| **❌ Phase T: Fisher 校准（方法失败）**  |                                  |       |        |                                         |                                                            |
+| **🔄 Phase T: Fisher 校准（V2 重新立项）** |                                  |       |        |                                         |                                                            |
 | ~~MVP-T0~~                      | ~~Noise Monotonicity~~           | T     | ❌      | -                                       | 方法失败，取消                                                    |
 | ~~MVP-T1~~                      | ~~Confounding Ablation~~         | T     | ❌      | -                                       | 方法失败，取消                                                    |
 | **MVP-T2**                      | **🟡 LLR Jacobian (P1 降级)**      | T     | ⏳      | `SCALING-20251223-fisher-llr-01`        | -                                                          |
@@ -441,13 +442,18 @@
 > 
 > **性价比优先三件套**：MVP-16T (Fisher) → MVP-16O (Oracle MoE) → MVP-16B (可信度)
 
-### MVP-16T: Fisher/CRLB 理论上限（🔴 P0 最高优先级）
+### MVP-16T-V2: Fisher/CRLB 理论上限（🔴 P0 最高优先级 - 规则网格数据）
+
+> **V1 失败原因**：BOSZ 连续采样数据导致邻近点差分法失效
+> **V2 解决方案**：使用新生成的规则网格数据 `grid_mag215_lowT`
 
 | Item | Config |
 |------|--------|
-| **Objective** | 计算 noise=1 时的理论可达上限 R²_max，量化 degeneracy |
+| **Objective** | 使用规则网格数据计算 noise=1 时的理论可达上限 R²_max，量化 degeneracy |
 | **Hypothesis** | H-16T.1: R²_max ≥ 0.75 (存在大 headroom) |
 | **Hypothesis** | H-16T.2: degeneracy 显著 (log_g 与 Teff/[M/H] 纠缠) |
+| **Data** | `/datascope/subaru/user/swei20/data/bosz50000/grid/grid_mag215_lowT/dataset.h5` (30,182 samples) |
+| **Grid** | T_eff: 250K step, log_g: 0.5 step, [M/H]: 0.25 step |
 
 **方法（最小可行版本）**：
 1. 抽样 N=5k~20k 个参数点（不必用全 1M）
@@ -834,6 +840,7 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 │ MVP-16A-1 (P1)   │ MVP-16B (P0)     │              │ MVP-1.4 ✅   │              │
 │ MVP-16A-2 (P1)   │                  │              │ MVP-1.6 ✅   │              │
 │ MVP-16L (P1)     │                  │              │ MVP-16T ❌   │              │
+│                  │                  │              │ MVP-16T-V2✅ │              │
 │ MVP-T2 (降级)    │                  │              │ MVP-16A-0 ✅ │              │
 └──────────────────┴──────────────────┴──────────────┴──────────────┴──────────────┘
 ```
@@ -890,6 +897,7 @@ MVP-NN-0 完成后
 | MVP-1.5 | TODO: 验证 LightGBM 参数极限 | - | ⏳ |
 | **MVP-1.6** | **H1.7.1 ❌: SNR ΔR²=+0.015 未达阈值; ⚠️ StandardScaler 严重损害 LightGBM (-0.36)** | Ridge snr_centered: R²=0.5222; LightGBM raw: R²=0.5533 | ✅ |
 | **MVP-16A-0** | **🔥 Oracle MoE 结构红利巨大！ΔR²=+0.16 >> 0.03 阈值，所有 9 bins 均正向提升** | Oracle R²=0.6249, Global R²=0.4611, ΔR²=+0.1637 | ✅ |
+| **MVP-16T V2** | **✅ 理论上限 R²_max=0.89，headroom +32% vs LightGBM，继续投入 CNN 值得** | R²_max=0.8914, Schur=0.6906, CRLB跨2.9数量级 | ✅ |
 
 ## 4.3 Timeline
 
@@ -901,6 +909,7 @@ MVP-NN-0 完成后
 | 2025-12-23 | MVP-1.4 完成 | 最优 α=1e4~1e5，H1.5.1 验证 ✅ |
 | 2025-12-23 | MVP-1.6 完成 | H1.7.1 ❌, LightGBM 必须用 raw 输入 |
 | **2025-12-24** | **MVP-16A-0 完成** | 🔥 Oracle MoE ΔR²=+0.16, H-A0.1 ✅, H4.1.1 ✅, H4.1.2 ✅ |
+| **2025-12-24** | **MVP-16T V2 完成** | ✅ R²_max=0.8914, Schur=0.6906, H-16T.1 ✅, H-16T.2 ✅ |
 
 ---
 
@@ -1005,6 +1014,8 @@ MVP-NN-0 完成后
 | 2025-12-23 | 取消 MVP-T0, T1；降级 T2, T3 | §2.1, §3 |
 | 2025-12-23 | 新增 Phase D + MVP-D0 (经验上限) | §2.1, §3 |
 | 2025-12-23 | 更新 P0 为 D0 + 16A-0 + NN-0 三件套 | §4.1 |
+| **2025-12-24** | **🔄 MVP-16T-V2 立项：使用规则网格数据 grid_mag215_lowT 重做 Fisher** | §2.1, §3 |
+| **2025-12-24** | **✅ MVP-16T-V2 完成：R²_max=0.8914, Schur=0.6906, 结果可信** | §2.1, §4.2, §4.3 |
 
 ---
 
@@ -1225,3 +1236,63 @@ Ridge 最优 α 在 1e4~1e5 之间，比原 baseline (α=5000) 高 1-2 个数量
 5. CaII_8542_mean: 71,738
 
 **Report**: [exp_scaling_gate_feat_sanity_20251224.md](./exp/exp_scaling_gate_feat_sanity_20251224.md)
+
+---
+
+# 📊 MVP-16T V2 完成 (2025-12-24)
+
+## 状态变更
+
+| 项目 | V1 状态 | V2 状态 |
+|------|---------|---------|
+| MVP-16T | ❌ Failed | ✅ **Done** |
+
+## V2 核心结果
+
+| 指标 | V1 (异常) | V2 (可信) |
+|------|----------|----------|
+| **R²_max (median)** | 0.97 ⚠️ | **0.8914** ✅ |
+| CRLB range (orders) | 20 | **2.9** ✅ |
+| Condition number max | 5e+16 | 3.78e+06 ✅ |
+| Schur decay | 0.24 ⚠️ | 0.6906 ✅ |
+
+## 假设验证
+
+| Hypothesis | Criteria | Result | Status |
+|------------|----------|--------|--------|
+| H-16T.1 (V2) | R²_max ≥ 0.75 | 0.8914 | ✅ |
+| H-16T.2 (V2) | Schur decay < 0.9 | 0.6906 | ✅ |
+
+## 核心结论
+
+1. **理论上限高**：R²_max ≈ 0.89，继续投入 CNN/Transformer 值得
+2. **Headroom 大**：当前 0.57 vs 理论 0.89，有 +32% 提升空间
+3. **Degeneracy 中等**：Schur decay = 0.69，边缘化后保留 69% 信息
+
+## 下一步
+
+| 方向 | 优先级 | 说明 |
+|------|--------|------|
+| 继续 CNN | 🔴 P0 | 理论上限高，值得投入 |
+| Multi-task | 🟡 P1 | Schur decay = 0.69，可能有帮助 |
+
+---
+
+### SCALING-20251224-nn-baseline-framework-01 Result (2025-12-24)
+
+| Model | Train Size | Input | Test R² | vs Oracle (0.62) |
+|-------|------------|-------|---------|------------------|
+| MLP 3L_1024 | 100k | flux_only | **0.4671** | -0.153 |
+| CNN 4L_k5_bn | 100k | flux_only | 0.4122 | -0.208 |
+| CNN 4L_k5_wide | 1M | whitening | 0.4337 | -0.186 |
+
+**Key Findings:**
+- MLP matches Ridge baseline (✅ H-NN0.1 validated)
+- CNN underperforms MLP by ~0.05 R²
+- Whitening preprocessing fails (causes training collapse)
+- Gap to Oracle MoE: **0.15-0.19 R²**
+
+**Next Steps:**
+- Fix MLP 1M (use flux_only instead of whitening)
+- CNN needs better hyperparams (lr, warmup, bn required)
+- Consider MoE-CNN if single-model CNN plateaus
