@@ -1,3 +1,11 @@
+<!--
+📝 Agent 书写规范（不出现在正文）:
+- Header 全英文
+- 正文中文
+- 图表文字全英文（中文会乱码）
+- 公式用 LaTeX: $inline$ 或 $$block$$
+-->
+
 # 🍃 [实验名称]
 > **Name:** [Name]  
 > **ID:** `[PROJECT]-[YYYYMMDD]-[topic]-[##]`  
@@ -9,19 +17,6 @@
 > 🚀 **Next:** [实验结论 → 影响什么决策]
 
 ---
-## 🔗 Upstream Links
-| Type | Link |
-|------|------|
-| 🧠 Hub | `logg/[topic]/[topic]_hub.md` § H[X.X] |
-| 🗺️ Roadmap | `logg/[topic]/[topic]_roadmap.md` § MVP-X.X |
-| 📋 Kanban | `status/kanban.md` |
-
----
-
-> ⚠️ **语言**: Header 全英文 | 正文中文 | 图表文字全英文（中文乱码）
-
----
-
 ## ⚡ 核心结论速览
 
 > **一句话**: [最重要发现 + 关键数字]
@@ -35,8 +30,13 @@
 | Best R² | | |
 | vs baseline | | |
 
----
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/[topic]/[topic]_hub.md` § H[X.X] |
+| 🗺️ Roadmap | `logg/[topic]/[topic]_roadmap.md` § MVP-X.X |
+| 📋 Kanban | `status/kanban.md` |
 
+---
 # 1. 🎯 目标
 
 **问题**: [一句话]
