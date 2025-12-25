@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/ridge/ridge_hub_20251223.md",
+                "file": "logg/moe/exp/exp_moe_regression_gate_20251204.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ridge_hub_20251223"
+              "title": "exp_moe_regression_gate_20251204"
             }
           }
         ],
@@ -245,8 +245,17 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "1934de817ef7bce4",
+  "active": "140d5ff8eb31ed3e",
   "lastOpenFiles": [
+    "logg/scaling/exp/exp_scaling_fisher_ceiling_v2_20251224.md",
+    "logg/moe/exp/exp_moe_noise_continuous_20251203.md",
+    "logg/ridge/exp/exp_feature_importance_stability_20251128.md",
+    "logg/ridge/exp/exp_ridge_alpha_sweep_20251127.md",
+    "logg/ridge/ridge_main_20251130.md",
+    "logg/ridge/ridge_hub_20251223.md",
+    "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md",
+    "logg/moe/exp/exp_moe_phys_gate_baseline_20251204.md",
+    "logg/moe/exp/exp_moe_regression_gate_20251204.md",
     "data/bosz50k/z0/grid_full.md",
     "tempfit/img/pred_vs_true_noisy.png",
     "tempfit/img/bias_vs_true_noisy.png",
@@ -278,18 +287,9 @@
     "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md.bak",
     "logg/ridge/ridge_roadmap_20251223.md",
     "conflict-files-obsidian-git.md",
-    "logg/ridge/ridge_hub_20251223.md",
-    "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md",
     "logg/ridge/exp/exp_ridge_100k_noise_sweep_20251205.md",
-    "logg/ridge/ridge_main_20251130.md",
     "logg/moe/exp/exp_moe_1m_high_noise_20251223.md",
-    "logg/moe/moe_roadmap_20251203.md",
-    "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
-    "tempfit/template_fitting_analysis.md",
     "tempfit",
-    "logg/scaling/sessions/coding_prompt_whitening_20251222.md",
-    "logg/scaling/exp/exp_scaling_whitening_snr_20251222.md",
-    "logg/scaling/exp/exp_scaling_stats_validation_20251222.md",
     "logg/scaling/sessions",
     "logg/scaling/img",
     "logg/scaling/exp"
