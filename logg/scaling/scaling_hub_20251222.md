@@ -179,6 +179,7 @@
 | 📍 Roadmap | [scaling_roadmap_20251222.md](./scaling_roadmap_20251222.md) | 实验规划与执行 |
 | 📗 Experiments | `exp/exp_*.md` | 详细实验报告 |
 | 📥 Child Hubs | [ridge_hub](../ridge/ridge_hub_20251223.md), [moe_hub](../moe/moe_hub_20251203.md) | 子主题深潜 |
+| 🧠 **Fisher Hub** | [fisher/fisher_hub_20251225.md](./fisher/fisher_hub_20251225.md) | **Fisher/CRLB 理论上限专题汇合** |
 | 📤 Parent Hub | [master_hub](../master_hub.md) | 全局战略 |
 
 ---

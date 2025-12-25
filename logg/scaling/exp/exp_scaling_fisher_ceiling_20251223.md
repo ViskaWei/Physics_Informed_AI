@@ -15,7 +15,8 @@
 
 | Type | Link | Description |
 |------|------|-------------|
-| 🧠 Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) | H3.1, H-16T.1~3 |
+| 🧠 **Fisher Hub** | [`fisher/fisher_hub_20251225.md`](../fisher/fisher_hub_20251225.md) | ⬅️ Fisher 专题汇合 |
+| 🧠 Scaling Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) | H3.1, H-16T.1~3 |
 | 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](../scaling_roadmap_20251222.md) | MVP-16T 规格 |
 | 📋 Kanban | `status/kanban.md` | Phase 16 P0 三件套 |
 
