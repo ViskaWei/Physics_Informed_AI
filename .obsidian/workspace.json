@@ -6,7 +6,7 @@
       {
         "id": "e69c64f63e1f5e44",
         "type": "tabs",
-        "dimension": 62.21515633280339,
+        "dimension": 49.428822495606326,
         "children": [
           {
             "id": "ba8d2fa3bd5a3042",
@@ -56,7 +56,7 @@
       {
         "id": "a4e449ee3dc708e0",
         "type": "tabs",
-        "dimension": 37.784843667196604,
+        "dimension": 50.571177504393674,
         "children": [
           {
             "id": "140d5ff8eb31ed3e",
@@ -247,6 +247,11 @@
   },
   "active": "aa71e7391bb755d3",
   "lastOpenFiles": [
+    "logg/design_principles_consolidated_20251225.md",
+    "_backend/template/old/hub3.md",
+    "_backend/template/old/hub2.md",
+    "_backend/template/old/hub1.md",
+    "_backend/template/old",
     "logg/scaling/fisher_hub_20251225 copy.md",
     "logg/scaling/fisher_hub_20251225.md",
     "_backend/template/root_hub1.md",
@@ -281,17 +286,12 @@
     "logg/scaling/img/fisher_ceiling_v2_condition.png",
     "logg/scaling/exp/exp_scaling_fisher_multi_mag_20251224.md",
     "logg/scaling/card_whitening_snr_20251222.md",
-    "logg/scaling/card_ridge_alpha_20251222.md",
-    "logg/scaling/card_pca_pls_20251223.md",
-    "logg/scaling/card_oracle_moe_20251223.md",
-    "logg/scaling/card_nn_baseline_20251224.md",
     "logg/ridge/tree/alpha",
     "logg/ridge/tree",
     "tempfit/img/pred_vs_true_noisy.png",
     "tempfit/img/bias_vs_true_noisy.png",
     "tempfit/img",
     "logg/benchmark/benchmark_hub_20251205.md.bak",
-    "data/bosz50k/z0/grid_data_report.txt",
-    "logg/scaling/scaling_roadmap_20251222.md.bak"
+    "data/bosz50k/z0/grid_data_report.txt"
   ]
 }
