@@ -122,8 +122,11 @@
 
 ## 🔗 Related
 
-- Previous: [exp_scaling_fisher_ceiling_v2_20251224.md](exp_scaling_fisher_ceiling_v2_20251224.md) (single mag=21.5)
-- Data: [grid_fisher_datasets.md](/home/swei20/Physics_Informed_AI/data/bosz50k/z0/grid_fisher_datasets.md)
+| Type | Link | Description |
+|------|------|-------------|
+| 🧠 **Fisher Hub** | [`../fisher/fisher_hub_20251225.md`](../fisher/fisher_hub_20251225.md) | ⬅️ Fisher 专题汇合 |
+| ⬅️ Previous | [exp_scaling_fisher_ceiling_v2_20251224.md](exp_scaling_fisher_ceiling_v2_20251224.md) | single mag=21.5 |
+| 📂 Data | [grid_fisher_datasets.md](/home/swei20/Physics_Informed_AI/data/bosz50k/z0/grid_fisher_datasets.md) | 数据索引 |
 
 ---
 

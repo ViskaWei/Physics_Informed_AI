@@ -26,7 +26,8 @@
 
 | Type | Link |
 |------|------|
-| 🧠 Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) § H3.1, H-16T.1~2 |
+| 🧠 **Fisher Hub** | [`fisher/fisher_hub_20251225.md`](../fisher/fisher_hub_20251225.md) ⬅️ Fisher 专题汇合 |
+| 🧠 Scaling Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) § H3.1, H-16T.1~2 |
 | 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](../scaling_roadmap_20251222.md) § MVP-16T |
 | 📋 Kanban | `status/kanban.md` § Phase 16 |
 | ❌ V1 Report | [`exp_scaling_fisher_ceiling_20251223.md`](./exp_scaling_fisher_ceiling_20251223.md) (方法失败) |
