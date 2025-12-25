@@ -247,6 +247,8 @@
   },
   "active": "95b094f5d53bc452",
   "lastOpenFiles": [
+    "logg/scaling/fisher/fisher_hub_20251225.md",
+    "logg/scaling/fisher",
     "scripts/update_exp_headers.py",
     "scripts",
     "logg/scaling/img/fisher_multi_mag_snr_trend.png",
@@ -290,8 +292,6 @@
     "logg/benchmark/benchmark_hub_20251205.md.bak",
     "data/bosz50k/z0/grid_data_report.txt",
     "logg/scaling/scaling_roadmap_20251222.md.bak",
-    "logg/scaling/scaling_hub_20251222.md.bak",
-    "logg/scaling/exp/exp_scaling_ml_ceiling_20251222.md.bak",
-    "tempfit"
+    "logg/scaling/scaling_hub_20251222.md.bak"
   ]
 }
