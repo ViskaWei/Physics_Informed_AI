@@ -30,6 +30,49 @@
 
 ---
 
+## 📊 核心图表
+
+### Fig 1: R²_max 随 Magnitude/SNR 变化
+![R²_max vs Magnitude](img/fisher_multi_mag_r2max.png)
+
+**关键观察**:
+- SNR > 20 (mag ≤ 20): R²_max ≈ 1，近乎完美估计
+- SNR = 4-7 (mag = 21.5-22): R²_max = 0.74-0.89，优秀-良好
+- SNR < 2 (mag > 23): median R²_max = 0，**信息悬崖**
+- 90% 分位在 mag=23 仍达 0.72，存在"信息富集"区域
+
+---
+
+### Fig 2: Schur Decay 恒定性
+![Schur Decay vs Magnitude](img/fisher_multi_mag_schur.png)
+
+**关键观察**:
+- Schur decay ≈ 0.68-0.69 across all SNR levels
+- 参数纠缠由光谱物理决定，与噪声水平无关
+- 启示：multi-task 解纠缠在所有 SNR 等效
+
+---
+
+### Fig 3: V2 框架 CRLB 分布验证
+![V2 CRLB Distribution](img/fisher_ceiling_v2_crlb_dist.png)
+
+**关键观察**:
+- CRLB range = 2.9 orders（V1 失败时为 20 orders）
+- 数值稳定，框架正确
+- Median R²_max = 0.89 @ mag=21.5
+
+---
+
+### Fig 4: V2 vs ML Baseline 对比
+![V2 vs Baseline](img/fisher_ceiling_v2_vs_baseline.png)
+
+**关键观察**:
+- Fisher ceiling (0.89) >> LightGBM (0.57) >> Ridge (0.46)
+- Gap = +32%，headroom 巨大
+- 现有 ML 远未榨干光谱信息
+
+---
+
 ## 1) 🌲 核心假设树
 
 ```
