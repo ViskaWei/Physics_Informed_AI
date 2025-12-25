@@ -124,7 +124,7 @@
 | **🆕 Phase A: noise=1 MoE**     |                                  |       |        |                                         |                                                            |
 | **MVP-16A-0**                   | **🔴 Oracle MoE @ noise=1 (P0)** | A     | ✅     | `SCALING-20251223-oracle-moe-noise1-01` | [exp](./exp/exp_scaling_oracle_moe_noise1_20251223.md)     |
 | **MVP-16A-1**                   | **✅ Gate-feat Sanity (P1)**     | A     | ✅      | `SCALING-20251223-gate-feat-01`         | [exp](./exp/exp_scaling_gate_feat_sanity_20251224.md)      |
-| **MVP-16A-2**                   | **🟡 Soft-gate MoE (P1)**        | A     | ⏳      | `SCALING-20251223-soft-moe-noise1-01`   | -                                                          |
+| **MVP-16A-2**                   | **✅ Soft-gate MoE (P1)**        | A     | ✅      | `SCALING-20251223-soft-moe-noise1-01`   | -                                                          |
 |                                 |                                  |       |        |                                         |                                                            |
 | **🆕 Phase NN: 神经网络 Baseline (2025-12-24 大立项)** |                                  |       |        |                                         |                                                            |
 | **MVP-NN-0**                    | **✅ 可靠基线框架 (P0)**        | NN    | ✅     | `SCALING-20251224-nn-baseline-framework-01` | [Link](./exp/exp_scaling_nn_baseline_framework_20251224.md) |

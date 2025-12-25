@@ -293,3 +293,29 @@
 > mag=22 是有效估计的极限边界。
 
 ![R²_max vs SNR](img/fisher_multi_mag_snr_trend.png)
+
+---
+
+## 🆕 Update 2025-12-25: Soft-gate MoE 验证完成
+
+### DG3 结果: ✅ 已验证
+
+| 项 | 内容 |
+|----|------|
+| **Experiment ID** | SCALING-20251223-soft-moe-noise1-01 |
+| **Soft-gate MoE R²** | 0.6077 |
+| **ρ (Oracle Benefit Retention)** | **0.7235 ≥ 0.70** ✅ |
+| **Routing Accuracy** | 86.3% |
+| **决策** | MoE 列为 noise=1 场景主线解法 |
+
+### 新增 Conclusion
+
+| # | Statement | Status | Evidence | Impact |
+|---|-----------|--------|----------|--------|
+| **C10:** Soft-gate MoE 保留 72.4% Oracle 收益 (ρ=0.7235) | ✅ 强 | MVP-16A-2 实验 | MoE 可作为 noise=1 主线方案 |
+
+### Timeline 更新
+
+| Date | Event | Action Taken |
+|------|-------|--------------|
+| 2025-12-25 | C10 确认：Soft-gate MoE ρ=0.7235 | MoE 路线验证成功，可进入生产化阶段 |
