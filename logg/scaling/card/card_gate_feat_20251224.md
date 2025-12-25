@@ -1,5 +1,5 @@
 # 📇 Knowledge Card: Gate Feature Robustness
-> **Name:** Gate Feature Sanity Check | **ID:** `VIT-20251224-scaling-gate-feat-card`  
+> **Name:** Gate Feature Sanity Check | **ID:** `SCALING-20251223-gate-feat-01`  
 > **Topic:** `scaling` | **Source:** `exp_scaling_gate_feat_sanity_20251224.md` | **Project:** `VIT`  
 > **Author:** Viska Wei | **Date:** 2025-12-24
 ```

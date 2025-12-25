@@ -1,20 +1,75 @@
 # 📘 SCALING-20251224-nn-baseline-framework-01: NN Baseline Framework
-> **Name:** TODO | **ID:** `VIT-20251224-scaling-01`  
-> **Topic:** `scaling` | **MVP:** MVP-X.X | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** 🔄
-```
-💡 实验目的  
-决定：影响的决策
-```
+
+> **Name:** NN Baseline Framework | **ID:** `SCALING-20251224-nn-baseline-framework-01`  
+> **Topic:** `scaling` | **MVP:** MVP-NN-0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** ✅ Done
+> **验证假设:** H-NN0.1 (NN 框架能复现 ML baseline)
 
 ---
 
+## ⚡ 核心结论速览
+
+> **一句话总结**: MLP (flux_only) 达到 Ridge baseline，但 CNN 弱于 MLP；**Whitening 预处理导致训练完全崩溃**。
+
+| 项目 | 结论 |
+|------|------|
+| **假设验证** | ✅ H-NN0.1: MLP 达到 Ridge baseline (R²=0.467 ≈ 0.46) |
+| **关键发现** | ❌ Whitening (flux/error) 导致 R²≈0，所有 NN 必须用 flux_only 输入 |
+| **最佳配置** | MLP 3L_1024 + flux_only + GELU: R²=0.4671, MAE=0.645 |
+| **vs Oracle gap** | -0.15 (Oracle MoE=0.62, best NN=0.47) |
+| **设计启示** | 1) NN 训练框架正常；2) CNN 需更多调参；3) 下一步修复 MLP 1M |
+
+---
 
 ## 🔗 Upstream Links
+
 | Type | Link |
 |------|------|
-| 🧠 Hub | `logg/scaling/scaling_hub.md` |
-| 🗺️ Roadmap | `logg/scaling/scaling_roadmap.md` |
+| 🧠 Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) |
+| 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](../scaling_roadmap_20251222.md) |
+
+---
+
+## 📐 实验设计
+
+### 数据配置
+
+| 项目 | 配置 |
+|------|------|
+| **数据集** | BOSZ 50000, mag205_225_lowT_1M |
+| **训练规模** | 100k (smoke test) / 1M (full) |
+| **测试集** | 1000 samples (固定) |
+| **噪声水平** | σ=1.0 (heteroscedastic Gaussian) |
+| **目标变量** | log_g ∈ [1.0, 5.0] |
+| **输入维度** | 4096 (MR arm 光谱) |
+
+### 输入变体
+
+| Input Mode | 描述 | 结果 |
+|------------|------|------|
+| **flux_only** | 原始 flux | ✅ 正常工作 |
+| **whitening** | flux / (error × σ) | ❌ 训练崩溃 (R²≈0) |
+
+### 模型架构
+
+| 类型 | 架构 | 参数量 | 备注 |
+|------|------|--------|------|
+| MLP 3L_1024 | [1024, 512, 256] + GELU + Dropout | 4.85M | **最佳配置** |
+| MLP 3L_2048 | [2048, 1024, 512] + GELU + Dropout | 11.0M | 略低于 3L_1024 |
+| CNN 4L_k5_bn | Conv1D×4 + BatchNorm + MLP head | 60.5k | CNN 中最佳 |
+| CNN 4L_k5_wide | [32, 64, 128, 128] channels | 150k | 1M 上表现尚可 |
+
+### 训练配置
+
+| 项目 | 100k 配置 | 1M 配置 |
+|------|-----------|---------|
+| Epochs | 20 | 10 |
+| Batch Size | 1024 | 2048 |
+| Learning Rate | 1e-3 | 5e-4 |
+| Weight Decay | 1e-4 | 1e-4 |
+| Optimizer | AdamW | AdamW |
+| Scheduler | CosineAnnealing | CosineAnnealing |
+| Early Stopping | patience=10 | patience=10 |
 
 ---
 
