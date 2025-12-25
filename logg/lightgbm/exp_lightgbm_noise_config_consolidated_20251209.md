@@ -1,11 +1,20 @@
 # 📘 LightGBM Best Config by Noise Level — Consolidated Experiment Summary
+> **Name:** TODO | **ID:** `VIT-20251209-lightgbm-01`  
+> **Topic:** `lightgbm` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-09 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Date:** 2025-12-09  
-> **Author:** Viska Wei  
-> **Topic:** `lightgbm`  
-> **Merged Experiments:** 3  
-> **Focus:** Best LightGBM configuration across different noise levels (σ = 0.0 ~ 2.0)
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/lightgbm/lightgbm_hub.md` |
+| 🗺️ Roadmap | `logg/lightgbm/lightgbm_roadmap.md` |
 
 ---
 

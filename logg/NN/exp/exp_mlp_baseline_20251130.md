@@ -1,13 +1,22 @@
 # 📘 MLP & CNN Baseline 实验报告
+> **Name:** TODO | **ID:** `VIT-20251130-mlp-01`  
+> **Topic:** `mlp` | **MVP:** MVP-1.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-30 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Neural Network Baseline for $\log g$ Prediction: MLP vs CNN 在噪声环境下的表现  
-> **对应 MVP：** MVP 1.1（Neural Network Baseline）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-30  
-> **数据版本：** HDF5 光谱数据（4096 像素合成光谱）  
-> **模型版本：** Baseline MLP/CNN v1 (PyTorch)  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/mlp/mlp_hub.md` |
+| 🗺️ Roadmap | `logg/mlp/mlp_roadmap.md` |
+
+---
 
 ---
 

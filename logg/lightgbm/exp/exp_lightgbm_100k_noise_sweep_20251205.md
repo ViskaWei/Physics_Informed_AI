@@ -1,13 +1,14 @@
 # 📘 Experiment Report: LightGBM 100k Noise Sweep (Large Tree)
+> **Name:** TODO | **ID:** `VIT-20251205-lightgbm-100k-noise-01`  
+> **Topic:** `VIT` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** ✅ 完成
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** LightGBM 100k Noise Sweep (n=500)  
-> **ID:** `VIT-20251205-lightgbm-100k-noise-01`  
-> **Topic ｜ MVP:** `VIT` / `lightgbm` ｜ 衍生自 main.md §5 P0 100k 公平比较  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-05  
-> **Project:** `VIT`  
-> **Status:** ✅ 完成
+
 ---
 
 ## 🔗 Upstream Links

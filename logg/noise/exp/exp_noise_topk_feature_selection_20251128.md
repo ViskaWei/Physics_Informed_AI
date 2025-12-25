@@ -1,13 +1,22 @@
 # 📘 噪声鲁棒性与 Top-K 特征选择实验报告
+> **Name:** TODO | **ID:** `VIT-20251128-noise-01`  
+> **Topic:** `noise` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-28 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Noise Robustness & Top-K Feature Selection for log\_g Prediction  
-> **对应 MVP：** 噪声鲁棒性与稀疏化分析  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-28  
-> **数据版本：** VIT Synthetic Spectra (4096-D)  
-> **模型版本：** LightGBM / Ridge / LinearRegression  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/noise/noise_hub.md` |
+| 🗺️ Roadmap | `logg/noise/noise_roadmap.md` |
+
+---
 
 ---
 

@@ -1,9 +1,20 @@
-# 📊 Experiment Report: Ridge Alpha Extended Sweep
+# 📘 📊 Experiment Report: Ridge Alpha Extended Sweep
+> **Name:** TODO | **ID:** `VIT-20251222-scaling-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.4 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
-> **Experiment ID:** SCALING-20251222-ridge-alpha-01  
-> **Date:** 2025-12-22  
-> **Status:** ✅ Completed  
-> **Duration:** 26.2 minutes
+---
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/scaling/scaling_hub.md` |
+| 🗺️ Roadmap | `logg/scaling/scaling_roadmap.md` |
 
 ---
 

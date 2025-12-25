@@ -1,12 +1,11 @@
-# 🧠 Benchmark 智库导航（Hub）
-
----
-> **主题名称：** 跨模型 $\log g$ 预测 Benchmark  
-> **作者：** Viska Wei  
-> **创建日期：** 2025-12-05  
-> **最后更新：** 2025-12-24  
-> **状态：** 🔄 探索中  
-> **Layer:** L1 (Cross-Cutting Hub)
+# 🧠 Benchmark Hub
+> **Name:** 跨模型 log_g Benchmark | **ID:** `VIT-20251205-benchmark-hub`  
+> **Topic:** `benchmark` | **Layer:** L1 (Cross-Cutting) | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** 🔄 Exploring
+```
+💡 各模型在不同噪声/数据量下的性能对比  
+决定：模型选择、资源分配优先级
+```
 
 ---
 

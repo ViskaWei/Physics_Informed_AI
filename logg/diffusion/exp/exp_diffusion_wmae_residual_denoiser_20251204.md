@@ -1,13 +1,14 @@
 # 📘 Experiment Report: wMAE Residual Denoiser
+> **Name:** TODO | **ID:** `SD-20251204-diff-wmae-01`  
+> **Topic:** `SpecDiffusion` | **MVP:** MVP-0.6 | **Project:** `SpecDiffusion`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** wMAE Residual Denoiser for Low-Noise Stellar Spectra  
-> **ID:** `SD-20251204-diff-wmae-01`  
-> **Topic | MVP:** `SpecDiffusion` | `diffusion` | MVP-0.6  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-04  
-> **Project:** `SpecDiffusion`  
-> **Status:** ✅ Completed
+
 ---
 
 ## 🔗 Upstream Links

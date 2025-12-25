@@ -1,14 +1,14 @@
 # 📘 Experiment Report: 回归最优 Soft Mixing
+> **Name:** TODO | **ID:** `VIT-20251204-moe-regress-gate-01`  
+> **Topic:** `VIT` | **MVP:** MVP-9E | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** ✅ 完成
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** 回归最优 Soft Mixing  
-> **ID:** `VIT-20251204-moe-regress-gate-01`  
-> **Topic ｜ MVP:** `VIT` / `moe` ｜ MVP-Next-A (from moe_roadmap)   
-> **Author:** Viska Wei  
-> **Date:** 2025-12-04  
-> **Project:** `VIT`  
-> **Status:** ✅ 完成
-> **验证假设:** H-A
+
 ---
 
 ## 🔗 Upstream Links

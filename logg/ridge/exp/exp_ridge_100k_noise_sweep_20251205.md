@@ -1,11 +1,23 @@
-# Ridge 100k Noise Sweep 实验报告
+# 🍃 100k 数据量增益验证
+> **Name:** Ridge 100k Noise Sweep  
+> **ID:** `VIT-20251205-ridge-scaling-01`  
+> **Topic:** `ridge` | **MVP:** MVP-2.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** ✅  
+> **Root:** `Ridge` | **Parent:** `Scaling` | **Child**: |
+
+> 🎯 **Target:** 验证 Ridge 对数据量增益是否有限，量化 100k vs 32k 各噪声下性能差异  
+> 🦾 **Decide:** Ridge 不值得更多数据（增益仅 +2.71%），资源应投入模型复杂度提升
 
 ---
-> **experiment_id:** BM-20251205-ridge-100k  
-> **MVP:** MVP-1.0 (Phase 1: Ridge 完整)  
-> **作者:** Viska Wei  
-> **日期:** 2025-12-05  
-> **状态:** ✅ 完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg//_hub.md` |
+| 🗺️ Roadmap | `logg//_roadmap.md` |
+
+---
 
 ---
 

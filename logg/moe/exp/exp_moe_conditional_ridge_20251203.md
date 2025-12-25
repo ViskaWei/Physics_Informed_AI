@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Conditional Ridge / FiLM
+> **Name:** TODO | **ID:** `VIT-20251203-moe-conditional-01`  
+> **Topic:** `VIT` | **MVP:** MVP-3.2 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** MoE-D: Conditional Ridge (FiLM-style Ridge)  
-> **ID:** `VIT-20251203-moe-conditional-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-3.2  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
 
 ---
 

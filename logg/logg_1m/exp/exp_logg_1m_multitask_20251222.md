@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Multi-task (Teff+FeH+logg)
+> **Name:** TODO | **ID:** `VIT-20251222-logg_1m-multitask`  
+> **Topic:** `VIT` | **MVP:** MVP-1.5 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Multi-task Joint Training  
-> **ID:** `VIT-20251222-logg_1m-multitask`  
-> **Topic ｜ MVP:** `VIT` | `logg_1m` | MVP-1.5  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
+
 ---
 
 ## 🔗 Upstream Links

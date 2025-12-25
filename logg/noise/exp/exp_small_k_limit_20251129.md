@@ -1,13 +1,22 @@
 # 📘 Small K Limit 实验报告
+> **Name:** TODO | **ID:** `VIT-20251129-small-01`  
+> **Topic:** `small` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-29 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Small K Limit - 极小特征数量下 $\log g$ 预测性能极限探索  
-> **对应 MVP：** TopK 极限分析  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-29  
-> **数据版本：** LAMOST 光谱数据 (32k 训练样本, 4096 维)  
-> **模型版本：** Ridge ($\alpha=1.0$), LightGBM (n\_estimators=1000)  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/small/small_hub.md` |
+| 🗺️ Roadmap | `logg/small/small_roadmap.md` |
+
+---
 
 ---
 

@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Quantile Bins Sweep
+> **Name:** TODO | **ID:** `VIT-20251203-moe-quantile-01`  
+> **Topic:** `VIT` | **MVP:** MVP-3.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ✅ Completed (Negative Result)
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** MoE-1.2: Quantile Bins Sweep + Pseudo Gating  
-> **ID:** `VIT-20251203-moe-quantile-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-3.0, MVP-3.1  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed (Negative Result)
 
 ---
 

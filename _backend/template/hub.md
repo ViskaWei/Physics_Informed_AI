@@ -1,324 +1,185 @@
-# 🧠 Knowledge Hub
-
-> **Topic:** TODO  
-> **Author:** Viska Wei  
-> **Created:** TODO | **Updated:** TODO  
-> **Status:** 🔄 Exploring / 🎯 Converging / ✅ Stable
-
-## 🔗 Related Files
-
-| Type | File | Description |
-|------|------|-------------|
-| 📍 Roadmap | [`[topic]_roadmap.md`](./[topic]_roadmap.md) | Experiment planning & tracking |
-| 📗 Experiments | `exp_*.md` | Detailed reports |
-| 📇 Cards | `card_*.md` | Condensed insights |
-
-## 📑 Contents
-
-- [1. 🌲 Question Tree](#1--question-tree)
-- [2. 🎯 Answer Key + Strategic Route](#2--answer-key--strategic-route)
-- [3. 💡 Insight Confluence](#3--insight-confluence)
-- [4. 📐 Design Principles](#4--design-principles)
-- [5. 📎 Appendix](#5--appendix)
+# 🧠 <Topic> Hub
+> **ID:** <PROJECT-YYYYMMDD-topic-hub>  
+> **Scope:** <数据/任务/场景>  
+> **Status:** Exploring | Stable | Pivoting  
+> **Hub 职责:** 知识汇总（验证的/洞见/决策空白），非实验计划  
+> **Roadmap:** [<topic>_roadmap.md](./<topic>_roadmap.md)
 
 ---
 
-# 1. 🌲 Question Tree
+## 0) Executive Snapshot
 
-> **Hierarchical structure of research questions and boundaries**
+### 一句话
+<最确定的结论 + 关键数字>
 
-## 1.1 Top-Level Question
+### Canonical Scoreboard（唯一权威口径）
 
-> **[State the core research question in one sentence]**
+> **Protocol:** <train/test/noise/metric 定义>
 
-## 1.2 Question Decomposition
+| 模型/方法 | 指标值 | 配置 | 备注 |
+|-----------|--------|------|------|
+| Baseline A | <value> | <config> | <note> |
+| Baseline B | <value> | <config> | <note> |
+| Upper bound | <value> | <method> | 理论/Oracle |
 
-```
-🎯 Top-Level: [Core question]
-│
-├── A) [Branch A question]
-│   ├── A.1: [Detail] → [Status] [Source]
-│   ├── A.2: [Detail] → [Status]
-│   └── A.3: [Detail] → [Status]
-│
-├── B) [Branch B question]
-│   ├── B.1: [Detail] → [Status]
-│   └── B.2: [Detail] → [Status]
-│
-├── C) [Branch C question]
-│   └── C.1: [Detail] → [Status]
-│
-├── D) [Branch D question]
-│   └── D.1: [Detail] → [Status]
-│
-└── E) [Branch E question]
-    └── E.1: [Detail] → [Status]
-
-Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Closed
-```
-
-## 1.3 Scope Boundaries
-
-> **Define what is and isn't within research scope**
-
-| ✅ In Scope | ❌ Out of Scope |
-|------------|----------------|
-| [Include] | [Exclude] |
-| [Include] | [Exclude] |
+### 当前信念（我们现在相信什么）
+- <信念1：基于多实验的稳定结论>
+- <信念2：关键风险/不确定性>
+- <信念3：目前最值得投入的方向>
 
 ---
 
-# 2. 🎯 Answer Key + Strategic Route
+## 1) Canonical Evaluation Protocol（数字口径冻结）
 
-> **§1 提出问题，§2 给出当前答案 + 战略推荐**
->
-> ⚠️ **职责边界**: 只回答"知道什么、该往哪走"，不做执行计划（→ Roadmap）
+| 项目 | 规格 |
+|------|------|
+| Dataset | <名称/版本> |
+| Train size | <N> |
+| Test size | <N> |
+| Noise/regime | <定义> |
+| Metric | <R²/MAE/...> |
 
-## 2.0 Strategic Route Recommendation
-
-> **基于当前证据的战略推荐**
-
-**推荐路线：[Route X]**
-
-| Route | 路线名称 | 当前倾向 | 关键理由 |
-|-------|---------|---------|---------|
-| Route I | [路线 I 名称] | 🟡 待验证 | [理由] |
-| **Route M** | [路线 M 名称] | 🟢 **推荐** | [理由] |
-| Route S | [路线 S 名称] | 🔴 高风险 | [理由] |
-
-> 📋 **验证计划**见 [Roadmap §1 Decision Gates](./[topic]_roadmap.md#1--decision-gates)
+**规则:** Hub 只允许一个 canonical 协议；任何变更写入 Changelog。
 
 ---
 
-## 2.1 Answer Key to Question Tree
+## 2) Knowledge Ledger（我们知道什么）
 
-> **逐一回答 §1.2 的问题分支，给出决策含义**
+| Claim | 状态 | 证据摘要 | 含义（So What） |
+|-------|------|---------|----------------|
+| C1: <结论1> | ✅ 强 | <exp/来源> | <它改变了什么决策> |
+| C2: <结论2> | ✅ 强 | <exp/来源> | <它改变了什么决策> |
+| C3: <结论3> | 🟡 中 | <exp/来源> | <如果证伪会怎样> |
+| C4: <结论4> | 🔴 待验证 | <来源> | <这是最大风险> |
 
-### A) [Branch A Question]
-
-| Item | Content |
-|------|---------|
-| **Current Answer** | [当前答案，基于已有实验] |
-| **Implication** | [对战略路线的影响] → 倾向 **Route X** |
-| **Confidence** | 🟢 High / 🟡 Medium / 🔴 Low |
-| **Evidence** | exp_001, exp_002 |
-
-### B) [Branch B Question]
-
-| Item | Content |
-|------|---------|
-| **Current Answer** | [当前答案] |
-| **Implication** | [对战略路线的影响] |
-| **Confidence** | 🟢 / 🟡 / 🔴 |
-| **Evidence** | exp_XXX |
-
-### C) [Branch C Question]
-
-| Item | Content |
-|------|---------|
-| **Current Answer** | [当前答案] |
-| **Implication** | [对战略路线的影响] |
-| **Confidence** | 🟢 / 🟡 / 🔴 |
-| **Evidence** | exp_XXX |
-
-### D) [Branch D Question]
-
-| Item | Content |
-|------|---------|
-| **Current Answer** | [当前答案] |
-| **Implication** | [对战略路线的影响] |
-| **Confidence** | 🟢 / 🟡 / 🔴 |
-| **Evidence** | exp_XXX |
-
-### E) [Branch E Question]
-
-| Item | Content |
-|------|---------|
-| **Current Answer** | [当前答案] |
-| **Implication** | [对战略路线的影响] |
-| **Confidence** | 🟢 / 🟡 / 🔴 |
-| **Evidence** | exp_XXX |
+> **写法建议:** Claim 数量控制在 5-9 条；每条必须回答 "So What"
 
 ---
 
-## 2.2 Route Decision Summary
+## 3) Insights（读者应该记住的）
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     当前证据指向                                 │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│   📊 Branch A: [答案摘要] ────────────► [Route 倾向]             │
-│   📊 Branch B: [答案摘要] ────────────► [Route 倾向]             │
-│   📊 Branch C: [答案摘要] ────────────► [Route 倾向]             │
-│   📊 Branch D: [答案摘要] ────────────► [Route 倾向]             │
-│   📊 Branch E: [答案摘要] ────────────► [Route 倾向]             │
-│                                                                 │
-│   🎯 综合推荐: Route X                                           │
-│   ⚠️ 待验证: [需要 Roadmap Decision Gate 确认的内容]             │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+### I1 — <洞见标题>
 
----
+| 项 | 内容 |
+|----|------|
+| **观察** | <事实> |
+| **解释** | <为什么会这样> |
+| **决策影响** | <它改变了什么决策/下一步> |
 
-# 3. 💡 Insight Confluence
+### I2 — <洞见标题>
 
-> **Aggregate findings from multiple experiments → high-level conclusions**
+| 项 | 内容 |
+|----|------|
+| **观察** | <事实> |
+| **解释** | <为什么会这样> |
+| **决策影响** | <它改变了什么决策/下一步> |
 
-## 3.1 Confluence Index
-
-| # | Theme | Sources | Conclusion | Confidence |
-|---|-------|---------|------------|------------|
-| C1 | [Theme] | exp_001, exp_002 | [Synthesis] | 🟢 High |
-| C2 | [Theme] | exp_003 | [Preliminary] | 🟡 Medium |
-
-## 3.2 Confluence Details
-
-### C1: [Theme Name]
-
-**Individual Findings:**
-
-| Source | Finding | Key Data |
-|--------|---------|----------|
-| [exp_001](./exp_001.md) | [Finding 1] | [Data] |
-| [exp_002](./exp_002.md) | [Finding 2] | [Data] |
-
-**Synthesized Conclusion:**
-> **[2-3 sentence summary]**
-
-**Design Implications:**
-- [Implication 1]
-- [Implication 2]
+> **规则:** 一般 5-8 条洞见足够；每条必须有 "决策影响"
 
 ---
 
-### C2: [Theme Name]
+## 4) Decision Gaps（下一步要补的知识空白）
 
-(Continue with same format...)
+> 写"要回答什么"，不写"怎么做实验"
 
----
+### DG1 — <Gap 标题>
 
-## 3.3 Conflicting Findings
+| 项 | 内容 |
+|----|------|
+| **为什么重要** | <会改变哪个关键决策> |
+| **什么能关闭它** | <什么证据/结果能关闭不确定性> |
+| **决策规则** | If <result> → <decision>；Else <pivot> |
 
-> **Document contradictory results and analysis**
+### DG2 — <Gap 标题>
 
-| Theme | Exp A Conclusion | Exp B Conclusion | Possible Cause | Resolution |
-|-------|------------------|------------------|----------------|------------|
-| [Topic] | [Conclusion A] | [Conclusion B] | [Analysis] | [Next steps] |
+| 项 | 内容 |
+|----|------|
+| **为什么重要** | <...> |
+| **什么能关闭它** | <...> |
+| **决策规则** | If ... → ... |
 
----
-
-# 4. 📐 Design Principles
-
-> **Reusable principles distilled from experiments**
-
-## 4.1 Confirmed Principles
-
-| # | Principle | Recommendation | Evidence | Scope |
-|---|-----------|----------------|----------|-------|
-| P1 | **[Name]** | [Do/Don't] | exp_001, exp_002 | [When applicable] |
-| P2 | **[Name]** | [Do/Don't] | exp_003 | [When applicable] |
-
-## 4.2 Key Numbers Reference
-
-> **Quick reference for important values**
-
-| Metric | Value | Condition | Source |
-|--------|-------|-----------|--------|
-| [Metric 1] | [Value] | [Config] | exp_XXX |
-| [Metric 2] | [Value] | [Config] | exp_XXX |
-
-## 4.3 Closed Directions
-
-| Direction | Evidence | Reason | Lessons |
-|-----------|----------|--------|---------|
-| ~~[Dir A]~~ | exp_XXX | [Reason] | [Learned] |
-| ~~[Dir B]~~ | exp_XXX | [Reason] | [Learned] |
+> **规则:** 一般 3-6 个 DG 就够
 
 ---
 
-# 5. 📎 Appendix
+## 5) Parallel Lanes（多线程探索保持可读）
 
-## 5.0 Hypothesis Archive
+| Lane | 目标 | 当前状态 | 会改变什么 |
+|------|------|---------|-----------|
+| L-A: <名称> | <...> | ✅/🟡/⏳ | <...> |
+| L-B: <名称> | <...> | ✅/🟡/⏳ | <...> |
+| L-C: <名称> | <...> | ✅/🟡/⏳ | <...> |
 
-> **战略假设和机制假设存档（从 §2 下放的详细内容）**
+> **规则:** Lane 是"并行研究线"的最小可读单元，防止内容互相穿插
+
+---
+
+## 6) Design Principles（可移植规则）
+
+| # | 原则 | 建议 | 证据 | 适用 |
+|---|------|------|------|------|
+| P1 | **<原则名>** | <做/不做> | <exp_xxx> | <场景> |
+| P2 | **<原则名>** | <做/不做> | <exp_xxx> | <场景> |
+
+---
+
+## 7) Pointers（详细内容在哪里）
+
+| 类型 | 文件 | 说明 |
+|------|------|------|
+| 📍 Roadmap | [<topic>_roadmap.md](./<topic>_roadmap.md) | 实验规划与执行 |
+| 📗 Experiments | `exp/exp_*.md` | 详细报告 |
+| 📥 Child Hubs | <link> | 子主题 |
+| 📤 Parent Hub | <link> | 上层战略 |
+
+---
+
+## 8) Changelog（仅记录知识改变）
+
+| 日期 | 变更 | 影响 |
+|------|------|------|
+| YYYY-MM-DD | 创建 Hub | - |
+| YYYY-MM-DD | <knowledge change> | <what it affects> |
+
+---
+
+## 📎 Appendix（可选）
+
+### A1: Canonical Evaluation History
+> 旧口径数字仅供追溯
+
+### A2: 假设存档
+> 已验证/否定的假设可折叠存档
 
 <details>
-<summary><b>Strategic Hypotheses (H1–Hn)</b></summary>
+<summary><b>战略假设 (H1-Hn)</b></summary>
 
-| # | Hypothesis | Status | If True | If False | Evidence |
-|---|------------|--------|---------|----------|----------|
-| H1 | [Core belief 1] | ✅/❌/🔄 | [Implication] | [Alternative] | exp_XXX |
-| H2 | [Core belief 2] | ✅/❌/🔄 | [Implication] | [Alternative] | exp_XXX |
+| # | 假设 | 状态 | 证据 |
+|---|------|------|------|
+| H1 | <...> | ✅/❌ | exp_xxx |
 
 </details>
 
-<details>
-<summary><b>Mechanistic Hypotheses (M1–Mn)</b></summary>
-
-| # | Hypothesis | 机制解释 | 验证方式 | Status |
-|---|------------|---------|---------|--------|
-| M1 | [机制假设 1] | [解释] | [实验] | 🔄 |
-| M2 | [机制假设 2] | [解释] | [实验] | 🔄 |
-
-</details>
+### A3: 领域背景/术语表
+> 按需添加
 
 ---
 
-## 5.1 Domain Background
+# ⚠️ Hub 职责边界
 
-> **Domain knowledge to help interpret conclusions**
+**Hub 做什么：**
+- ✅ 知识汇总（我们知道什么）
+- ✅ 洞见提炼（为什么重要 + 决策影响）
+- ✅ 决策空白（下一步要补什么知识）
+- ✅ 设计原则（可复用规则）
+- ✅ 数字口径冻结（canonical scoreboard）
 
-### 5.1.1 [Background Topic 1]
+**Hub 不做什么：**
+- ❌ 实验计划/执行跟踪 → Roadmap
+- ❌ 细粒度 testable hypotheses → Roadmap/Exp
+- ❌ 日常 backlog → Kanban
+- ❌ 具体实验流程/代码 → Exp report
 
-[Explanation]
-
-### 5.1.2 [Background Topic 2]
-
-[Explanation]
-
----
-
-## 5.2 Glossary
-
-| Term | Definition | Notes |
-|------|------------|-------|
-| [Term 1] | [Definition] | [Notes] |
-| [Term 2] | [Definition] | [Notes] |
-
----
-
-## 5.3 Changelog
-
-| Date | Change | Sections |
-|------|--------|----------|
-| YYYY-MM-DD | Created Hub | - |
-| YYYY-MM-DD | Updated Answer Key | §2 |
-| YYYY-MM-DD | Added Insight C1 | §3 |
-
----
-
-> **Template Usage:**
-> 
-> ## Hub vs Roadmap 职责分工
-> 
-> | 问题 | Hub | Roadmap |
-> |------|-----|---------|
-> | 我们知道什么？ | ✅ §2 Answer Key | |
-> | 该往哪走？ | ✅ §2 Strategic Route | |
-> | 怎么验证？（Decision Gates） | | ✅ §1 |
-> | 做哪些实验？ | | ✅ §2, §3 |
-> | 进度如何？ | | ✅ §4 |
-> | 学到了什么洞见？ | ✅ §3 Confluence | |
-> | 设计原则是什么？ | ✅ §4 Principles | |
-> 
-> ## Hub Scope
-> - ✅ **Do:** Question Tree, Answer Key, Strategic Route, Insight Confluence, Design Principles
-> - ❌ **Don't:** Decision Gates, MVP specs, progress tracking (→ roadmap.md)
-> 
-> ## Update Triggers
-> - After experiment → update §2 Answer Key (if answer changes), §3 (add insight)
-> - After hypothesis verification → update §5.0 Hypothesis Archive
-> - After distilling principles → update §4
-
+**核心区别：**
+- **Hub** = "我们知道了什么？下一步该往哪走？"（**战略**）
+- **Roadmap** = "我们计划跑哪些实验？进度如何？"（**执行**）

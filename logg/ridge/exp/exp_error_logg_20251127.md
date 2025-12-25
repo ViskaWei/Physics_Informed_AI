@@ -1,13 +1,23 @@
-# 📘 Error 特征预测 log_g 实验报告
+# 🍃 Error σ 作为独立特征预测 log_g 
+> **Name:** Error Feature Prediction  
+> **ID:** `VIT-20251127-ridge-input-01`  
+> **Topic:** `ridge` | **MVP:** MVP-1.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-27 | **Status:** ✅  
+> **Root:** `Ridge` | **Parent:** `Input` | **Child**: |
+
+>  🎯 **Target:** 验证 error σ 是否独立包含 log_g 信息，评估非线性模型提取 error 信息的能力  
+> 🦾 **Decide:** 是否在 NN 输入中采用 [flux, error] 双通道或 flux/error (SNR) 组合
 
 ---
-> **实验名称：** Error-based log_g Prediction Experiment  
-> **对应 MVP：** Error 通道信息分析  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-27  
-> **数据版本：** HDF5 光谱数据（含 flux 和 error 列）  
-> **模型版本：** LightGBM (lgbm\_error\_nz0.pkl), Ridge Regression (lnreg\_e\_n32k\_nz0.pkl)  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/error/error_hub.md` |
+| 🗺️ Roadmap | `logg/error/error_roadmap.md` |
+
+---
 
 ---
 

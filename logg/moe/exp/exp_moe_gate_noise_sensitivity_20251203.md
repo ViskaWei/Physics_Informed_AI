@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Gate Noise Sensitivity Analysis
+> **Name:** TODO | **ID:** `VIT-20251203-moe-gate-noise-01`  
+> **Topic:** `VIT` | **MVP:** MVP-7.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Gate Noise Sensitivity Analysis  
-> **ID:** `VIT-20251203-moe-gate-noise-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-7.1  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
 
 ---
 

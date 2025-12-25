@@ -1,13 +1,23 @@
-# 📘 Ridge 回归特征重要性稳定性分析报告
+# 🍃 特征重要性稳定性分析
+> **Name:** Feature Importance Stability  
+> **ID:** `VIT-20251128-ridge-feature-01`  
+> **Topic:** `ridge` | **MVP:** MVP-1.2 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-28 | **Status:** ✅  
+> **Root:** `Ridge` | **Parent:** `Feature` | **Child**: |
+
+> 🎯 **Target:** 验证 Ridge 特征重要性排序对 α 和噪声的敏感性，判断 Top-K 选择是否可靠  
+> 🦾 **Decide:** 是否可在任意 α 下安全预选特征；避免从 noise=0 迁移到有噪声场景
 
 ---
-> **实验名称：** Ridge Feature Importance Stability vs Alpha & Noise  
-> **对应 MVP：** 特征稳定性分析（为 TopK 特征选择提供依据）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-28  
-> **数据版本：** linear_alpha_search (42 configurations)  
-> **模型版本：** Ridge Regression (sklearn)  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/feature/feature_hub.md` |
+| 🗺️ Roadmap | `logg/feature/feature_roadmap.md` |
+
+---
 
 ---
 

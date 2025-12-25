@@ -1,13 +1,22 @@
 # 📘 Neural Network 架构设计实验报告
+> **Name:** TODO | **ID:** `VIT-20251129-nn-01`  
+> **Topic:** `nn` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-29 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Physics-Informed Neural Network Architecture Design for $\log g$ Prediction  
-> **对应 MVP：** NN 架构系统性设计（多阶段）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-29  
-> **数据版本：** HDF5 光谱数据（4096 像素合成光谱）  
-> **模型版本：** Phase 1 - Baseline MLP/CNN (PyTorch)  
-> **状态：** 🔄 进行中
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/nn/nn_hub.md` |
+| 🗺️ Roadmap | `logg/nn/nn_roadmap.md` |
+
+---
 
 ---
 

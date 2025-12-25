@@ -1,11 +1,22 @@
-# Ridge 100k Noise Sweep 实验报告
+# 📘 Ridge 100k Noise Sweep 实验报告
+> **Name:** TODO | **ID:** `TODO`  
+> **Topic:** `` | **MVP:** MVP-1.0 (Phase 1: Ridge 完整) | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:**  | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **experiment_id:** BM-20251205-ridge-100k  
-> **MVP:** MVP-1.0 (Phase 1: Ridge 完整)  
-> **作者:** Viska Wei  
-> **日期:** 2025-12-05  
-> **状态:** ✅ 完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg//_hub.md` |
+| 🗺️ Roadmap | `logg//_roadmap.md` |
+
+---
 
 ---
 

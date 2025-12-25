@@ -1,13 +1,13 @@
 # 📘 Experiment Report: MoE-1 Piecewise Ridge
+> **Name:** TODO | **ID:** `VIT-20251203-moe-piecewise-01`  
+> **Topic:** `VIT` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** MoE-1: Piecewise Ridge (Piecewise Linear Model)  
-> **ID:** `VIT-20251203-moe-piecewise-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-1.0  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
 
 ---
 ## 🔗 Upstream Links

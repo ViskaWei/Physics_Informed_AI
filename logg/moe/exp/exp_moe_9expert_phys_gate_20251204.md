@@ -1,13 +1,14 @@
 # 📘 Experiment Report: 物理窗 Gate → 9 专家扩展
+> **Name:** TODO | **ID:** `VIT-20251204-moe-9expert-01`  
+> **Topic:** `VIT` | **MVP:** MVP-9E | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** 物理窗 Gate → 9 专家扩展  
-> **ID:**  `VIT-20251204-moe-9expert-01`  
-> **Topic ｜ MVP:** `VIT` / `moe` ｜ MVP-9E1 (from moe_roadmap)   
-> **Author:** Viska Wei  
-> **Date:** 2025-12-04  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
+
 ---
 
 ## 🔗 Upstream Links

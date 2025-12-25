@@ -1,10 +1,11 @@
-# 🏔️ Master Knowledge Hub
-
-> **Purpose:** 全局研究战略导航 — log_g 预测任务  
-> **Author:** Viska Wei  
-> **Created:** 2025-12-24  
-> **Updated:** 2025-12-24  
-> **Status:** 🔄 Active
+# 🏔️ Master Hub
+> **Name:** 全局研究战略导航 | **ID:** `VIT-20251224-master-hub`  
+> **Topic:** `log_g prediction` | **Layer:** L0 (Master) | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** 🔄 Active
+```
+💡 log_g 预测任务的全局战略导航  
+决定：模型架构选择、数据规模策略、研究优先级
+```
 
 ---
 

@@ -1,13 +1,14 @@
 # 📘 Experiment Report: SNR/Error as Input
+> **Name:** TODO | **ID:** `VIT-20251222-logg_1m-error_input`  
+> **Topic:** `VIT` | **MVP:** MVP-1.2 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** SNR/Error as Model Input  
-> **ID:** `VIT-20251222-logg_1m-error_input`  
-> **Topic ｜ MVP:** `VIT` | `logg_1m` | MVP-1.2  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
+
 ---
 
 ## 🔗 Upstream Links

@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Fisher/Sensitivity Upper Bound
+> **Name:** TODO | **ID:** `VIT-20251222-logg_1m-fisher`  
+> **Topic:** `VIT` | **MVP:** MVP-1.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Fisher Information Upper Bound Analysis  
-> **ID:** `VIT-20251222-logg_1m-fisher`  
-> **Topic ｜ MVP:** `VIT` | `logg_1m` | MVP-1.1  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
+
 ---
 
 ## 🔗 Upstream Links

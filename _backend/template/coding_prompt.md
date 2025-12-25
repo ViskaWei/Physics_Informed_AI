@@ -1,470 +1,201 @@
-# 🤖 实验 Coding Prompt 模板 (v3.1 - 训练自动化)
+# 🤖 实验 Coding Prompt
 
 ---
-> **日期：** YYYY-MM-DD | **来源：** `logg/[topic]/sessions/session_*.md`
-
+> **日期:** YYYY-MM-DD | **来源:** `logg/[topic]/sessions/session_*.md`
 ---
 
-## 🚨🚨🚨 跨仓库写入规则（置顶警告）🚨🚨🚨
+## 🚨 跨仓库写入规则
 
-> **所有写入 `/home/swei20/Physics_Informed_AI/` 知识中心的操作，必须使用终端命令！**
->
-> - ❌ **禁止**：使用 IDE 编辑功能（write/search_replace 等工具）直接写入知识中心
-> - ✅ **必须**：使用终端命令（`cat << 'EOF' >`、`echo >>`、`cp`、`tee`）写入
->
-> **原因**：Cursor IDE 跨仓库写入会弹出确认框，打断自动化工作流。
+> 写入 `/home/swei20/Physics_Informed_AI/` 必须用**终端命令**！
+> - ❌ 禁止 IDE 工具 (write/search_replace)
+> - ✅ 用 `cat << 'EOF' >`、`echo >>`、`cp`
 
 ```bash
-# ✅ 正确方式示例
 KNOWLEDGE_CENTER="/home/swei20/Physics_Informed_AI"
-
-# 写入新文件
 cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/[topic]/exp_xxx.md"
-[报告内容]
+[内容]
 EOF
-
-# 追加内容
-echo "| MVP-X | exp | Phase | ✅ |" >> "$KNOWLEDGE_CENTER/logg/[topic]/[topic]_roadmap.md"
-
-# 复制文件
-cp ./local_report.md "$KNOWLEDGE_CENTER/logg/[topic]/"
-```
-
----
-
-## ⚠️ 执行模式：驱动器 + 自动健康检查 + 失败修复
-
-**核心原则**：使用 `driver.py` 自动管理训练生命周期
-
-```
-Agent 用 driver.py 启动训练
-    ↓
-驱动器自动执行：
-├─ 前 5 分钟健康检查（NaN/OOM/Loss爆炸）
-├─ 健康检查通过 → 等待训练完成
-├─ 健康检查失败 → 自动终止 + 输出修复建议
-└─ 训练完成 → 自动后处理（生成 summary.json）
-    ↓
-如果成功：继续生成图表和报告
-如果失败：根据修复建议调整后重试
 ```
 
 ---
 
 ## 🚀 仓库路由
 
-| Topic | 代码仓库 | ID 前缀 |
-|-------|---------|---------|
-| `diffusion` | `~/SpecDiffusion` | `SD-` |
-| `cnn/swin/ridge/pca/gta/noise/moe` | `~/VIT` | `VIT-` |
-| `distill/latent/probe` | `~/BlindSpotDenoiser` | `BS-` |
+| Topic | 仓库 | 前缀 |
+|-------|------|------|
+| diffusion | `~/SpecDiffusion` | SD- |
+| cnn/swin/ridge/pca/gta/moe | `~/VIT` | VIT- |
+| distill/latent/probe | `~/BlindSpotDenoiser` | BS- |
 
-**知识中心**：`/home/swei20/Physics_Informed_AI/`（所有报告保存到这里）
-**驱动器脚本**：`/home/swei20/Physics_Informed_AI/_backend/scripts/training/driver.py`
+**驱动器**: `Physics_Informed_AI/_backend/scripts/training/driver.py`
 
 ---
 
 # 📋 Prompt 正文
 
 ```text
-你是实验执行助理。按以下规格执行实验。
+你是实验执行助理。
 
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-⚠️ 跨仓库写入规则（最高优先级）
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-
-所有写入 /home/swei20/Physics_Informed_AI/ 的操作：
-❌ 禁止：使用 IDE 工具（write、search_replace、edit_file 等）
-✅ 必须：使用终端命令（cat << 'EOF' >、echo >>、cp、tee）
-
-原因：IDE 跨仓库写入会触发确认弹窗，打断工作流。
-
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+🚨 跨仓库写入: 用终端命令，禁止 IDE 工具
+📝 语言: Header 全英文 | 正文中文 | 图表文字全英文
 
 ═══════════════════════════════════════
-⚠️ 训练自动化模式
+执行流程
 ═══════════════════════════════════════
 
-使用 driver.py 执行训练，它会自动：
-1. 前 5 分钟健康检查（NaN、OOM、Loss 爆炸等）
-2. 健康检查失败 → 自动终止 + 输出修复建议
-3. 健康检查通过 → 等待训练完成
-4. 训练完成 → 生成 metrics.csv、summary.json、report_draft.md
-
-关键文件位置：
-- 日志: [repo]/logs/[exp_id].log
-- 信号: [repo]/signals/[exp_id].done (或 .failed)
-- 摘要: [repo]/results/[exp_id]/summary.json
-- 报告骨架: [repo]/results/[exp_id]/report_draft.md
-
-═══════════════════════════════════════
-执行流程（4 步）
-═══════════════════════════════════════
-
-【Step 1】使用 driver.py 启动训练
+【Step 1】启动训练
 ```bash
-cd [repo_path]
-source init.sh  # 激活环境
-
-# 使用驱动器启动（自动健康检查 + 后处理）
-python /home/swei20/Physics_Informed_AI/_backend/scripts/training/driver.py \
-    --cmd "[训练命令]" \
-    --exp-id [exp_id] \
-    --health-time 300  # 可选：健康检查时长（秒），默认 5 分钟
-
-# 例如：
-python /home/swei20/Physics_Informed_AI/_backend/scripts/training/driver.py \
-    --cmd "python scripts/run.py -f configs/exp/logg/base.yaml" \
-    --exp-id VIT-20251204-cnn-01
-
-# 或使用配置文件（会自动构建 python scripts/run.py -f CONFIG 命令）：
-python /home/swei20/Physics_Informed_AI/_backend/scripts/training/driver.py \
-    --config configs/exp/logg/base.yaml \
-    --exp-id VIT-20251204-cnn-01
+cd [repo]
+source init.sh
+python .../driver.py --cmd "[训练命令]" --exp-id [exp_id]
+# 或
+python .../driver.py --config xxx.yaml --exp-id [exp_id]
 ```
 
-【Step 1b】如果健康检查失败
-驱动器会自动输出：
-- 失败原因
-- 日志最后 20 行
-- 针对性修复建议
+健康检查失败？根据修复建议调整后重试。
 
-根据修复建议调整配置后重试：
+【Step 2】生成图表（⚠️ 文字全英文！）
 ```bash
-# 例如：NaN 检测 → 降低学习率
-python .../driver.py \
-    --cmd "python train.py --lr 1e-5" \
-    --exp-id [exp_id]-fix1
-
-# 例如：OOM → 减小 batch size
-python .../driver.py \
-    --cmd "python train.py --batch-size 16" \
-    --exp-id [exp_id]-fix1
+python plot.py --exp_id [exp_id] --output .../logg/[topic]/img/
 ```
 
-【Step 2】训练完成后 → 生成图表
-驱动器已自动生成 summary.json，接下来生成图表：
-
-⚠️⚠️⚠️ 图表文字规则（重要！）⚠️⚠️⚠️
-图表中的所有文字必须使用英文！包括：
-- 标题 (title)
-- 坐标轴标签 (xlabel, ylabel)
-- 图例 (legend)
-- 注释 (annotation)
-- colorbar 标签
-原因：中文字符会显示为乱码方块
-
+【Step 3】写报告（用终端命令！）
 ```bash
-# 读取摘要获取关键信息
-cat [repo]/results/[exp_id]/summary.json
-
-# 生成图表（⚠️ 所有文字用英文！）
-python plot.py --exp_id [exp_id] \
-    --output /home/swei20/Physics_Informed_AI/logg/[topic]/img/
-```
-
-【Step 3】撰写报告 🚨 必须用终端命令！禁止用 IDE！
-# ⚠️ 下面所有写入知识中心的操作，必须用 run_terminal_cmd 执行 bash 命令
-# ❌ 禁止：write()、search_replace()、edit_file() 等 IDE 工具
-# ✅ 必须：cat << 'EOF' > 或 echo >> 通过终端写入
-
-# ⚠️⚠️⚠️ 实验细节必须完整记录！⚠️⚠️⚠️
-# 以下信息必须写入报告 §2 实验设计，不能省略：
-# - 数据来源（如 APOGEE DR17 / xxx.h5）
-# - train/val/test size（具体数字）
-# - 噪声配置（sigma 值、噪声类型、添加公式）
-# - 所有训练参数（包括 default 值：lr, batch_size, epochs, optimizer, seed 等）
-# 原因：后续实验可能更换数据/噪声/参数，完整记录才能准确对比
-
-```bash
-KNOWLEDGE_CENTER="/home/swei20/Physics_Informed_AI"
-
-# 读取自动生成的报告骨架
-cat [repo]/results/[exp_id]/report_draft.md
-
-# 基于骨架和 summary.json 填充完整报告
-# ⚠️ 必须用 cat << 'EOF' > 写入，不能用 IDE 编辑（跨仓库写入会触发确认弹窗）
 cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/[topic]/exp_[name]_YYYYMMDD.md"
-# [实验名称]
+# 🍃 [实验名称]
+> **Name:** [Name]  
+> **ID:** \`[exp_id]\`  
+> **Topic:** \`[topic]\` | **MVP:** MVP-X.X | **Project:** \`VIT\`  
+> **Author:** Viska Wei | **Date:** YYYY-MM-DD | **Status:** ✅  
+> **Root:** \`[Root]\` | **Parent:** \`[Branch]\` | **Child**: |
 
-> experiment_id: [exp_id] | date: YYYY-MM-DD | status: ✅ 完成
+> 🎯 **Target:** [一句话实验目的]  
+> 🦾 **Decide:** [影响的决策]
 
+---
 ## ⚡ 核心结论速览
-| 项目 | 内容 |
-|------|------|
-| **一句话总结** | [从 summary.json 提取] |
-| **假设验证** | ❌/✅ H?.? |
-| **关键数字** | R²=[final_r2], Loss=[final_loss] |
-| **设计启示** | [总结] |
+> **一句话**: [最重要发现 + 关键数字]
 
-## 1. 目标
-[实验目的]
+| 验证问题 | 结果 | 结论 |
+|---------|------|------|
+| Q? | ✅/❌ | [简短] |
 
-## 2. 实验设计
-### 2.1 数据
-| 配置项 | 值 |
-|--------|-----|
-| **数据来源** | [来源名称，如 APOGEE DR17] |
-| **数据路径** | `[完整路径，如 ~/VIT/data/xxx.h5]` |
-| **数据大小** | [文件大小 或 总样本数，如 2.3GB / 100k samples] |
-| **训练样本数** | [N] |
-| **验证样本数** | [N] |
-| **测试样本数** | [N] |
-| **特征维度** | [N] |
-| **预处理** | [简述，如：归一化[0,1] / 标准化 / 无] |
+---
+## 1. 🎯 目标
+[中文描述]
 
-### 2.2 噪声配置
-| 配置项 | 值 |
-|--------|-----|
-| **噪声类型** | [gaussian/none/...] |
-| **噪声水平 σ** | [值] |
-| **应用范围** | [train/all/...] |
+## 2. 🧪 实验设计
+| 项 | 值 |
+|----|-----|
+| 数据 | [来源/路径/train-val-test] |
+| 噪声 | σ=[值] |
+| 模型 | [类型+参数] |
+| 训练 | epochs/batch/lr/optimizer/seed |
 
-### 2.3 训练参数（包括 default 值）
-| 参数 | 值 |
-|------|-----|
-| epochs | [N] |
-| batch_size | [N] |
-| learning_rate | [值] |
-| optimizer | [Adam/...] |
-| weight_decay | [值] |
-| random_seed | [N] |
+## 3. 📊 图表
+![](./img/[exp_id]_xxx.png)
+**观察**: [观察]
 
-## 3. 图表
-> ⚠️ **图表文字规则**：所有图表中的文字（标题、坐标轴标签、图例、注释等）必须使用英文，中文会显示为乱码！
+## 4. 💡 洞见
+- [发现]
 
-![fig1](./img/[exp_id]_xxx.png)
-[观察]
-
-## 4. 洞见
-- [关键发现]
-
-## 5. 结论
+## 5. 📝 结论
 [核心发现 + 设计启示]
 
-## 6. 附录
-### 6.1 数值结果
-从 [repo]/results/[exp_id]/metrics.csv 提取
-
-### 6.2 执行日志
-[关键命令和输出]
+## 6. 📎 附录
+[数值结果 + 执行日志]
 EOF
 ```
 
-【Step 4】更新追踪文件 🚨 必须用终端命令！禁止用 IDE！
-# ⚠️ 所有追加/修改知识中心文件的操作，必须用 run_terminal_cmd 执行
-# ❌ 禁止：write()、search_replace()、edit_file() 等 IDE 工具
-# ✅ 必须：echo >> 或 cat << 'EOF' >> 通过终端追加
+【Step 4】更新追踪文件
 ```bash
-KNOWLEDGE_CENTER="/home/swei20/Physics_Informed_AI"
-
-# 更新 kanban
 echo "- [x] [exp_id]: [结论]" >> "$KNOWLEDGE_CENTER/status/kanban.md"
-
-# 更新 roadmap §2.1 实验总览（追加实验条目）
-cat << 'EOF' >> "$KNOWLEDGE_CENTER/logg/[topic]/[topic]_roadmap.md"
-| [MVP-X.X] | [实验名称] | [Phase] | ✅ | [exp_id] | [链接](./exp_[name]_YYYYMMDD.md) |
-EOF
-
-# 更新 roadmap §4.2 核心结论快照（如有重要结论）
-cat << 'EOF' >> "$KNOWLEDGE_CENTER/logg/[topic]/[topic]_roadmap.md"
-### [exp_id]
-- **结论**: [一句话总结]
-- **关键数字**: R²=[value], MAE=[value]
-- **设计启示**: [总结]
-EOF
-
-# 更新 hub §3 洞见汇合站（如有重要发现）
-cat << 'EOF' >> "$KNOWLEDGE_CENTER/logg/[topic]/[topic]_hub.md"
-#### [exp_id] 的发现
-- **单点发现**: [关键发现]
-- **汇合结论**: [与已有洞见的关联]
-EOF
-
-# ⚠️ 重要：跨仓库写入必须用终端命令（cat/echo/tee），不能用 IDE 编辑
-# 原因：IDE 跨仓库写入会触发确认弹窗，打断工作流
 ```
 
 ═══════════════════════════════════════
-驱动器参数速查
+驱动器参数
 ═══════════════════════════════════════
 
-| 参数 | 说明 | 默认值 |
-|------|------|--------|
-| --cmd | 完整训练命令 | 必需（或 --config） |
-| --config | 配置文件路径 | 必需（或 --cmd） |
+| 参数 | 说明 | 默认 |
+|------|------|------|
+| --cmd | 训练命令 | 必需 |
 | --exp-id | 实验 ID | 必需 |
-| --health-time | 健康检查时长（秒） | 300 |
-| --check-interval | 检查间隔（秒） | 10 |
-| --skip-post | 跳过后处理 | false |
-| --dry-run | 只显示命令不执行 | false |
+| --health-time | 健康检查(秒) | 300 |
 
 ═══════════════════════════════════════
-交付物清单
+交付物
 ═══════════════════════════════════════
 
 | 类型 | 路径 |
 |------|------|
-| 训练日志 | `[repo]/logs/[exp_id].log` |
-| 指标 CSV | `[repo]/results/[exp_id]/metrics.csv` |
-| 摘要 JSON | `[repo]/results/[exp_id]/summary.json` |
-| 报告骨架 | `[repo]/results/[exp_id]/report_draft.md` |
-| 最终报告 | `/home/swei20/Physics_Informed_AI/logg/[topic]/exp_[name]_YYYYMMDD.md` |
-| 图表 | `/home/swei20/Physics_Informed_AI/logg/[topic]/img/` |
+| 报告 | `logg/[topic]/exp_[name]_YYYYMMDD.md` |
+| 图表 | `logg/[topic]/img/` |
 
-🚨 完成后更新（必须用 run_terminal_cmd 执行 bash 命令）：
-- `status/kanban.md` → Done 区域（用 `echo >>`）
-- `logg/[topic]/[topic]_roadmap.md` §2.1 和 §4.2（用 `cat << 'EOF' >>`）
-- `logg/[topic]/[topic]_hub.md` §3（如有重要洞见，用 `cat << 'EOF' >>`）
-
-🚨🚨🚨 跨仓库写入规则（重申）🚨🚨🚨
-❌ 禁止：使用 write()、search_replace()、edit_file() 等 IDE 工具写入知识中心
-✅ 必须：使用 run_terminal_cmd 执行 cat/echo/tee 命令写入
-原因：IDE 跨仓库写入会触发确认弹窗，打断自动化工作流
+🚨 完成后更新: kanban.md, roadmap.md §2.1, hub.md §3
 ```
 
 ---
 
-# 🗂️ 参考代码（填写区）
+# 🗂️ 参考代码
 
-> ⚠️ **不要写代码骨架！** 只提供参考脚本路径，让 Agent 直接阅读并复用/改造。
+> 不写代码骨架，只列参考脚本路径
 
-| 参考脚本 | 可复用的函数 | 需要修改的部分 |
-|---------|-------------|---------------|
-| `[脚本路径]` | `[函数1](), [函数2]()` | [说明需要新增/修改的逻辑] |
-| `[脚本路径]` | `[函数名]()` | 无需修改 |
-
-**核心修改说明**（用自然语言描述，不写代码）：
-- [描述需要新增的逻辑，如 "新增 6 种 input variant 处理函数"]
-- [描述需要修改的逻辑，如 "修改数据加载，同时返回 flux 和 error"]
+| 参考脚本 | 可复用 | 需修改 |
+|---------|--------|--------|
+| `[路径]` | `func()` | [说明] |
 
 ---
 
-# 🎯 实验规格（填写区）
+# 🎯 实验规格
 
 ```yaml
-experiment_id: "[PROJECT]-[YYYYMMDD]-[topic]-[序号]"
-experiment_name: "[名称]"
-repo_path: "~/VIT"  # 或 ~/BlindSpotDenoiser 或 ~/SpecDiffusion
+experiment_id: "[PROJECT]-[YYYYMMDD]-[topic]-[##]"
+repo_path: "~/VIT"
 
-# 训练命令（二选一）
-train_cmd: "python scripts/xxx.py --config xxx.yaml"
-# 或
-config_file: "configs/exp/xxx.yaml"
-
-# ⚠️ 数据配置（必须详细记录！后续实验可能有变化）
 data:
-  source: "[数据来源名称，如 APOGEE DR17 / 合成数据]"
-  path: "[完整路径，如 ~/VIT/data/apogee_100k.h5]"
-  size: "[文件大小 或 总样本数，如 2.3GB / 100k samples]"
-  train_size: N       # 训练样本数
-  val_size: N         # 验证样本数（如有）
-  test_size: N        # 测试样本数
-  feature_dim: N      # 光谱特征维度
-  wavelength_range: "[起始, 结束]"  # 波长范围（如有）
-  target: "log_g"     # 预测目标
-  aux_features: []    # 辅助特征（如 Teff, Fe_H）
-  preprocessing: "[简述预处理方式，如：归一化到[0,1] / 标准化(mean=0,std=1) / 无]"
+  source: ""
+  path: ""
+  train/val/test: N/N/N
+  feature_dim: N
+  target: "log_g"
 
-# ⚠️ 噪声配置（必须详细记录！）
 noise:
-  enabled: true/false
-  type: "gaussian"    # gaussian / poisson / snr_based
-  noise level: 0.1        # 高斯噪声标准差（如适用）
-  snr: 20 #noise level 对应的信噪比
-  snr: null           # 信噪比（如适用）
-  apply_to: "train"   # train / train+val / all
-  formula: "noisy = flux + noise_level * N(0, sigma^2)"  # 噪声添加公式
+  type: "gaussian"
+  sigma: 0.1
+  apply_to: "train"
 
-# 模型
 model:
-  type: "[类型]"
-  # [其他参数]
+  type: ""
 
-# ⚠️ 训练配置（所有参数都要记录，包括 default 值！）
 training:
   epochs: N
   batch_size: N
   lr: 1e-4
-  optimizer: "Adam"           # 优化器
-  weight_decay: 0.0           # L2 正则化
-  scheduler: null             # 学习率调度器
-  grad_clip: null             # 梯度裁剪
-  early_stopping: false       # 早停
-  early_stopping_patience: 10 # 早停耐心值
-  seed: 42                    # 随机种子
+  optimizer: "Adam"
+  seed: 42
 
-# 健康检查配置（可选）
-health_check:
-  time: 300     # 健康检查时长（秒）
-  interval: 10  # 检查间隔
-
-# 要画的图
-# ⚠️ 图表内所有文字必须用英文！中文会显示为乱码！
 plots:
   - type: loss_curve
     save: "[exp_id]_loss.png"
-  - type: pred_vs_true
-    save: "[exp_id]_pred.png"
 ```
-
-> ⚠️ **重要提醒**：
-> - **数据配置**：来源、路径、大小、train/val/test size、预处理方式都必须记录（后续实验可能换数据集）
-> - **噪声配置**：sigma/snr 值、噪声类型、添加公式必须记录，不同实验噪声设定可能不同
-> - **训练参数**：即使是 default 值也要写出来，方便后续对比和复现
-> - **随机种子**：必须记录，确保可复现性
 
 ---
 
 # ✅ 成功标准
 
-| 检查项 | 状态 |
-|--------|------|
-| 驱动器启动成功 | ⬜ |
-| 健康检查通过 | ⬜ |
-| 训练正常完成 | ⬜ |
-| summary.json 已生成 | ⬜ |
-| 图表已生成 | ⬜ |
-| 报告已写入知识中心 | ⬜ |
-| kanban 已更新 | ⬜ |
+| 检查项 | ⬜ |
+|--------|---|
+| 训练完成 | |
+| 图表(英文) | |
+| 报告(中文) | |
+| kanban更新 | |
 
 ---
 
 # 🔧 故障排除
 
-## 健康检查失败
-
-驱动器会自动输出修复建议，常见场景：
-
-| 问题 | 修复建议 |
-|------|---------|
-| NaN 检测 | 降低 lr / 添加 grad_clip / 检查数据 |
-| OOM | 减小 batch_size / 使用 gradient accumulation |
-| Loss 爆炸 | 降低 lr / 添加 warmup |
-| CUDA 错误 | 检查 GPU 状态 / 重启 |
-
-## 训练太久？
-
-使用 `--skip-post` 跳过后处理，手动检查：
-```bash
-# 检查训练状态
-cat [repo]/signals/[exp_id].done
-
-# 手动运行后处理
-python /home/swei20/Physics_Informed_AI/_backend/scripts/training/post_process.py \
-    --exp-id [exp_id] --work-dir [repo]
-```
-
----
-
-> **使用说明**：
-> 1. 填写「参考代码」部分（只写路径和函数名，不写代码骨架！）
-> 2. 填写「实验规格」部分
-> 3. 复制「Prompt 正文」给 Agent
-> 4. Agent 读取参考代码，复用/改造后执行实验
-> 5. 如果失败，根据修复建议调整后重试
->
-> ⚠️ **关于代码骨架**：
-> - 不要在 prompt 中写代码骨架/模板代码
-> - 只提供参考脚本路径 + 需要复用/修改的函数说明
-> - 让 Agent 直接读取已有代码并理解后进行改造
+| 问题 | 修复 |
+|------|------|
+| NaN | 降 lr / grad_clip |
+| OOM | 减 batch_size |
+| Loss爆炸 | 降 lr / warmup |

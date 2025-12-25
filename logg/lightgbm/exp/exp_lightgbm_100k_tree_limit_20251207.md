@@ -1,12 +1,20 @@
 # 📘 Experiment Report: LightGBM 100k Tree 上限确认
+> **Name:** TODO | **ID:** `VIT-20251207-lgb-100k-tree-01`  
+> **Topic:** `` | **MVP:** MVP-2.2 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-07 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** LightGBM 100k Tree 上限确认  
-> **ID:** `VIT-20251207-lgb-100k-tree-01`  
-> **MVP:** MVP-2.2  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-07  
-> **Status:** ✅ Completed
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg//_hub.md` |
+| 🗺️ Roadmap | `logg//_roadmap.md` |
 
 ---
 

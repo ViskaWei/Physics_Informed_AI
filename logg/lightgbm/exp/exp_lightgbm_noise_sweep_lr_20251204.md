@@ -1,12 +1,13 @@
 # 📘 Experiment Report: LightGBM Noise Sweep (lr 主轴)
+> **Name:** TODO | **ID:** `VIT-20251204-lgb-noise-sweep-01`  
+> **Topic:** `VIT` | **MVP:** MVP-1.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** LightGBM Noise Sweep (lr 主轴)  
-> **ID:** `VIT-20251204-lgb-noise-sweep-01`  
-> **Topic ｜ MVP:** `VIT` / `lightgbm` ｜ MVP-1.1  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-04  
-> **Status:** ✅ Completed
 
 ---
 

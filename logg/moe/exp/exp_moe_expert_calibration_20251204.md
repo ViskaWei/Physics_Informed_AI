@@ -1,9 +1,20 @@
-# 📋 Experiment Report: MVP-Next-C Expert Calibration
+# 📘 📋 Experiment Report: MVP-Next-C Expert Calibration
+> **Name:** TODO | **ID:** `VIT-20251204-moe-01`  
+> **Topic:** `moe` | **MVP:** MVP-9E | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
-**Experiment ID:** `VIT-20251204-moe-calibration-01`  
-**Date:** 2025-12-04  
-**Status:** ✅ Completed  
-**Result:** ❌ **H-C Not Verified**
+---
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/moe/moe_hub.md` |
+| 🗺️ Roadmap | `logg/moe/moe_roadmap.md` |
 
 ---
 

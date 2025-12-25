@@ -1,13 +1,14 @@
 # 📘 Experiment Report: LightGBM Summary
+> **Name:** TODO | **ID:** `VIT-20251205-lightgbm-summary`  
+> **Topic:** `VIT` | **MVP:** MVP-2.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** LightGBM 综合实验总结  
-> **ID:**  `VIT-20251205-lightgbm-summary`  
-> **Topic ｜ MVP:** `VIT` / `lightgbm` ｜ Summary (E01 + E02 综合)  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-05  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
+
 ---
 ## 🔗 Upstream Links
 

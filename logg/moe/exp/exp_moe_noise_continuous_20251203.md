@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Noise Continuous Conditioning
+> **Name:** TODO | **ID:** `VIT-20251203-moe-noise-cont-01`  
+> **Topic:** `VIT` | **MVP:** MVP-7.3 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Noise Continuous Conditioning (Replacing Discrete Expert Bins)  
-> **ID:** `VIT-20251203-moe-noise-cont-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-7.3  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
 
 ---
 

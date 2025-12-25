@@ -1,13 +1,23 @@
-# 📊 Ridge 回归正则化强度 (α) 调优实验报告
+# 🍃 正则化强度 (α) 调优
+> **Name:** Ridge α Sweep  
+> **ID:** `VIT-20251127-ridge-alpha-01`  
+> **Topic:** `ridge` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-27 | **Status:** ✅  
+> **Root:** `Ridge` | **Parent:** `Alpha` | **Child**: |
+
+> 🎯 **Target:** 验证光谱-log_g 映射是否本质线性，最优 α 如何随噪声变化  
+> 🦾 **Decide:** NN 架构应优先设计信息过滤机制（Attention/Sparse/Denoising）
 
 ---
-> **实验名称：** Ridge Regression Alpha Sweep Experiment  
-> **对应 MVP：** Ridge Baseline（为所有模型提供线性基准）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-27  
-> **数据版本：** HDF5 光谱数据（4096 像素合成光谱）  
-> **模型版本：** Ridge Regression with α ∈ [0.001, 1000]  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/ridge/ridge_hub.md` |
+| 🗺️ Roadmap | `logg/ridge/ridge_roadmap.md` |
+
+---
 
 ---
 

@@ -1,13 +1,22 @@
-# 📊 PCA + 线性回归：log g 信息维度实验报告
+# 📘 📊 PCA + 线性回归：log g 信息维度实验报告
+> **Name:** TODO | **ID:** `VIT-20251128-pca-01`  
+> **Topic:** `pca` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-28 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** PCA + Linear Regression Dimension Sweep Experiment  
-> **对应 MVP：** 独立实验（为 GTA Phase 3 提供基础）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-28  
-> **数据版本：** HDF5 光谱数据（4096 像素合成光谱）  
-> **模型版本：** PCA + Ridge/OLS Regression (k=1~4096, $\alpha \in$ {0.0001, 0.001, 1.0, OLS})  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/pca/pca_hub.md` |
+| 🗺️ Roadmap | `logg/pca/pca_roadmap.md` |
+
+---
 
 ---
 

@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Noise-conditioned Ridge
+> **Name:** TODO | **ID:** `VIT-20251203-moe-snr-02`  
+> **Topic:** `VIT` | **MVP:** MVP-2.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** MoE-2: Noise-conditioned Ridge  
-> **ID:** `VIT-20251203-moe-snr-02`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-2.0  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
 
 ---
 

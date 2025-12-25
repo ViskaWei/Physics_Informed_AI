@@ -309,3 +309,16 @@
   - R²_max = 0.97 的结果**不可信**
   - 下一步：等待方法论改进（数值微分/局部回归）
   - 详见: \`logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md\`
+
+## ✅ Done (2025-12-24)
+
+- [x] **SCALING-20251224-fisher-ceiling-02**: Fisher/CRLB V2 (Grid-based) ✅
+  - V2 成功修复 V1 的数值问题，结果可信
+  - R²_max (median) = **0.8914** (理论上限高)
+  - Schur decay = **0.6906** (degeneracy 显著但非极端)
+  - CRLB 范围仅 **2.9** 数量级 (V1 是 20！)
+  - Gap vs Ridge: +0.43 | Gap vs LightGBM: +0.32
+  - ✅ H-16T.1 (V2) 验证通过 | ✅ H-16T.2 (V2) 验证通过
+  - 详见: \`logg/scaling/exp/exp_scaling_fisher_ceiling_v2_20251224.md\`
+
+- [x] SCALING-20251224-nn-baseline-framework-01: MLP=0.47, CNN=0.43, vs Oracle gap=0.15~0.19

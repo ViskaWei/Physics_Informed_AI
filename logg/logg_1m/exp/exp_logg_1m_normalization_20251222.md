@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Normalization Comparison
+> **Name:** TODO | **ID:** `VIT-20251222-logg_1m-normalization`  
+> **Topic:** `VIT` | **MVP:** MVP-1.3 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Normalization Methods Comparison  
-> **ID:** `VIT-20251222-logg_1m-normalization`  
-> **Topic ｜ MVP:** `VIT` | `logg_1m` | MVP-1.3  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
+
 ---
 
 ## 🔗 Upstream Links

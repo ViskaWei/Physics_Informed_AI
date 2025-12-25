@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Statistical Validation of Plateau
+> **Name:** TODO | **ID:** `SCALING-20251222-stats-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.3 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔴 Ready
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Statistical Validation of ML Plateau  
-> **ID:** `SCALING-20251222-stats-01`  
-> **Topic ｜ MVP:** `scaling` | MVP-1.3  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** VIT  
-> **Status:** 🔴 Ready
+
 ---
 
 ## 🔗 Upstream Links

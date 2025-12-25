@@ -1,13 +1,22 @@
 # 📘 Global Tower Architecture (GTA) 实验企划
+> **Name:** TODO | **ID:** `VIT-20251130-global-01`  
+> **Topic:** `global` | **MVP:** MVP-0.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-30 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Global Feature Tower 信息上界分析与架构设计  
-> **对应 MVP：** GTA 系列实验（多阶段）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-30  
-> **数据版本：** Synthetic Spectra Grid v1.0  
-> **模型版本：** Ridge / MLP Baseline  
-> **状态：** 📝 企划中
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/global/global_hub.md` |
+| 🗺️ Roadmap | `logg/global/global_roadmap.md` |
+
+---
 
 ---
 

@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Baseline Scaling (Ridge + LightGBM @ noise=1.0)
+> **Name:** TODO | **ID:** `VIT-20251222-logg_1m-baseline-scaling-01`  
+> **Topic:** `VIT` | **MVP:** MVP-0.B | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Baseline Bounds - Data Scaling at High Noise  
-> **ID:** `VIT-20251222-logg_1m-baseline-scaling-01`  
-> **Topic ｜ MVP:** `VIT` | `logg_1m` | MVP-0.B  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
+
 ---
 
 ## 🔗 Upstream Links

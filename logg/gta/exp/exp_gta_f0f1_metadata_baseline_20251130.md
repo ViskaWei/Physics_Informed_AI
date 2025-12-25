@@ -1,13 +1,22 @@
 # 📘 F0/F1 元数据 Baseline 实验报告
+> **Name:** TODO | **ID:** `TODO`  
+> **Topic:** `` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:**  | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** F0/F1 Metadata Baseline - 用 DataFrame 元数据预测 $\log g$  
-> **对应 MVP：** MVP-1.0, MVP-2.0（来自 gta_main）  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-30  
-> **数据版本：** BOSZ50000 z=0 Synthetic Spectra  
-> **模型版本：** OLS / LightGBM  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg//_hub.md` |
+| 🗺️ Roadmap | `logg//_roadmap.md` |
+
+---
 
 ---
 

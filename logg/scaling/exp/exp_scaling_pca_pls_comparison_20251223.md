@@ -1,10 +1,20 @@
-# Experiment Report: PCA vs PLS Dimensionality Reduction
+# 📘 Experiment Report: PCA vs PLS Dimensionality Reduction
+> **Name:** TODO | **ID:** `VIT-20251223-scaling-01`  
+> **Topic:** `scaling` | **MVP:** 1.7 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-23 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
-**Experiment ID:** `SCALING-20251223-pca-pls-01`  
-**Date:** 2025-12-23  
-**Author:** Viska Wei  
-**MVP:** 1.7  
-**Status:** ✅ Completed
+---
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/scaling/scaling_hub.md` |
+| 🗺️ Roadmap | `logg/scaling/scaling_roadmap.md` |
 
 ---
 

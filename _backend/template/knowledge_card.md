@@ -1,12 +1,11 @@
-# 📇 知识卡片模板（Knowledge Card）
-
----
-> **experiment_id:** TODO  
-> **project:** VIT / BlindSpot  
-> **topic:** cnn, swin, noise, distill, gta, ...  
-> **source_exp:** [exp_xxx.md](./exp_xxx.md)（如有）  
-> **created:** YYYY-MM-DD  
-> **author:** Viska Wei
+# 📇 Knowledge Card
+> **Name:** TODO | **ID:** `[PROJECT]-[YYYYMMDD]-[topic]-card`  
+> **Topic:** `<topic>` | **Source:** `exp_xxx.md` | **Project:** `VIT`/`SD`  
+> **Author:** Viska Wei | **Date:** TODO
+```
+💡 一句话核心发现  
+适用：<在什么条件下适用>
+```
 
 ---
 

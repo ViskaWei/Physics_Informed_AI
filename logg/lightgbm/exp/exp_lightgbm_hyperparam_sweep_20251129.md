@@ -1,12 +1,13 @@
 # 📘 Experiment Report: LightGBM 超参数搜索
+> **Name:** TODO | **ID:** `VIT-20251129-lgb-hyperparam-01`  
+> **Topic:** `VIT` | **MVP:** MVP-0.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-29 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** LightGBM 超参数网格搜索 ($\log g$ 预测)  
-> **ID:** `VIT-20251129-lgb-hyperparam-01`  
-> **Topic ｜ MVP:** `VIT` / `lightgbm` ｜ MVP-0.1  
-> **Author:** Viska Wei  
-> **Date:** 2025-11-29  
-> **Status:** ✅ Completed
 
 ---
 

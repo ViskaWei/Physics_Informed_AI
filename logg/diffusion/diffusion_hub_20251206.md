@@ -1,11 +1,11 @@
-# 🧠 Diffusion 智库导航（Hub）
-
----
-> **主题名称：** Diffusion 1D 恒星光谱降噪与参数推断  
-> **作者：** Viska Wei  
-> **创建日期：** 2025-12-06  
-> **最后更新：** 2025-12-06  
-> **状态：** 🔄 探索中
+# 🧠 Diffusion Hub
+> **Name:** Diffusion 1D 光谱降噪 | **ID:** `VIT-20251206-diffusion-hub`  
+> **Topic:** `diffusion` | **Layer:** L2 (Topic Hub) | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-06 | **Status:** 🔄 Exploring
+```
+💡 Diffusion 能否用于 1D 恒星光谱降噪？  
+决定：是否采用 diffusion 作为预处理/增强方法
+```
 
 ---
 

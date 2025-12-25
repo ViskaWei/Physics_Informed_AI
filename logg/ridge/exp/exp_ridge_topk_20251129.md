@@ -1,13 +1,23 @@
-# 📘 Ridge Top-K 特征选择实验报告
+# 🍃 Top-K 特征选择噪声适配性
+> **Name:** Ridge Top-K Feature Selection  
+> **ID:** `VIT-20251129-ridge-topk-01`  
+> **Topic:** `ridge` | **MVP:** MVP-1.3 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-29 | **Status:** ✅  
+> **Root:** `Ridge` | **Parent:** `TopK` | **Child**: |
+
+> 🎯 **Target:** 验证干净数据选的 Top-K 特征在噪声下是否仍最优，噪声匹配选择策略效果  
+> 🦾 **Decide:** 特征选择器噪声应匹配测试噪声；特征选择无法替代噪声增强训练
 
 ---
-> **实验名称：** Ridge Top-K 特征选择实验  
-> **对应 MVP：** Ridge 特征选择策略验证  
-> **作者：** Viska Wei  
-> **日期：** 2025-11-29  
-> **数据版本：** v1.0  
-> **模型版本：** Ridge Regression with optimal $\alpha$  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/ridge/ridge_hub.md` |
+| 🗺️ Roadmap | `logg/ridge/ridge_roadmap.md` |
+
+---
 
 ---
 

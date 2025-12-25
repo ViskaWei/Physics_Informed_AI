@@ -1,13 +1,22 @@
 # 📘 Latent 提取方式优化实验：改善 log g 预测
+> **Name:** TODO | **ID:** `VIT-20251201-latent-01`  
+> **Topic:** `latent` | **MVP:** MVP-1.4 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-01 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Latent Extraction Strategy for log g Improvement  
-> **对应 MVP：** MVP 1.4（Distillation 实验计划）  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-01  
-> **数据版本：** BOSZ 合成光谱库 (mag215)  
-> **模型版本：** `m215l9e48k25s1bn1d1ep5000` (BlindSpot Denoiser, 5000 epochs)  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/latent/latent_hub.md` |
+| 🗺️ Roadmap | `logg/latent/latent_roadmap.md` |
+
+---
 
 ---
 

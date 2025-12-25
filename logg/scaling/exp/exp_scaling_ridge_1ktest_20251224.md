@@ -1,13 +1,20 @@
-# Ridge Alpha Sweep & Y-Scaling @ 1k Test (2025-12-24)
+# 📘 Ridge Alpha Sweep & Y-Scaling @ 1k Test (2025-12-24)
+> **Name:** TODO | **ID:** `TODO`  
+> **Topic:** `` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:**  | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
 
-| 字段 | 值 |
-|------|-----|
-| **Experiment ID** | SCALING-20251224-ridge-alpha-1ktest |
-| **Date** | 2025-12-24 |
-| **Status** | ✅ Completed |
-| **Related** | MVP-1.0, MVP-1.4 |
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg//_hub.md` |
+| 🗺️ Roadmap | `logg//_roadmap.md` |
 
 ---
 

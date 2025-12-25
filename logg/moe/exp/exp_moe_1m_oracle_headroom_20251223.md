@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Oracle MoE Headroom @ noise=1
+> **Name:** TODO | **ID:** `MOE-20251223-oracle-headroom-01`  
+> **Topic:** `moe` | **MVP:** MVP-16O | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-23 | **Status:** 🔴 Ready
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Oracle MoE 结构 Headroom @ 1M + noise=1  
-> **ID:**  `MOE-20251223-oracle-headroom-01`  
-> **Topic ｜ MVP:** `moe` ｜ MVP-16O (P0 最高优先级)  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-23  
-> **Project:** `VIT`  
-> **Status:** 🔴 Ready
+
 ---
 ## 🔗 Upstream Links
 

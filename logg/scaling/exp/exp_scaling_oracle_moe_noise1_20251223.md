@@ -1,119 +1,22 @@
-# Oracle MoE @ noise=1 Structure Bonus Verification (1M Data)
-
----
-
-| 字段 | 值 |
-|------|-----|
-| **Experiment ID** | SCALING-20251223-oracle-moe-noise1-01 |
-| **MVP** | MVP-16A-0 (🔴 P0 Highest Priority) |
-| **Date** | 2025-12-23 |
-| **Status** | ✅ Completed |
-| **Script** | `~/VIT/scripts/scaling_oracle_moe_noise1.py` |
-
----
-
-## 🎯 核心结论速览
-
-| Metric | Value | Threshold | Status |
-|--------|-------|-----------|--------|
-| **Global Ridge R²** | 0.4611 | ~0.5 | baseline (α=100000) |
-| **Oracle MoE R²** | **0.6249** | > 0.55 | ✅ PASS |
-| **ΔR²** | **+0.1637** | ≥ 0.03 | ✅ **STRONG PASS** |
-| **Coverage** | 83.5% | - | - |
-| **Train Size** | 1,000,000 | 1M | ✅ |
-
-### 🔥 Decision
-
-> **✅ STRONG STRUCTURE BONUS: ΔR² = +0.16 >> 0.03 threshold**
-> 
-> MoE 路线继续! Proceed with MVP-16A-1, MVP-16A-2 (trainable gate development)
-
----
-
-## 📊 Per-bin Analysis (Teff × [M/H])
-
-| Bin | Teff | [M/H] | n_train | n_test | Oracle R² | Global R² | ΔR² |
-|-----|------|-------|---------|--------|-----------|-----------|-----|
-| 0 | Cool | Metal-poor | 88,666 | 93 | 0.5433 | 0.3505 | +0.1927 ✅ |
-| 1 | Cool | Solar | 89,050 | 85 | 0.7956 | 0.6496 | +0.1459 ✅ |
-| 2 | Cool | Metal-rich | 62,702 | 71 | 0.8466 | 0.7626 | +0.0840 ✅ |
-| 3 | Mid | Metal-poor | 102,801 | 89 | 0.3070 | 0.1376 | +0.1694 ✅ |
-| 4 | Mid | Solar | 102,864 | 111 | 0.5833 | 0.5453 | +0.0380 ✅ |
-| 5 | Mid | Metal-rich | 71,516 | 62 | 0.8742 | 0.7716 | +0.1026 ✅ |
-| 6 | Hot | Metal-poor | 116,727 | 117 | 0.4470 | 0.2762 | +0.1707 ✅ |
-| 7 | Hot | Solar | 115,778 | 126 | 0.6006 | 0.5466 | +0.0540 ✅ |
-| 8 | Hot | Metal-rich | 80,717 | 81 | 0.8245 | 0.6745 | +0.1500 ✅ |
-
-### Key Observations
-
-1. **All 9 bins show positive ΔR²** - Oracle MoE outperforms Global Ridge in every bin!
-2. **Metal-rich bins perform best**: R² = 0.82-0.87
-3. **Bin 3 (Mid/Metal-poor)** is hardest: Oracle R² = 0.3070 (but still +0.17 over global!)
-4. **Bin 5 (Mid/Metal-rich)** is best: Oracle R² = 0.8742
-5. **Metal-poor bins show largest ΔR²**: Bins 0, 3, 6 have ΔR² = 0.17-0.19
-
----
-
-## 🔬 Hypothesis Verification
-
-| Hypothesis | Expected | Actual | Status |
-|------------|----------|--------|--------|
-| **H-A0.1**: ΔR² ≥ 0.03 vs Global Ridge | ≥ 0.03 | +0.1637 | ✅ **PASS** |
-| **H4.1.1**: Oracle MoE R² > 0.55 @ noise=1 | > 0.55 | 0.6249 | ✅ **PASS** |
-
----
-
-## 📈 Plots
-
-### Plot 1: Oracle MoE vs Global Ridge Comparison
-![scaling_oracle_moe_comparison.png](../img/scaling_oracle_moe_comparison.png)
-
-### Plot 2: Per-bin R² Heatmap (Teff × [M/H])
-![scaling_oracle_moe_perbin_r2.png](../img/scaling_oracle_moe_perbin_r2.png)
-
-### Plot 3: Per-bin Comparison (Oracle vs Global)
-![scaling_oracle_moe_perbin_comparison.png](../img/scaling_oracle_moe_perbin_comparison.png)
-
-### Plot 4: Prediction vs True log_g
-![scaling_oracle_moe_pred_vs_true.png](../img/scaling_oracle_moe_pred_vs_true.png)
-
----
-
-## ⚙️ Experiment Configuration
-
-```yaml
-data:
-  source: BOSZ simulated spectra (mag205_225_lowT_1M)
-  train_size: 1,000,000 (5 shards × 200k)
-  test_size: 1,000 (test_1k_0)
-  feature_dim: 4096 (MR arm)
-  target: log_g
-
-noise:
-  level: 1.0
-  formula: noisy = flux + noise_level * error * N(0,1)
-
-model:
-  type: Ridge Regression (with StandardScaler)
-  alpha: 100000 (fixed)
-
-bins:
-  teff_boundaries: [3750, 4500, 5250, 6000]  # 3 bins
-  mh_boundaries: [-2.0, -1.0, 0.0, 0.5]      # 3 bins
-  total: 9 bins (3×3)
+# 📘 Oracle MoE @ noise=1 Structure Bonus Verification (1M Data)
+> **Name:** TODO | **ID:** `TODO`  
+> **Topic:** `` | **MVP:** MVP-16A | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:**  | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
 ```
 
 ---
 
-## 📁 Output Files
 
-| Type | Path |
+## 🔗 Upstream Links
+| Type | Link |
 |------|------|
-| Script | `~/VIT/scripts/scaling_oracle_moe_noise1.py` |
-| Results CSV | `~/VIT/results/scaling_oracle_moe/results.csv` |
-| Per-bin CSV | `~/VIT/results/scaling_oracle_moe/per_bin_results.csv` |
-| Metadata | `~/VIT/results/scaling_oracle_moe/metadata.json` |
-| Images | `/home/swei20/Physics_Informed_AI/logg/scaling/img/scaling_oracle_moe_*.png` |
+| 🧠 Hub | `logg//_hub.md` |
+| 🗺️ Roadmap | `logg//_roadmap.md` |
+
+---
 
 ---
 

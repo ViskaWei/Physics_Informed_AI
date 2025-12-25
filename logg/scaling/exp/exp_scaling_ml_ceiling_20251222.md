@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Traditional ML Ceiling at Large Scale
+> **Name:** TODO | **ID:** `SCALING-20251222-ml-ceiling-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** ✅ Done
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Traditional ML Fails at Large Data Scale  
-> **ID:** `SCALING-20251222-ml-ceiling-01`  
-> **Topic ｜ MVP:** `scaling` | MVP-1.0, MVP-1.1, MVP-1.2  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** VIT  
-> **Status:** ✅ Done
+
 ---
 
 ## 🔗 Upstream Links

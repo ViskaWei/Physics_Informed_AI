@@ -1,14 +1,22 @@
 # 📘 子实验报告：有限噪声多级 Denoiser（Bounded Noise Denoiser）
+> **Name:** TODO | **ID:** `VIT-20251204-diffusion-01`  
+> **Topic:** `diffusion` | **MVP:** MVP-0.5 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Bounded Noise Multi-Level Denoiser for Stellar Spectra  
-> **对应 MVP：** MVP-0.5  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-04  
-> **数据版本：** BOSZ 50000 z0  
-> **模型版本：** ConditionalUNet1D (6.3M params)  
-> **状态：** ✅ 完成 - 通过
-> **验证假设：** H0.2 有限噪声 denoiser 有效
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/diffusion/diffusion_hub.md` |
+| 🗺️ Roadmap | `logg/diffusion/diffusion_roadmap.md` |
+
+---
 
 ---
 

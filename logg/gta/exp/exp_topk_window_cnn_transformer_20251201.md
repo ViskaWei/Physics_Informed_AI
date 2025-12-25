@@ -1,13 +1,22 @@
 # 📘 子实验报告：Top-K Window + CNN / Transformer
+> **Name:** TODO | **ID:** `VIT-20251201-topk-01`  
+> **Topic:** `topk` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-01 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Top-K Window CNN & Transformer for log_g Prediction  
-> **对应 MVP：** MVP-Local-1  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-01  
-> **数据版本：** 32k train / 512 val / 512 test  
-> **模型版本：** TopKWindowCNN v1, TopKWindowTransformer v1  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/topk/topk_hub.md` |
+| 🗺️ Roadmap | `logg/topk/topk_roadmap.md` |
+
+---
 
 ---
 

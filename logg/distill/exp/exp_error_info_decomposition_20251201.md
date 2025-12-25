@@ -1,25 +1,22 @@
 # 📘 子实验报告：Error 信息分解与 log g 残差分析
+> **Name:** TODO | **ID:** `VIT-20251201-error-01`  
+> **Topic:** `error` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-01 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Error 信息分解与 log g 残差分析  
-> **对应 MVP：** Stage A（新增：信息来源分解）  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-01  
-> **数据版本：** mag215 / BOSZ  
-> **模型版本：** BlindSpot Denoiser  
-> **状态：** 🔄 进行中
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/error/error_hub.md` |
+| 🗺️ Roadmap | `logg/error/error_roadmap.md` |
 
 ---
-
-# 📑 目录
-
-- [0. 🔥 问题背景与动机](#0--问题背景与动机)
-- [1. 🎯 目标](#1--目标)
-- [2. 🧪 实验设计](#2--实验设计)
-- [3. 📊 实验图表](#3--实验图表)
-- [4. 💡 关键洞见](#4--关键洞见)
-- [5. 📝 结论](#5--结论)
-- [6. 📎 附录](#6--附录)
 
 ---
 

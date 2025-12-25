@@ -1,11 +1,22 @@
-# 📊 Experiment Report: Whitening / SNR Input
+# 📘 📊 Experiment Report: Whitening / SNR Input
+> **Name:** TODO | **ID:** `VIT-20251222-scaling-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.6 (Whitening/SNR Input) | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** ✅ 已完成
+```
+💡 实验目的  
+决定：影响的决策
+```
 
-> **Experiment ID:** SCALING-20251222-whitening-01  
-> **MVP:** MVP-1.6 (Whitening/SNR Input)  
-> **Date:** 2025-12-22  
-> **Author:** Viska Wei  
-> **Status:** ✅ 已完成  
-> **Hypothesis:** H1.7.1 - Whitening (flux/error) 能提升 R² > 0.02
+---
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/scaling/scaling_hub.md` |
+| 🗺️ Roadmap | `logg/scaling/scaling_roadmap.md` |
+
+---
 
 ---
 

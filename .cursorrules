@@ -37,8 +37,9 @@ status/
 └── archive_queue.md # 归档队列
 
 _backend/template/
-├── hub.md            # 🆕 智库导航模板（问题树、假设、洞见汇合）
-├── roadmap.md        # 🆕 实验追踪模板（MVP 列表、进度）
+├── root_hub.md       # 🌳 Root Hub 模板（问题树、答案、洞见、设计原则）⬅️ 写 hub 必用
+├── hub.md            # 智库导航模板（旧版，建议用 root_hub.md）
+├── roadmap.md        # 实验追踪模板（MVP 列表、进度）
 ├── exp.md            # 子实验报告模板（包含流程 + 结果）
 ├── coding_prompt.md  # 实验 Coding Prompt 模板
 ├── session.md        # GPT 会话归档模板
@@ -65,28 +66,40 @@ Examples:
 
 ---
 
-#### 🧠 智库导航（Hub）🆕
+#### 🧠 智库导航（Hub）
 
-**模板文件**: `_backend/template/hub.md`
+**⚠️ 模板文件**: `_backend/template/root_hub.md`（必须使用此模板！）
 
 **适用场景**：
 - 管理研究问题的层级结构（问题树）
-- 维护假设金字塔（宏观→中观→微观）
-- 汇合多个实验的单点发现成高层结论
-- 战略导航：决定下一步方向
+- 记录问题回答与战略路线
+- 汇合多个实验的洞见成综合结论
+- 沉淀设计原则与关键数字
 
-**必需章节**：
-1. **Header**: 主题名称、作者、创建日期、状态
-2. **🔗 相关文件**: 链接到 roadmap、exp、card
-3. **1. 🌲 核心问题树**: 问题分解、问题边界
-4. **2. 🔺 假设金字塔**: L1宏观→L2中观→L3微观假设
-5. **3. 💡 洞见汇合站**: 多实验单点发现→汇合结论
-6. **4. 🧭 战略导航**: 高信心/待验证/风险/已关闭方向
-7. **5. 📐 设计原则库**: 已确认原则、关键数字速查
-8. **6. 📎 附录**: 物理背景、术语表、变更日志
+**必需章节**（按 root_hub.md 模板）：
+1. **Header**: Topic、Author、Status、日期
+2. **1. 🌲 问题树**: 核心问题 + ASCII问题分解 + 边界
+3. **2. 🎯 答案 + 战略路线**: 战略推荐 + 按分支回答 + 决策汇总
+4. **3. 💡 跨分支洞见**: 汇合索引 + 详情（来源/发现/综合/启示）
+5. **4. 📐 设计原则**: 已确认原则 + 关键数字 + 已关闭方向
+6. **5. 📎 附录**: 假设存档、领域背景、术语表、更新日志
 
-**⚠️ hub.md 职责边界**：
-- ✅ 做：问题梳理、假设管理、洞见汇合、战略导航、设计原则
+**问题树写法示例**（参考 `logg/ridge/ridge_hub_20251223.md`）：
+```
+🎯 核心: <核心问题简述>
+│
+├── A) <分支A名称>
+│   ├── A.1: <子问题1> → ✅/❌/🔆 <简要结论>
+│   └── A.2: <子问题2> → ✅/❌/🔆 <简要结论>
+│
+├── B) <分支B名称>
+│   └── B.1: <子问题1> → ✅/❌/🔆 <简要结论>
+│
+✅ 已验证 | ❌ 已否定 | 🔆 进行中
+```
+
+**⚠️ hub 职责边界**：
+- ✅ 做：问题梳理、回答问题、洞见汇合、战略导航、设计原则
 - ❌ 不做：实验执行追踪（→ roadmap.md）、日常 backlog（→ kanban.md）
 
 ---
@@ -315,6 +328,17 @@ This project focuses on:
 4. **📝 最近更新** (`logg/`)
    - 最近 3 个修改的文档
 
+5. **📦 自动 Git Commit + Push**
+   - 检查是否有未提交的更改
+   - 如果有更改，自动执行：
+     ```bash
+     cd /home/swei20/Physics_Informed_AI
+     git add -A
+     git commit -m "status: auto-sync $(date +%Y%m%d_%H%M)"
+     git push
+     ```
+   - 输出同步结果
+
 ### 输出格式示例
 ```
 📊 实验追踪系统进度
@@ -354,6 +378,14 @@ This project focuses on:
 • logg/cnn/cnn_main_20251201.md (2h ago)
 • logg/distill/exp_encoder_nn_logg_20251201.md (3h ago)
 • logg/gta/exp_global_feature_tower_mlp_20251201.md (5h ago)
+
+═══════════════════════════════════════
+📦 Git 同步
+───────────────────────────────────────
+✅ git add -A
+✅ git commit -m "status: auto-sync 20251201_1530"
+✅ git push
+📊 已同步 3 个文件到远程仓库
 
 💡 快捷操作: sync | a | n | report
 ```
@@ -2105,4 +2137,266 @@ AI: 📝 完整更新实验报告...
 |-----------|-----------|---------|
 | [`yyy_hub`](path) | 引用内容描述 | §X.X 章节名 |
 ```
+
+---
+
+## 🌱 实验树系统 (Experiment Tree System) 🆕
+
+### 设计理念
+
+用**根/枝/叶**三类节点替代 exp0/1/2 编号式展开，适合**慢慢推进 research**：
+- MVP → 结论 → 合并出 insight → 规划下一个 MVP
+- 过程中能自动"grow"长出新枝/补洞/消歧
+
+### 三类节点
+
+| 类型 | 文件名模式 | 职责 | 数量限制 |
+|------|-----------|------|---------|
+| 🌳 **根 Root** | `root_<topic>.md` | 主题当前答案（活文档） | 每个 topic 只有 1 份 |
+| 🌿 **枝 Branch** | `branch_<topic>__<branch>.md` | 某条研究线的当前答案 | 每个 branch 只有 1 份 |
+| 🍃 **叶 Leaf** | `leaf_<topic>__<branch>__<id>__YYYYMMDD.md` | 一次 MVP 或完善实验 | 可以很多 |
+
+### 目录结构
+
+```
+logg/<topic>/
+  tree/
+    root_<topic>.md                              # 根：全局当前答案
+    <branchA>/
+      branch_<topic>__<branchA>.md               # 枝：研究线答案
+      leaf_<topic>__<branchA>__A__20251224.md    # 叶：MVP 实验
+      leaf_<topic>__<branchA>__B__20251225.md    # 叶：后续实验
+      leaf_<topic>__<branchA>__P01__20251226.md  # 叶：完善/消歧实验
+    <branchB>/
+      branch_<topic>__<branchB>.md
+      leaf_...
+  assets/                                        # 图表等资源
+  [topic]_hub_*.md                               # 可选：hub 同步
+  [topic]_roadmap_*.md                           # 可选：roadmap 同步
+```
+
+### 模板位置
+
+| 模板 | 路径 | 用途 |
+|------|------|------|
+| 🌳 Root Hub | `_backend/template/root_hub.md` | 创建 topic 智库（问题树+答案+洞见） |
+| 🌿 Branch | `_backend/template/branch.md` | 创建研究线枝节点 |
+| 🍃 Leaf | `_backend/template/leaf.md` | 创建 MVP/完善实验 |
+
+### 叶子 ID 规则
+
+| ID 格式 | 类型 | 说明 |
+|---------|------|------|
+| A, B, C... | MVP 实验 | 按字母顺序递增 |
+| P01, P02... | Patch 实验 | 完善/消歧/补洞 |
+
+---
+
+## 🌱 grow 命令 (Experiment Tree Auto-Growth)
+
+### 触发词
+- `grow` / `grow <topic>` / `grow <topic>/<branch>` / `grow <topic> new_branch=<name>`
+
+### 用途
+让实验树"慢而稳"推进：每次只做最小 MVP，但能自动：
+- 合并叶子得到当前答案（更新 branch）
+- 发现冲突/缺口/数据不一致并派生"完善实验 leaf_Pxx"
+- 必要时长出新枝（仅当会影响决策/门控）
+- 回写更新 root 的分支状态与 top insights
+
+### 工作流程
+
+```
+用户: grow ridge
+    │
+    ├─ Step 1: 🔍 树快照
+    │   - 检查 root_ridge.md 是否存在
+    │   - 列出所有 branch 及其状态
+    │   - 列出所有 leaf 按时间排序
+    │
+    ├─ Step 2: 📋 Review（复用 agent_review）
+    │   - Summary Table（抽取：leaf_id/date/data_config/model_config/main_metric/一句话结论）
+    │   - Consistency & Conflict（稳定结论/潜在冲突/可能原因）
+    │   - Missing Metadata & Patch Suggestions
+    │
+    ├─ Step 3: 🌱 Grow 决策
+    │   - P0 阻断：要解决什么 → 生成 leaf_Pxx（消歧/统一）
+    │   - P1 关键缺口：缺哪格会影响结论 → 生成 leaf
+    │   - P2 探索：≤2 个（必须说明"会改变什么决策"）
+    │
+    ├─ Step 4: 📝 生成/更新文件
+    │   - 若缺 branch → 生成 branch_<topic>__<branch>.md
+    │   - 为每个 leaf_Pxx → 生成 leaf 文件骨架（填前30行计划区）
+    │   - 更新 root_<topic>.md（分支状态灯 + top insights）
+    │
+    └─ Step 5: 📦 Git Commit + Push
+        git commit -m "grow: <topic> - 更新branch/生成patch"
+```
+
+### 硬规则
+
+1. **不编造数字**：缺字段就输出 Patch Checklist，不猜测
+2. **data_config 不一致 → ⚠️Blocked**：优先生成"统一数据/复跑基线"的 leaf_Pxx（P0）
+3. **冲突优先于补网格**：先消歧再扩展
+4. **每个新建议的 leaf 必须包含**：QUESTION/HYPOTHESIS/MVP SPEC/STOP RULE/target_cell
+5. **branch 与 root 都是"活文档"**：输出必须包含可直接粘贴的更新片段
+
+### 新枝规则（谨慎）
+
+只有当满足以下条件时才允许 `new_branch`：
+- 现有 branch 无法回答核心问题
+- 需要完全不同的变量组/方法族
+- 会改变 root 的决策门控
+
+新 branch 只先生成 1 个 baseline leaf（MVP），stop rule 写得极硬。
+
+### 示例对话
+
+```
+用户: grow ridge
+
+AI: 🌱 Grow 实验树: ridge
+    
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    📊 Step 1: 树快照
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🌳 Root: logg/ridge/tree/root_ridge.md
+       STATUS: 🔄Draft
+       BRANCHES: 2
+       
+    🌿 Branches:
+    ├─ alpha (🟢Stable) - 3 leaves
+    └─ scaling (🟡Draft) - 2 leaves
+    
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    📋 Step 2: Review
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    | leaf_id | date | data | noise | R² | 结论 |
+    |---------|------|------|-------|-----|------|
+    | leaf_A | 12-27 | 32k | 0-2.0 | 0.999 | α=0.001最优@noise=0 |
+    | leaf_B | 12-05 | 100k | 0-2.0 | 0.999 | 数据量增益有限 |
+    
+    ⚠️ Conflict:
+    - leaf_A(32k) vs leaf_B(100k) 在 noise=0.2 结论冲突
+    - A: R²=0.826 | B: R²=0.841 (差异 +1.8%)
+    - 可能原因: data_version 不同
+    
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    🌱 Step 3: Grow 决策
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    🔴 P0 阻断:
+    - 需要统一 data_version 后复核 → leaf_P01
+    
+    🟡 P1 缺口:
+    - 缺 noise=1.5 点 → leaf_P02
+    
+    🟢 P2 探索:
+    - 测试 α>1000 范围 → leaf_P03
+    
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    📝 Step 4: 生成文件
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    ✅ 更新: branch_ridge__alpha.md
+       - CURRENT ANSWER: α随噪声单调增大(0.001→1000)
+       - TOP FINDINGS: 3条稳定结论
+       - P0 阻断: data_version不一致
+    
+    ✅ 生成: leaf_ridge__alpha__P01__20251224.md (骨架)
+       - QUESTION: 统一data_version后noise=0.2结果是否一致？
+       - STOP RULE: R²差异<1%即消歧成功
+    
+    ✅ 更新: root_ridge.md
+       - alpha分支: 🟡Draft → 待消歧
+       - TOP INSIGHTS: 添加"α随噪声单调增大"
+    
+    📦 Step 5: Git Commit
+    ✅ git commit -m "grow: ridge/alpha - 发现冲突，生成P01消歧实验"
+    ✅ git push
+```
+
+### grow 输出结构
+
+```markdown
+### 1) 树快照
+- root 状态（是否存在/需更新）
+- 本次涉及的 branch 状态（Draft/Stable/Blocked）
+- leaf 列表（按时间排序）
+
+### 2) Review（复用 agent_review）
+- Summary Table（抽取关键字段）
+- Consistency & Conflict（稳定/冲突/原因）
+- Missing Metadata & Patch Suggestions
+
+### 3) Grow 决策（P0/P1/P2）
+- P0 阻断: <要解决什么> → 生成哪些 leaf_Pxx
+- P1 关键缺口: <缺哪格会影响结论> → 生成哪些 leaf
+- P2 探索: ≤2 个（必须说明"会改变什么决策"）
+
+### 4) 生成文件骨架
+- branch_xxx.md 更新片段
+- leaf_Pxx.md 骨架
+- root_xxx.md 更新片段
+```
+
+---
+
+## 🔄 实验树工作流（每次迭代 5 步）
+
+### A) 立项（只做一次）
+
+1. 建 `root_<topic>.md`（根：全局当前答案 + 分支状态表）
+2. 建一个起始枝：`tree/<branch>/branch_<topic>__<branch>.md`（定义 SCOPE + Coverage Spec + Gate）
+
+### B) 每次研究迭代（永远重复这 5 步）
+
+```
+1. 📝 写一个叶（MVP 计划）
+   建 leaf_...__A__YYYYMMDD.md
+   只写前 30 行就可以开跑（问题/假设/MVP/stop rule）
+         ↓
+2. 🏃 跑完补全叶
+   填 KEY RESULT / DATA CONFIG / MODEL CONFIG
+         ↓
+3. 🔍 review（审查）
+   对该枝所有叶做字段抽取、冲突检查、缺字段补丁
+         ↓
+4. 🌱 grow（生长）
+   更新枝的"当前答案"
+   决定要不要派生 leaf_Pxx（完善/消歧/补洞）或长新枝
+         ↓
+5. 🌳 根回写
+   把该枝的 1 句结论与状态灯同步到 root_<topic>.md
+```
+
+> 核心是：**叶=一次最小实验；枝=该线的唯一答案；根=全局唯一答案**。
+> 你永远只需要：看根决定方向；看枝决定下一组实验；看叶复现与查错。
+
+---
+
+## 🛠️ 实验树快捷命令
+
+| 命令 | 作用 | 输出 |
+|------|------|------|
+| `grow <topic>` | 审查+生长整个 topic | 更新 root + branches + 生成 patches |
+| `grow <topic>/<branch>` | 只生长某个 branch | 更新 branch + 生成 patches |
+| `grow <topic> new_branch=<name>` | 创建新分支 | 新 branch + baseline leaf |
+| `tree <topic>` | 查看树状态（只读） | 树结构 + 状态灯 + 统计 |
+| `tree migrate <topic>` | 从旧 exp/ 迁移到 tree/ | 自动分组 + 生成 branch/root |
+
+### tree migrate 迁移规则
+
+将旧结构 `logg/<topic>/exp/` 迁移到新结构 `logg/<topic>/tree/`：
+
+**分组规则（推断 branch）：**
+- 若标题/Focus/Tags/文件名含关键词（alpha/beta/noise/scale/ablation/...）→ 对应 branch
+- 无法判断 → branch=misc（并输出"需人工重命名"列表）
+
+**输出：**
+1. 新目录树路径列表
+2. old_path → new_path 映射表
+3. 每个新建 branch 的"枝模板最小版"
+4. root 的"分支状态灯表"初版
 

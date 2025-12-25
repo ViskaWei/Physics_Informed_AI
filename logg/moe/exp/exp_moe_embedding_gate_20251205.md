@@ -1,14 +1,22 @@
-# 📗 实验报告：1M 参数 Embedding for Gate
+# 📘 📗 实验报告：1M 参数 Embedding for Gate
+> **Name:** TODO | **ID:** `VIT-20251205-moe-01`  
+> **Topic:** `moe` | **MVP:** MVP-14 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** MVP-14: 1M 参数 Embedding for Gate  
-> **对应 MVP：** MVP-14  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-05  
-> **数据版本：** 全量  
-> **模型版本：** 小 CNN/AE (~1M 参数) → embedding → gate  
-> **状态：** 🔄 立项中  
-> **验证假设：** H-14
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/moe/moe_hub.md` |
+| 🗺️ Roadmap | `logg/moe/moe_roadmap.md` |
+
+---
 
 ---
 

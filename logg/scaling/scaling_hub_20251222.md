@@ -1,887 +1,254 @@
-# 🧠 Scaling Hub
-> **Name:** Data Scaling & Model Capacity | **ID:** `VIT-20251222-scaling-hub`  
-> **Topic:** `scaling` | **Layer:** L1 (Cross-Cutting) | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 Exploring
-```
-💡 数据规模与模型容量的最优配比  
-决定：32k→100k→1M 的投资优先级、模型选择
-```
+# 🧠 Scaling Hub (v2) — 数据规模与模型容量
+> **ID:** VIT-20251222-scaling-hub  
+> **Scope:** BOSZ 合成光谱 → log_g 回归  
+> **Focus:** noise=1 (高噪声) + 大数据 (≥100k, up to 1M)  
+> **Hub 职责:** 知识汇总（验证的/洞见/决策空白），非实验计划  
+> **Roadmap:** [scaling_roadmap_20251222.md](./scaling_roadmap_20251222.md)
 
 ---
 
-## 🔗 Hub Dependencies
+## 0) Executive Snapshot
 
-> **定义本 Hub 与其他 Hub 的引用关系，供自动传播使用**
-> 
-> 📋 完整依赖图见 [`../_hub_graph.md`](../_hub_graph.md)
+### 一句话
+在 noise=1 极端低 SNR 下：**"更多数据"对传统 ML 边际收益很小**，但 **结构化建模（MoE/分域）显示出显著 headroom**，且理论上限提示仍有大量可提取信息。
 
-### 📤 Parent Hubs (引用本 Hub 的上层)
+### Canonical Scoreboard（唯一权威口径）
 
-| Parent Hub | 引用的数据 | 同步章节 |
-|------------|-----------|---------|
-| [`master_hub`](../master_hub.md) | Scaling 战略结论, 数据量 vs 模型选择 | §2 Strategic Questions, §3 Global Insights |
+> **Protocol:** train=1M, test=1k, noise=1.0, metric=R²
 
-### 📥 Child Hubs (本 Hub 引用的下层)
+| 模型 | R² | α/config | 备注 |
+|------|-----|----------|------|
+| Global Ridge | **0.46** | α=1e5 | 线性 baseline |
+| Global LightGBM | **0.57** | raw input | 非线性 baseline |
+| Oracle MoE (9-bin) | **0.62** | 真值 routing | 结构上限 |
+| Fisher/CRLB ceiling | **0.89** | V2 规则网格 | 理论上限 |
 
-| Child Hub | 引用的数据 | 来源章节 |
-|-----------|-----------|---------|
-| [`ridge_hub`](../ridge/ridge_hub_20251223.md) | α sweep, 1M ceiling, R² @ all scales | §4.2 Key Numbers |
-| [`lightgbm_hub`](../lightgbm/lightgbm_hub_20251130.md) | LightGBM scaling results | §5.3 Key Numbers |
-| [`moe_hub`](../moe/moe_hub_20251203.md) | Oracle MoE @ noise=1 headroom | §5.3 Key Numbers |
+### 当前信念（我们现在相信什么）
 
----
-
-## 🔗 Related Files
-
-| Type | File | Description |
-|------|------|-------------|
-| 📍 Roadmap | [`scaling_roadmap_20251222.md`](./scaling_roadmap_20251222.md) | Experiment tracking |
-| 📗 Experiments | `exp/exp_*.md` | Detailed reports |
-| 📇 Cards | `card_*.md` | Condensed insights |
-
-## 📑 Contents
-
-- [1. 🌲 Question Tree](#1--question-tree)
-- [2. 🔺 Hypothesis Pyramid](#2--hypothesis-pyramid)
-- [3. 💡 Insight Confluence](#3--insight-confluence)
-- [4. 🧭 Strategic Navigation](#4--strategic-navigation)
-- [5. 📐 Design Principles](#5--design-principles)
-- [6. 📎 Appendix](#6--appendix)
+1. **数据不是瓶颈**（至少对 Ridge/LGBM）：100k→1M 仅 +2-3%
+2. **瓶颈是"建模方式/结构"**：Oracle MoE 比 Global Ridge 高 +16%
+3. **Gate 可落地性已降级风险**：noise=1 下 9-class Acc=88%
+4. **单模型 NN 尚未证明能吃 headroom**：当前 MLP≈Ridge，CNN 更弱
 
 ---
 
-# 1. 🌲 Question Tree
+## 1) Canonical Evaluation Protocol（数字口径冻结）
 
-> **Hierarchical structure of research questions and boundaries**
-
-## 1.1 Top-Level Question
-
-> **在高噪声环境下（noise_level=1），传统机器学习方法（Linear Regression, LightGBM）是否存在性能天花板？大规模数据 + 神经网络能否突破这个瓶颈？**
-
-## 1.2 Question Decomposition
-
-```
-🎯 Top-Level: 数据规模与模型容量的 Scaling Law
-│
-├── Q1: 传统 ML 的数据 Scaling 瓶颈
-│   ├── Q1.1: Linear Regression 在 1M 数据下能达到什么性能？ → ✅ MVP-1.0 (R²=0.46)
-│   ├── Q1.2: LightGBM 在 1M 数据下能达到什么性能？ → ✅ MVP-1.1 (R²=0.57)
-│   ├── Q1.3: 增加数据从 100k → 1M 能带来多少提升？ → ✅ MVP-1.2 (ΔR²<0.03)
-│   │
-│   ├── Q1.4: "没 plateau" 是真实还是统计假象？ → ⏳ MVP-1.3 (P0)
-│   │   ├── Q1.4.1: 多 seed 重复时 R² 的方差有多大？
-│   │   └── Q1.4.2: test=500 的评估噪声是否掩盖真实趋势？
-│   │
-│   ├── Q1.5: Ridge α 是否还没扫到最优？ → ✅ MVP-1.4 (Done)
-│   │   ├── Q1.5.1: α=5000 是否只是 sweep 边界而非真正最优？
-│   │   └── Q1.5.2: 更大 α (1e6, 1e8) 能否继续提升？
-│   │
-│   ├── Q1.6: LightGBM 参数空间是否探索完全？ → ⏳ MVP-1.5 (P0)
-│   │   ├── Q1.6.1: num_leaves 增大能否抬高上限？
-│   │   ├── Q1.6.2: lr 减小是否能更精细拟合？
-│   │   └── Q1.6.3: early stopping 是否"过早停"了？
-│   │
-│   ├── Q1.7: 输入表示方式是否最优？ → ⏳ MVP-1.6/1.7 (P1)
-│   │   ├── Q1.7.1: Whitening (flux/error) 能否提升？
-│   │   ├── Q1.7.2: PLS (监督降维) vs PCA (无监督) 哪个更好？ → 🔴 MVP-1.7
-│   │   ├── Q1.7.3: PCA 会不会误伤低方差高信息的细谱线特征？ → 🔴 MVP-1.7
-│   │   └── Q1.7.4: PCA 建在什么空间最稳健（noisy/whitened/denoised）？ → 🔴 MVP-1.7
-│   │
-│   └── Q1.8: 分段建模能否提升极值区域？ → ⏳ MVP-1.8 (P2)
-│       └── Q1.8.1: 按 Teff/log_g bin 分模型效果如何？
-│
-├── Q2: 神经网络的大数据优势
-│   ├── Q2.1: MLP 在 1M 数据下的性能？ → ⏳ MVP-2.0
-│   ├── Q2.2: CNN 在 1M 数据下的性能？ → ⏳ MVP-2.1
-│   └── Q2.3: 数据量翻倍时 NN 的性能提升是否持续？ → ⏳ MVP-2.2
-│
-└── Q3: 瓶颈的本质是什么？
-    ├── Q3.1: 是噪声导致的信息上限？ → ⏳ MVP-3.0
-    ├── Q3.2: 是模型容量不足？ → ⏳ MVP-3.1
-    └── Q3.3: 是特征表达能力限制？ → ⏳ MVP-3.2
-│
-├── Q4: 🔴 理论上限是多少？（Phase 16T/L 新增）
-│   ├── Q4.1: Fisher/CRLB 理论上限 R²_max 是多少？ → ✅ MVP-16T (R²=0.97，但需校准)
-│   │   ├── Q4.1.1: 边缘化后 log_g 的 CRLB 下界是多少？ → ✅ 0.2366 Schur decay
-│   │   ├── Q4.1.2: degeneracy (log_g 与 Teff/[M/H] 的信息纠缠) 有多强？ → ✅ 极强
-│   │   │
-│   │   └── 🆕 Q4.1.3: Fisher ceiling 是否被高估（偏导混参污染）？ → ⏳ MVP-T 系列
-│   │       ├── Q4.1.3.1: 收紧邻居约束后 R²_max 是否下降？ → ⏳ MVP-T1
-│   │       ├── Q4.1.3.2: R²_max 随 noise_level 是否单调下降？ → ⏳ MVP-T0
-│   │       ├── Q4.1.3.3: 用局部线性回归估 Jacobian 结果如何？ → ⏳ MVP-T2
-│   │       └── Q4.1.3.4: noise=1 实际 SNR 是多少？ → ⏳ MVP-T3
-│   │
-│   ├── Q4.2: 线性模型族的上限 (LMMSE) 是多少？ → ⏳ MVP-16L
-│   │   └── Q4.2.1: Ridge 与 LMMSE 差多少？差 < 1% 则线性已到极限
-│   │
-│   └── Q4.3: 结构上限 (Oracle MoE headroom) 是多少？ → ⏳ MVP-16A-0
-│       └── Q4.3.1: Oracle MoE - Global Ridge ≥ 0.03 则 MoE 值得做 @ noise=1
-│
-├── Q5: 🔴 现有 ceiling 结论可信吗？（Phase 16B 新增）
-│   ├── Q5.1: 多 seed 重复时 R² 的方差有多大？ → ⏳ MVP-16B
-│   ├── Q5.2: 扩大 test set (500→5k) 后趋势是否改变？ → ⏳ MVP-16B
-│   └── Q5.3: LightGBM 参数空间是否覆盖完全？ → ⏳ MVP-16B
-│
-└── Q6: 🟡 表示/模型方向哪个更值得投入？（Phase 16W/CNN 新增）
-    ├── Q6.1: Whitening (flux/error) 能带来多少提升？ → ⏳ MVP-16W
-    ├── Q6.2: 1D-CNN 能比 Ridge 提升多少？ → ⏳ MVP-16CNN
-    └── Q6.3: 表示改进 + CNN 组合能接近理论上限吗？ → ⏳ MVP-16CNN
-
-Legend: ✅ Verified | ❌ Rejected | 🔄 In Progress | ⏳ Pending | 🚫 Closed
-```
-
-## 1.3 Scope Boundaries
-
-> **Define what is and isn't within research scope**
-
-| ✅ In Scope | ❌ Out of Scope |
-|------------|----------------|
-| noise_level = 1.0 (高噪声) | noise_level < 0.5 (低噪声场景) |
-| BOSZ 模拟光谱数据 | 真实观测数据 |
-| log_g 预测任务 | 多目标预测 (T_eff, Fe_H) |
-| 1M 规模数据 | 分布式训练 / 10M+ 数据 |
-| Ridge, LightGBM, MLP, CNN | Transformer, Diffusion 等复杂模型 |
-
----
-
-# 2. 🔺 Hypothesis Pyramid
-
-> **Strategic → Tactical → Testable hypotheses, progressively refined**
-
-## 2.1 L1 Strategic Hypotheses
-
-> **Core beliefs that determine research direction**
-
-| # | Hypothesis | Status | If True | If False |
-|---|------------|--------|---------|----------|
-| **H1** | 传统 ML 在高噪声 + 大数据下存在**不可逾越的性能瓶颈** | ⏳ | NN 是唯一出路 | 继续优化 ML 方法 |
-| **H2** | 神经网络能从**大规模数据**中学到传统 ML 无法捕获的模式 | ⏳ | 证明 data-driven 路线正确 | 重新审视问题 |
-| **H3** | 🔴 noise=1 场景存在**可计算的理论上限** R²_max ≤ 某值 | ⏳ | 用 Fisher/CRLB 量化 degeneracy | 理论分析不适用 |
-| **H4** | 🔴 **MoE 结构红利在高噪声下仍存在** (Oracle headroom > 0.02) | ⏳ | MoE 值得做 | 放弃 MoE，直接上 CNN |
-
-## 2.2 L2 Tactical Hypotheses
-
-> **Concrete implementation paths for strategic hypotheses**
-
-| # | Hypothesis | Parent | Status | Key MVP |
-|---|------------|--------|--------|---------|
-| **H1.1** | Ridge 的瓶颈源于**线性假设**无法建模非线性噪声-信号交互 | H1 | ⏳ | MVP-1.0 |
-| **H1.2** | LightGBM 的瓶颈源于**树模型的局部性**，无法做全局模式提取 | H1 | ⏳ | MVP-1.1 |
-| **H1.3** | 数据量从 100k → 1M 对传统 ML 的边际收益**递减至零** | H1 | ⏳ | MVP-1.2 |
-| **H2.1** | MLP 能学习到**非线性特征组合**，突破线性瓶颈 | H2 | ⏳ | MVP-2.0 |
-| **H2.2** | CNN 能学习到**局部-全局特征层次**，优于 MLP | H2 | ⏳ | MVP-2.1 |
-| **H3.1** | 🔴 Fisher/CRLB 给出的 R²_max ≥ 0.75 (存在大 headroom) | H3 | ✅ | MVP-16T |
-| **H3.2** | 🔴 LMMSE (最优线性预测器) 与 Ridge 差 < 1% | H3 | ⏳ | MVP-16L |
-| **H4.1** | 🔴 Oracle MoE - Global Ridge ≥ 0.05 (结构红利明显) | H4 | ⏳ | MVP-16O |
-| **H4.2** | 🔴 可落地 Gate 在 noise=1 下仍能保住 ρ ≥ 0.7 | H4 | ⏳ | MVP-16G |
-
-## 2.3 L3 Testable Hypotheses
-
-> **Each hypothesis maps to a specific experiment with clear acceptance criteria**
-
-| # | Testable Hypothesis | Parent | Criteria | Result | Source |
-|---|---------------------|--------|----------|--------|--------|
-| **H1.1.1** | Ridge 在 1M 数据、noise=1 下，R² < 0.6 | H1.1 | R² < 0.6 | ✅ 0.46 | MVP-1.0 |
-| **H1.2.1** | LightGBM 在 1M 数据、noise=1 下，R² < 0.65 | H1.2 | R² < 0.65 | ✅ 0.5709 | MVP-1.1 |
-| **H1.3.1** | Ridge: 1M vs 100k 的 ΔR² < 0.02 | H1.3 | ΔR² < 0.02 | ❌ 0.0244 | MVP-1.2 |
-| **H1.3.2** | LightGBM: 1M vs 100k 的 ΔR² < 0.03 | H1.3 | ΔR² < 0.03 | ✅ 0.0176 | MVP-1.2 |
-| **H1.4.1** | 多 seed 重复时，1M vs 500k 差异在误差棒内 | H1.4 | 差异 < σ | ⏳ | MVP-1.3 |
-| **H1.4.2** | 扩大 test set (500→1k) 后趋势判断改变 | H1.4 | test=1k+ | ⏳ | MVP-1.3 |
-| **H1.5.1** | Ridge 最优 α 在 5000~1e8 之间存在峰值 | H1.5 | 峰值后下降 | ✅ | MVP-1.4 |
-| **H1.6.1** | num_leaves=127/255 能提升 R² > 0.01 | H1.6 | ΔR² > 0.01 | ⏳ | MVP-1.5 |
-| **H1.6.2** | lr=0.01/0.02 能提升 R² > 0.01 | H1.6 | ΔR² > 0.01 | ⏳ | MVP-1.5 |
-| **H1.7.1** | Whitening (flux/error) 能提升 R² > 0.02 | H1.7 | ΔR² > 0.02 | ❌ +0.0146 | MVP-1.6 |
-| **H1.7.2** | PLS 优于 PCA（相同维度下） | H1.7 | PLS > PCA | 🔴 | MVP-1.7 |
-| **H1.7.3** | PCA 可能误伤低方差高信息特征（细谱线） | H1.7 | PCA 降维后 R² < 全特征 Ridge | 🔴 | MVP-1.7 |
-| **H1.7.4** | Whitened/Denoised space 建 PCA 比 noisy space 更稳健 | H1.7 | R²(whitened) > R²(noisy) | 🔴 | MVP-1.7 |
-| **H2.1.1** | MLP 在 1M 数据、noise=1 下，R² > 0.70 | H2.1 | R² > 0.70 | ⏳ | MVP-2.0 |
-| **H2.2.1** | CNN 在 1M 数据、noise=1 下，R² > Ridge + 0.15 | H2.2 | ΔR² > 0.15 | ⏳ | MVP-2.1 |
-| **H3.1.1** | 🔴 Fisher CRLB 转换的 R²_max ≥ 0.75 (大 headroom 存在) | H3.1 | R²_max ≥ 0.75 | ✅ **0.9661** | MVP-16T |
-| **H3.1.2** | 🔴 degeneracy 指标显著 (log_g 与 Teff/[M/H] 信息纠缠) | H3.1 | Fisher 条件数 > 100 | ✅ **8.65×10⁵** | MVP-16T |
-| **H3.2.1** | 🔴 LMMSE R² - Ridge R² < 0.01 (线性模型已到极限) | H3.2 | 差值 < 0.01 | ⏳ | MVP-16L |
-| **H4.1.1** | 🔴 Oracle MoE (9 bin) R² > 0.55 @ noise=1 | H4.1 | R² > 0.55 | ✅ **0.6249** | MVP-16A-0 |
-| **H4.1.2** | 🔴 Oracle MoE - Global Ridge ≥ 0.05 @ noise=1 | H4.1 | ΔR² ≥ 0.05 | ✅ **+0.1637** | MVP-16A-0 |
-| **H4.2.1** | 🔴 Gate 9-class 准确率 > 60% @ noise=1 | H4.2 | Acc > 60% | ⏳ | MVP-16G |
-| **H4.2.2** | 🔴 Soft routing ρ ≥ 0.7 @ noise=1 | H4.2 | ρ ≥ 0.7 | ⏳ | MVP-16G |
-
-### 🔴 Phase 16 信息论上限假设（2025-12-23 新增）
-
-| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
-|---|-----------|------|---------|------|------|
-| **H-16T.1** | CRLB 给出的 MSE_min 可转换为 R²_max 上界 | H3 | R²_max ≥ 0.75 | ✅ **0.9661** ⚠️ 待校准 | MVP-16T |
-| **H-16T.2** | degeneracy 显著 (Schur decay < 0.9) | H3 | Schur < 0.9 | ✅ **0.2366** | MVP-16T |
-| **H-16L.1** | LMMSE (Σ_xx^-1 Σ_xy) 是线性模型族上限 | H3.2 | Ridge ≈ LMMSE | ⏳ | MVP-16L |
-| **H-16B.1** | 多 seed 实验确认 Ridge=0.46, LGB=0.57 的统计置信度 | H1 | std < 0.01 | ⏳ | MVP-16B |
-| **H-16B.2** | 扩大 test set (500→5k) 后 ceiling 结论不变 | H1 | ΔR² < 0.01 | ⏳ | MVP-16B |
-
-### 🔄 Phase T: Fisher Ceiling 校准假设（V2 已完成 ✅）
-
-> **V1 失败原因**：BOSZ 数据是连续采样（~40k 唯一值/参数），不是规则网格
-> **V2 解决方案**：使用新生成的规则网格数据 `grid_mag215_lowT` (30,182 samples)
-> **V2 完成时间**：2025-12-24 ✅
-
-| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
-|---|-----------|------|---------|------|------|
-| ~~H-T0.1~~ | ~~R²_max 随 noise_level 单调下降~~ | H-16T | - | ❌ **取消** | 方法失败 |
-| ~~H-T1.1~~ | ~~收紧邻居约束后 R²_max 显著下降~~ | H-16T | - | ❌ **取消** | 方法失败 |
-| **H-16T.1 (V2)** | ✅ 规则网格 Fisher: R²_max ≥ 0.75 | H3.1 | ≥ 0.75 | ✅ **0.8914** | MVP-16T-V2 |
-| **H-16T.2 (V2)** | ✅ 规则网格 Fisher: degeneracy 显著 | H3.1 | Schur < 0.9 | ✅ **0.6906** | MVP-16T-V2 |
-| **H-T2.1** | 局部线性回归 Jacobian 给出更稳定 ceiling | H-16T | CRLB 分布合理 | ⏳ 降级 | MVP-T2 |
-| **H-T3.1** | noise=1 实际 SNR ≈ 1（非虚高 SNR） | H-16T | median(\|flux\|)/median(error×σ) ≈ 1 | ⏳ | MVP-T3 |
-
-**🆕 V2 新数据规格**：
-| 参数 | 范围 | 步长 | 点数 |
-|------|------|------|------|
-| T_eff | 3500-7000 K | 250 K | ~14 |
-| log_g | 0.0-5.0 | 0.5 dex | 11 |
-| [M/H] | -2.5 to +0.75 | 0.25 dex | 14 |
-| **总样本** | | | 30,182 |
-
-**数据路径**: `/datascope/subaru/user/swei20/data/bosz50000/grid/grid_mag215_lowT/dataset.h5`
-
-### 🆕 Phase D: 经验上限假设（替代 Fisher）
-
-> **核心思路**：用 noise=0 的经验上限替代理论 CRLB
-
-| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
-|---|-----------|------|---------|------|------|
-| **H-D0.1** | noise=0 时 Ridge R² > 0.95 | H3 | R² > 0.95 | ⏳ | MVP-D0 |
-| **H-D0.2** | headroom = R²(noise=0) - R²(noise=1) > 0.40 | H3 | > 0.40 | ⏳ | MVP-D0 |
-
-### 🆕 Phase A: noise=1 MoE 结构红利假设（2025-12-23 新增）
-
-> **核心问题**：noise=1 下 MoE 的结构红利是否还存在？
-
-| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
-|---|-----------|------|---------|------|------|
-| **H-A0.1** | Oracle MoE @ noise=1 有结构红利 | H4 | ΔR² ≥ 0.03 vs Global Ridge | ✅ +0.16 | MVP-16A-0 |
-| **H-A1.1** | Gate 特征 @ noise=1 仍有分类信号 | H4.2 | Ca II triplet 等特征可区分 bins | ✅ Acc=87.8% | MVP-16A-1 |
-| **H-A2.1** | Soft-gate MoE @ noise=1 能保持 ≥70% oracle 收益 | H4.2 | ρ ≥ 0.7 | ⏳ | MVP-16A-2 |
-
-### 🆕 Phase NN: NN Baseline 假设（2025-12-24 新增）
-
-> **核心问题**：单模型 NN 能否接近/超过 Oracle MoE 的 0.62？
-> 
-> **策略**：先 MLP 快速止损 → 再 CNN 验证归纳偏置 → 最后 MoE-CNN（如需）
-
-| # | 可验证假设 | 上层 | 验证标准 | 结果 | 来源 |
-|---|-----------|------|---------|------|------|
-| **H-NN0.1** | 输入 whitening (flux/(error×σ)) 能提升 NN 性能 | H2 | val 曲线稳定无 NaN | ⏳ | MVP-NN-0 |
-| **H-NN0.2** | NN 框架能复现 Ridge/LGBM 水平（100k 先验证） | H2 | R² 接近 Ridge baseline | ⏳ | MVP-NN-0 |
-| **H-MLP1.1** | MLP 100k→1M 提升 < +0.02 R² | H2.1 | ΔR² < 0.02 | ⏳ | MVP-MLP-1 |
-| **H-MLP1.2** | MLP val 曲线 plateau 很早（<3 epochs） | H2.1 | plateau epoch | ⏳ | MVP-MLP-1 |
-| **H-CNN1.1** | CNN 100k 明显超过 MLP（≥+0.05 R²） | H2.2 | ΔR² ≥ 0.05 | ⏳ | MVP-CNN-1 |
-| **H-CNN1.2** | CNN 1M 继续涨（vs 100k ≥+0.03 R²） | H2.2 | ΔR² ≥ 0.03 | ⏳ | MVP-CNN-1 |
-| **H-CNN2.1** | 多尺度 CNN 逼近 Oracle MoE 0.62 | H2.2 | R² ≥ 0.60 | ⏳ | MVP-CNN-2 |
-| **H-MoE-CNN.1** | MoE-CNN experts 超过 global CNN | H4 | 仅当 CNN < 0.60 时启动 | ⏳ | MVP-MoE-CNN-0 |
-
-**NN Baseline 止损规则**：
-- **MLP 止损**：如果 100k→1M 提升 < +0.02 R² 且 plateau 很早 → MLP 架构归纳偏置不对，停止投入
-- **CNN 止损**：如果 CNN 100k 不如 Ridge/LGBM → 检查 input/whitening/训练细节，可能是 bug
-- **Global CNN vs Oracle MoE**：
-  - CNN ≥ 0.62 → 单模型已吃掉结构红利，MoE 不必须
-  - CNN < 0.60 → MoE-CNN 是正确方向
-
-## 2.4 Dependency Graph
-
-```
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                   Hypothesis Pyramid Dependencies (Phase 16 扩展)              │
-├───────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│   L1:  [H1 ML 瓶颈]      [H2 NN 优势]     [H3 理论上限]     [H4 MoE 结构红利] │
-│            │                  │                │                  │           │
-│      ┌─────┼─────┐      ┌────┴────┐      ┌────┴────┐      ┌─────┴─────┐     │
-│      ▼     ▼     ▼      ▼         ▼      ▼         ▼      ▼           ▼     │
-│   L2: H1.1 H1.2 H1.3  H2.1      H2.2   H3.1      H3.2   H4.1        H4.2   │
-│      Ridge LGB  边际  MLP       CNN   Fisher   LMMSE  Oracle      Gate    │
-│       │     │     │     │         │      │         │      │           │     │
-│       ▼     ▼     ▼     ▼         ▼      ▼         ▼      ▼           ▼     │
-│   L3: ✅    ✅    ⏳    ⏳        ⏳     ⏳        ⏳     ⏳          ⏳    │
-│                                                                               │
-│   Phase 16 三件套（性价比最高）：                                             │
-│   ┌──────────┐    ┌──────────┐    ┌──────────┐                               │
-│   │ MVP-16T  │ → │ MVP-16O  │ → │ MVP-16B  │                                │
-│   │ 理论上限  │    │ 结构上限  │    │ 可信度   │                                │
-│   └──────────┘    └──────────┘    └──────────┘                               │
-│         ↓               ↓               ↓                                     │
-│   决定：上限多高？  决定：MoE 值不值？  决定：baseline 可信？                   │
-│                                                                               │
-└───────────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-# 3. 💡 Insight Confluence
-
-> **Aggregate findings from multiple experiments → high-level conclusions**
-
-## 3.1 Confluence Index
-
-| # | Theme | Sources | Conclusion | Confidence |
-|---|-------|---------|------------|------------|
-| C1 | 传统 ML 性能天花板 | MVP-1.0, 1.1, 1.2 | Ridge=0.46, LGB=0.57 @ 1M, noise=1 | 🟢 高 |
-| C2 | Ridge α 优化空间 | MVP-1.4 | 最优 α=1e4~1e5，倒 U 型曲线，优化提升仅 0.4%~2.5% | 🟢 高 |
-| C3 | SNR 输入表示 | MVP-1.6 | H1.7.1 ❌: SNR ΔR²=+0.015 未达阈值; StandardScaler 严重损害 LightGBM (-0.36) | 🟢 高 |
-| **C4** | **✅ Fisher ceiling V2 可信** | MVP-16T V2 | V1 R²_max=0.97 虚高（方法失败）；V2 R²_max=**0.8914** 可信，headroom +32% | 🟢 高 |
-| **C5** 🆕 | **Oracle MoE 结构红利强劲** | MVP-16A-0 | ΔR²=+0.16 (>>0.03 阈值), 所有 9 bin 都优于 Global Ridge, MoE 路线继续 | 🟢 高 |
-| **C6** 🆕 | **Y-Scaling 对 Ridge R² 无影响** | SCALING-20251224 | MinMaxScaler(y) 不改变 R²，因 R² 对线性变换不变；最优 α 随 X scaling 改变 | 🟢 高 |
-| C3 | Whitening/SNR 输入影响 | MVP-1.6 | SNR 对 Ridge +1.5%（未达阈值），StandardScaler 严重损害 LightGBM（-0.36） | 🟢 高 |
-
-## 3.2 Confluence Details
-
-### C3: Whitening/SNR 输入方式对模型影响（MVP-1.6）
-
-**来源**: MVP-1.6 (Whitening/SNR Input Experiment)
-
-**发现汇合**:
-1. **SNR/Whitening 对 Ridge 微小提升但未达阈值**: snr_centered ΔR²=+0.0146 (< 0.02)
-2. **StandardScaler 对 Ridge 无害**: raw ≈ standardized
-3. **⚠️ 重大发现: StandardScaler 严重损害 LightGBM**: raw=0.5533 vs standardized=0.1966 (-0.36!)
-4. **SNR 化对 LightGBM 有害**: SNR 输入导致 LightGBM 性能暴跌至 ~0.01
-
-**汇合结论**: 
-> - Ridge 对 input scaling 几乎不敏感（线性可逆变换）
-> - LightGBM 必须使用 raw 输入，standardization 会破坏树模型的分裂点最优性
-> - Whitening/SNR 化不是改进信号质量的银弹
-
----
-
-### C1: 传统 ML 性能天花板
-
-**来源**: MVP-1.0 (Ridge), MVP-1.1 (LightGBM), MVP-1.2 (Scaling Law)
-
-**发现汇合**:
-1. Ridge 在 1M 数据下 R²=0.46，LightGBM R²=0.57
-2. 100k → 1M 仅提升 2-3%，边际收益递减明显
-3. 高噪声下非线性优势有限（LGB 仅比 Ridge 好 ~7%）
-
-**汇合结论**: 传统 ML 在高噪声场景下存在明确的表达能力瓶颈，深度学习目标应突破 R²=0.70
-
----
-
-### C2: Ridge α 优化空间有限
-
-**来源**: MVP-1.4 (Ridge Alpha Extended Sweep)
-
-**发现汇合**:
-1. 倒 U 型曲线明确存在：100k 峰值 α=3.16e+04，1M 峰值 α=1.00e+05
-2. 最优 α 比原 baseline (5000) 高 1-2 个数量级
-3. 优化 α 仅带来 0.4%~2.5% 提升，说明 Ridge ceiling 确实存在
-4. 更大的数据量需要更大的最优 α（正相关）
-
-**汇合结论**: Ridge 的瓶颈不是 α 调参问题，而是线性模型本身的表达能力限制。应转向 NN 方法。
-
----
-
-### C4: ⚠️ Fisher Ceiling 可能虚高（需校准）
-
-**来源**: MVP-16T 结果 + 理论分析 (2025-12-23)
-
-**问题发现**:
-MVP-16T 计算 R²_max ≈ 0.97，第一反应应该是"哪里把信息算多了"。
-
-**最可疑根因：偏导估计的"混参污染"（confounding）**：
-1. KDTree 找邻居做有限差分时，"其它参数差不多"的容许区间偏大
-2. flux 的变化里混入了其它参数的影响（Teff ↔ logg ↔ [M/H] 强耦合）
-3. 这部分变化被"归因"给当前参数的偏导 → |∂μ/∂θ| 被系统性放大
-4. Fisher I = J^T Σ^-1 J 随梯度平方放大 → **CRLB 异常小** → **R²_max 虚高**
-
-**这同时解释了**：
-- "上限很高"（0.97）：梯度被放大
-- "degeneracy 很强"（Schur=0.24）：cross-term 也很大
-
-**验证方法（MVP-T 系列）**：
-1. **T0 (Monotonicity)**: noise 0.2→1.0→2.0，R²_max 应单调下降
-2. **T1 (Confounding)**: 收紧邻居约束 5-10 倍，看 R²_max 是否大幅下降
-3. **T2 (LLR Jacobian)**: 用局部线性回归估计 Jacobian，天然控制混参
-4. **T3 (Scale audit)**: 确认 noise=1 实际 SNR
-
-**物理可能性**：
-- 即使 noise=1 真的很吵，**7200 波长点**的信息会累积
-- 信息按 I ~ Σ (∂μ/∂θ)² / σ² 求和
-- 单点 SNR 不高 ≠ 参数估计一定差
-- 但 R²≈0.97 意味着 CRLB RMSE 远小于 log_g 分布 std，仍需验证
-
-**决策规则**：
-- 如果 T1 后 R²_max 从 0.97 降到 0.7-0.85 → 坐实"混参污染"，使用校准后的值
-- 如果 T1 后 R²_max 仍 >0.9 → ceiling 可信，headroom 确实很大
-
----
-
-### C5: 🆕 Oracle MoE 结构红利强劲（2025-12-23 新增）
-
-**来源**: MVP-16A-0 (Oracle MoE @ noise=1 结构红利验证)
-
-**核心发现**:
-1. **强结构红利**: Oracle MoE R²=0.6249 vs Global Ridge R²=0.4611, ΔR²=**+0.1637** (远超 0.03 阈值)
-2. **所有 9 bin 都优于全局模型**: 每个 bin 的 Oracle Expert 都优于 Global Ridge 在该 bin 上的预测
-3. **Metal-poor bins 受益最大**: Bins 0, 3, 6 (metal-poor) 的 ΔR² = 0.17-0.19
-4. **高噪声下结构红利更大**: noise=0.2 时 ΔR²≈0.05, noise=1.0 时 ΔR²=**+0.16**
-
-**Per-bin R² 分布**:
-
-| Bin | Teff | [M/H] | Oracle R² | Global R² | ΔR² |
-|-----|------|-------|-----------|-----------|-----|
-| Best (5) | Mid | Rich | 0.8742 | 0.7716 | +0.10 |
-| Worst (3) | Mid | Poor | 0.3070 | 0.1376 | +0.17 |
-
-**决策**: ✅ MoE 路线继续! 进入 MVP-16A-1 (trainable gate) 开发阶段
-
-**含义**:
-- Oracle routing (用真值 Teff, [M/H] 分配样本) 证明了 MoE 的结构潜力
-- 下一步是开发可训练的 gate 来逼近 Oracle 性能
-- 这也证实了**物理分层建模**的价值（不同参数区间需要不同的回归权重）
-
----
-
-# 4. 🧭 Strategic Navigation
-
-> **Recommended research directions based on accumulated insights**
-
-## 4.1 Direction Status Overview
-
-```
-┌───────────────────────────────────────────────────────────────┐
-│                    Research Direction Status                  │
-├───────────────────────────────────────────────────────────────┤
-│                                                               │
-│   🟢 High Confidence              🟡 Pending                  │
-│   └── (待验证)                    ├── 传统 ML 瓶颈验证        │
-│                                   └── NN scaling 验证         │
-│                                                               │
-│   🔴 Risky                        ⚫ Closed                   │
-│   └── (待验证)                    └── (无)                    │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
-
-## 4.2 High Confidence Directions (🟢)
-
-| Direction | Evidence | Next Action | Priority |
-|-----------|----------|-------------|----------|
-| 传统 ML 存在性能天花板 | Ridge=0.46, LGB=0.57 @ 1M | 确认统计可信度 | 🟢 已确认 |
-| 数据量非瓶颈 | 100k→1M 仅 +2-3% | 转向模型改进 | 🟢 已确认 |
-
-## 4.3 Pending Directions (🟡)
-
-| Direction | Depends On | Required MVP | Expected Gain |
-|-----------|------------|--------------|---------------|
-| 确认 plateau 真实性 | 多 seed + 大 test set | MVP-1.3 | 验证趋势可信 |
-| ~~扩展 Ridge α 搜索~~ | ~~MVP-1.3 完成~~ | ~~MVP-1.4~~ | ✅ **已完成**: 最优 α=1e4~1e5，仅提升 0.4%~2.5% |
-| 扩展 LightGBM 参数 | MVP-1.3 完成 | MVP-1.5 | 验证是否达上限 |
-| Whitening/PLS 输入表示 | MVP-1.4/1.5 完成 | MVP-1.6, 1.7 | 可能 +2-5% R² |
-| 验证 NN 优势 | Phase 1.x 完成 | MVP-2.0, 2.1 | 突破 0.70 目标 |
-
-## 4.4 Risky/Low Priority Directions (🔴)
-
-| Direction | Risk | Required MVP | Expected Gain |
-|-----------|------|--------------|---------------|
-| 分段建模 (MoE) | 实现复杂，可能过拟合 | MVP-1.8 | 极值区域改进 |
-| 物理特征工程 | 领域知识依赖重 | MVP-1.9 | 不确定 |
-| 继续堆数据到 2M+ | 边际收益极小 | - | 不推荐 |
-
----
-
-# 5. 📐 Design Principles
-
-> **Reusable principles distilled from experiments**
-
-## 5.1 Confirmed Principles
-
-| # | Principle | Recommendation | Evidence | Scope |
-|---|-----------|----------------|----------|-------|
-| P1 | Ridge α 应更大 | α ∈ [1e4, 1e5] 而非 5000 | MVP-1.4 倒 U 型曲线 | noise=1 场景 |
-| P2 | α 与数据量正相关 | 更多数据 → 更大的最优 α | 100k: α=3e4, 1M: α=1e5 | 线性模型 |
-| P3 | 避免过度正则化 | α > 1e6 时 R² 急剧下降 | MVP-1.4 扫描 | Ridge |
-| **P4** | **LightGBM 必须用 raw 输入** | ❌ 禁止 StandardScaler | MVP-1.6: standardized ΔR²=-0.36 | 树模型 |
-| **P5** | **Ridge 对 scaling 不敏感** | StandardScaler 可用可不用 | MVP-1.6: raw ≈ standardized | 线性模型 |
-| **P6** | **SNR 化效果有限** | 不推荐作为默认输入 | MVP-1.6: ΔR²=+0.015 < 0.02 | 全模型 |
-
-## 5.2 Pending Principles
-
-| # | Principle | Initial Suggestion | Needs Verification |
-|---|-----------|--------------------|--------------------|
-| P1 | 高噪声场景选模型 | 优先考虑 NN 而非 ML | MVP-2.x |
-| P2 | 数据量收益 | 100k → 1M 对 NN 有效，对 ML 无效 | MVP-1.2, 2.2 |
-
-## 5.3 Key Numbers Reference
-
-> **Quick reference for important values (from previous experiments)**
-
-| Metric | Value | Condition | Source |
-|--------|-------|-----------|--------|
-| Ridge R² (100k, σ=1) | 0.4856 | α=3.16e+04 (最优) | MVP-1.4 |
-| Ridge R² (1M, σ=1) | 0.5017 | α=1.00e+05 (最优) | MVP-1.4 |
-| Ridge 最优 α (100k) | 3.16e+04 | noise=1 | MVP-1.4 |
-| Ridge 最优 α (1M) | 1.00e+05 | noise=1 | MVP-1.4 |
-| LightGBM R² (1M, σ=1) | 0.5709 | 1M train | MVP-1.1 |
-| α 调优提升幅度 | 0.4%~2.5% | vs baseline α=5000 | MVP-1.4 |
-| **LightGBM raw vs std ΔR²** | **-0.3567** | StandardScaler 严重损害 | MVP-1.6 |
-| **SNR_centered vs std ΔR² (Ridge)** | +0.0146 | 微小提升，未达阈值 | MVP-1.6 |
-| **最优输入 (Ridge)** | snr_centered | R²=0.5222 | MVP-1.6 |
-| **最优输入 (LightGBM)** | raw | R²=0.5533 | MVP-1.6 |
-| **R²_max (Fisher V2)** | **0.8914** | 规则网格, noise=1 | MVP-16T V2 |
-| **Schur decay (V2)** | 0.6906 | 69% 信息保留 | MVP-16T V2 |
-| **Gap vs LightGBM** | +0.32 | 理论 headroom | MVP-16T V2 |
-
----
-
-# 6. 📎 Appendix
-
-## 6.1 Domain Background
-
-### 6.1.1 BOSZ 光谱模拟数据
-
-- **来源**: BOSZ (Bohlin, Rauch, & Sah) 恒星大气模型
-- **分辨率**: R = 50,000
-- **波长范围**: MR 臂 (6500-9500 Å)
-- **参数范围**:
-  - T_eff: 3750-6000 K
-  - log_g: 1.0-5.0 dex
-  - [Fe/H]: -1.0-0.0 dex
-
-### 6.1.2 噪声模型
-
-- **noise_level = σ**: 高斯噪声标准差
-- **σ = 1.0** 对应约 SNR ≈ 1（极低信噪比）
-- 物理意义：模拟暗天体 / 恶劣观测条件
-
-### 6.1.3 1M 数据集规格
-
-| 项目 | 值 |
-|------|-----|
-| 数据集名称 | mag205_225_lowT_1M |
-| 总样本数 | 1,000,000 |
-| 总数据量 | 93 GB |
-| 分片 | 5 × 200k |
-| 路径 | `/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/` |
-
----
-
-## 6.2 Glossary
-
-| Term | Definition | Notes |
-|------|------------|-------|
-| Scaling Law | 模型性能随数据/参数规模的变化规律 | 本研究关注数据 scaling |
-| 性能瓶颈 | 增加资源无法继续提升性能的临界点 | 本假设认为 ML 存在此瓶颈 |
-| noise_level (σ) | 高斯噪声标准差 | σ=1 为高噪声 |
-
----
-
-## 6.3 Changelog
-
-| Date | Change | Sections |
-|------|--------|----------|
-| 2025-12-22 | Created Hub | - |
-| 2025-12-22 | Phase 1 结果填充 | §2.3, §3, §5.3 |
-| 2025-12-22 | Phase 1.x 规划 | §1.2, §2.3, §4 |
-| 2025-12-23 | MVP-1.7 PCA vs PLS 立项，添加 H1.7.3, H1.7.4 | §1.2, §2.3 |
-| 2025-12-23 | MVP-1.4 完成，H1.5.1 验证通过，洞见 C2 汇合 | §2.3, §3, §4.3, §5 |
-| **2025-12-23** | **🔴 Phase 16 大立项：信息论上限 + 结构上限 + 可信度验证** | §1.2, §2, §2.4 |
-| 2025-12-23 | 添加 Q4-Q6 问题树（理论上限、可信度、表示方向） | §1.2 |
-| 2025-12-23 | 添加 H3, H4 战略假设 + H3.x, H4.x 假设链 | §2.1, §2.2, §2.3 |
-| 2025-12-23 | 添加 Phase 16 假设组（H-16T, H-16L, H-16B） | §2.3 |
-| 2025-12-23 | 更新依赖图：展示 Phase 16 三件套 | §2.4 |
-| **2025-12-23** | **MVP-16T 完成：H-16T.1, H-16T.2, H3.1 验证通过** | §2.2, §2.3, §3 |
-| **2025-12-23** | **🆕 Phase T/A/NN 大立项：Fisher 校准 + MoE 验证 + NN baseline** | §1.2, §2.3, §3 |
-| 2025-12-23 | 添加 Q4.1.3 问题树（Fisher 可信度）| §1.2 |
-| 2025-12-23 | 添加 H-T/A 假设系列 | §2.3 |
-| 2025-12-23 | 添加 C4 洞见（Fisher ceiling 可能虚高）| §3 |
-| **2025-12-23** | **❌ MVP-16T 失败：方法论缺陷（非规则网格）** | §2.3, §3 |
-| 2025-12-23 | 取消 H-T0.1, H-T1.1；降级 H-T2.1 | §2.3 |
-| 2025-12-23 | 新增 Phase D 经验上限假设 (H-D0.1, H-D0.2) | §2.3 |
-| **2025-12-24** | **🔄 MVP-16T-V2 重新立项：使用规则网格数据 grid_mag215_lowT** | §2.3 |
-| **2025-12-23** | **MVP-1.6 完成：H1.7.1 ❌ REJECTED，洞见 C3 汇合，P4-P6 原则** | §2.3, §3.1, §3.2, §5.1, §5.3 |
-
----
-
-> **Template Usage:**
-> 
-> **Hub Scope:**
-> - ✅ **Do:** Question mapping, hypothesis management, insight synthesis, strategic navigation, design principles
-> - ❌ **Don't:** Experiment tracking (→ roadmap.md), daily backlog (→ kanban.md)
-> 
-> **Hub vs Roadmap:**
-> - Hub = "What do we know? Where should we go?"
-> - Roadmap = "What experiments are planned? What's the progress?"
-
----
-
-## 🔬 SCALING-20251222-ml-ceiling-01 洞见汇合
-
-### 假设验证结果
-
-| 假设 | 预期 | 实际 | 验证 |
-|------|------|------|------|
-| H1.1.1: Ridge R² < 0.6 @ 1M, σ=1 | < 0.6 | 0.4997 | ✅ |
-| H1.2.1: LightGBM R² < 0.65 @ 1M, σ=1 | < 0.65 | 0.5709 | ✅ |
-| H1.3.1: Ridge ΔR² < 0.02 (1M vs 100k) | < 0.02 | 0.0244 | ❌ (略超) |
-| H1.3.2: LightGBM ΔR² < 0.03 (1M vs 100k) | < 0.03 | 0.0176 | ✅ |
-
-### 关键发现
-
-1. **性能天花板确认**
-   - Ridge: R² = 0.4997 ≈ 0.50
-   - LightGBM: R² = 0.5709 ≈ 0.57
-   - 两者均远低于低噪声时的 0.90+
-
-2. **数据增益边际递减**
-   - 10k → 100k: +0.10~0.14 R² (显著提升)
-   - 100k → 1M: +0.02~0.03 R² (边际收益)
-   - Scaling law 在传统 ML 上失效
-
-3. **非线性优势有限**
-   - LightGBM 仅比 Ridge 好 ~7%
-   - 高噪声下，树模型的特征交互价值有限
-
-### 汇合结论
-
-> 传统 ML 在高噪声场景下存在明确的表达能力瓶颈，R² ≈ 0.50-0.57。
-> 这为深度学习方法设定了清晰的改进目标：突破 0.70。
-> 后续实验应聚焦于模型架构创新，而非数据量扩展。
-
-### 下游影响
-
-| 影响 | 具体行动 |
-|------|---------|
-| MVP-2.0 (MLP) 目标 | R² > 0.60 才有意义 |
-| MVP-2.1 (CNN) 目标 | R² > 0.65 才算突破 |
-| 资源分配 | 模型研发 > 数据采集 |
-
----
-
-# 🆕 Phase 16T 洞见更新 (2025-12-23)
-
-## 新增已验证假设
-
-| # | Hypothesis | Parent | Criteria | Result | Source |
-|---|-----------|--------|----------|--------|--------|
-| **H-16T.1** | R²_max (CRLB) ≥ 0.75 | H3.1 | ≥ 0.75 | ✅ **0.9661** | MVP-16T |
-| **H-16T.2** | degeneracy 显著 (Schur < 0.9) | H3.1 | < 0.9 | ✅ **0.2366** | MVP-16T |
-
-## 洞见汇合站更新
-
-### I-16T.1: 理论上限极高，巨大 headroom 存在
-
-> **核心发现**：noise=1 下 Fisher/CRLB 理论上限 R²_max = 0.97 (median)，远超当前最佳 LightGBM (0.57)。
-> 
-> **含义**：投入更复杂模型（CNN/Transformer）是值得的，提升空间约 40%。
-
-### I-16T.2: degeneracy 是主要信息瓶颈
-
-> **核心发现**：Schur decay = 0.24，表明边缘化 Teff/[M/H] 后，log_g 的 Fisher 信息损失了 76%。
-> 
-> **含义**：
-> - log_g 与 Teff/[M/H] 高度纠缠
-> - Multi-task 联合估计可能是解纠缠的关键
-> - 单独估计 log_g 本质上很困难
-
-### I-16T.3: Fisher 条件数极高，参数耦合强
-
-> **核心发现**：Fisher 矩阵条件数 median = 8.65×10⁵，表明参数之间存在强耦合。
-> 
-> **物理解释**：
-> - 压力敏感线同时也对温度敏感
-> - 金属丰度影响谱线强度，与 log_g 效应混淆
-> - 高噪声下这些效应更难分离
-
-## 设计原则更新
-
-| Principle | From | Description |
-|-----------|------|-------------|
-| **P-16T.1** | MVP-16T | 理论上限 R²_max ≈ 0.97 证明继续投入更强模型是合理的 |
-| **P-16T.2** | MVP-16T | degeneracy 强 → 考虑 multi-task 联合预测 Teff/log_g/[M/H] |
-| **P-16T.3** | MVP-16T | 不同 Teff 区间的 degeneracy 程度不同 → 可能需要区域特化模型 |
-
-## 关键数字速查
-
-| Metric | Value | Description |
-|--------|-------|-------------|
-| R²_max (CRLB median) | **0.9661** | 理论上限 |
-| R²_max (CRLB 90%) | 0.9995 | 高分位上限 |
-| Schur decay | 0.2366 | 边缘化后仅保留 24% 信息 |
-| Fisher 条件数 | 8.65×10⁵ | 参数耦合强度 |
-| Gap vs Ridge | +0.47 | 相对 0.50 的提升空间 |
-| Gap vs LightGBM | +0.40 | 相对 0.57 的提升空间 |
-
----
-
-# ❌ Phase 16T 失败总结 (2025-12-23 更新)
-
-## MVP-16T 失败原因
-
-| 问题 | 详情 |
+| 项目 | 规格 |
 |------|------|
-| **核心失败** | 偏导数估计方法存在根本性缺陷 |
-| **数据问题** | BOSZ 为连续采样（~40k 唯一参数值），不是规则网格 |
-| **方法问题** | 邻近点差分法在非规则网格上完全失效 |
-| **数值表现** | CRLB 跨越 20 个数量级（2.77e-10 到 1.00e+10） |
-| **结果可靠性** | R²_max = 0.97 **不可信** |
+| Dataset | BOSZ 50000, mag205_225_lowT_1M |
+| Train | 1M (5 shards × 200k) |
+| Test | test_1k_0 (1000 samples, pre-noised) |
+| Features | 4096 (MR arm) |
+| Target | log_g ∈ [1.0, 5.0] |
+| Noise | σ=1.0 (heteroscedastic Gaussian) |
+| Metric | R² over test set |
 
-## 假设验证状态
-
-| Hypothesis | Status | 说明 |
-|------------|--------|------|
-| H-16T.1: R²_max ≥ 0.75 | ❓ 未验证 | 方法失败 |
-| H-16T.2: degeneracy 显著 | ❓ 未验证 | 方法失败 |
-
-## 经验教训
-
-1. **数据结构检查**：设计算法前应先验证数据假设
-2. **数值稳定性**：CRLB 跨 20 个数量级是明显红旗
-3. **Sanity check**：R²_max=0.97 vs 实际 R²=0.57 的差距本身值得怀疑
-
-## 下一步方向
-
-| 方向 | 优先级 | 说明 |
-|------|--------|------|
-| 暂停 MVP-16T | - | 等待方法论改进 |
-| 调研 BOSZ 前向模型 | 🟡 | 是否可数值微分 |
-| 尝试局部多项式回归 | 🟡 | 在现有数据上验证 |
-| 改用经验上限（noise=0 Oracle） | 🟢 | 替代方案 |
+**规则:** Hub 只保留一个 canonical scoreboard；历史口径变化只进 Changelog。
 
 ---
 
-## 2025-12-23 核心发现
+## 2) Knowledge Ledger（我们知道什么 vs 仍不确定）
 
-### Oracle MoE @ noise=1 结构红利验证 (MVP-16A-0) ✅ 完成
-
-**🔑 Key Insight**: 高噪声下结构红利更大，不是更小！
-
-| 条件 | ΔR² (Oracle - Global) | Oracle R² | Global R² |
-|------|----------------------|-----------|-----------|
-| noise=0.2 | +0.050 | ~0.91 | ~0.86 |
-| **noise=1.0** | **+0.1637** | **0.6249** | **0.4611** |
-
-**解释**: 
-- 在高噪声条件下，全局模型被噪声淹没，性能下降明显 (R²=0.46)
-- 但分 bin 后，每个 bin 内的样本更相似，更容易学习，噪声影响相对更小
-- 因此 Oracle MoE 的优势在高噪声下反而更明显（ΔR² 从 0.05 增加到 0.16）
-
-**per-bin 分析**：
-- 所有 9 个 bin 都显示正向 ΔR²（Oracle 优于 Global）
-- Metal-rich bins 表现最好：R² = 0.82-0.87
-- Metal-poor bins (0, 3, 6) 结构红利最大：ΔR² = 0.17-0.19
-- Bin 3 (Mid/Metal-poor) 最困难：Oracle R² = 0.3070
-
-**实践意义**:
-- MoE 在高噪声真实观测数据上可能比低噪声模拟更有价值
-- **决策：继续开发可落地的 trainable gate (MVP-16A-1, A-2)**
-
-| **2025-12-23** | **✅ MVP-16A-0 完成：Oracle MoE ΔR²=+0.16, C5 洞见汇合** | §2.3, §3, §3.1, §3.2 |
-| **2025-12-23** | **🔄 Ridge 基准修正：R²=0.46 (1k test，原 0.50 for 500 test)** | §3.1 (C1) |
-| **2025-12-24** | **✅ Ridge Alpha Sweep (1k test): Best α=100k, R²=0.4551, Y-scaling 无效** | §3.1 (C1) |
-| **2025-12-24** | **✅ MVP-16T V2 完成：R²_max=0.8914, Schur=0.6906，结果可信** | §2.3, §3, §5.3 |
+| Claim (知识) | 状态 | 证据摘要 | 含义 |
+|-------------|------|---------|------|
+| **C1:** Ridge/LGBM 在 noise=1 下存在明显 ceiling（R²≈0.46-0.57） | ✅ 强 | 1M 下 Ridge~0.46，LGBM~0.57 | 继续堆数据对传统 ML 不划算 |
+| **C2:** 100k→1M 对传统 ML 增益很小（ΔR² <~0.03） | ✅ 强 | scaling 实验汇总 | 资源应转向模型/结构，而非数据 |
+| **C3:** Ridge α 可调，但提升幅度有限（0.4-2.5%） | ✅ 强 | α 最优在 1e4-1e5，倒U曲线 | Ridge ceiling 属于模型族限制 |
+| **C4:** 输入 scaling 对模型族影响巨大 | ✅ 强 | StandardScaler 严重伤 LGBM(-0.36)；Ridge 不敏感 | pipeline 必须按模型族定制 |
+| **C5:** Fisher ceiling (V2) 显示 noise=1 下 R²_max~0.89 | ✅ 强 | V2 规则网格修复后数值合理 | 低 baseline 不是"信息已被噪声抹平" |
+| **C6:** Oracle MoE 在 noise=1 下结构红利更大（ΔR²≈+0.16） | ✅ 强 | Oracle MoE~0.62 vs Ridge~0.46 | "结构化/分域"是高噪声场景主要增益来源 |
+| **C7:** Gate 信号在 noise=1 下仍很强（9-class Acc~88%） | ✅ 强 | gate sanity check | MoE 主要风险（gate 不可落地）已显著降低 |
+| **C8:** 当前单模型 NN baseline 未超过强 ML baseline | 🟡 中 | MLP≈Ridge，CNN 更弱 | 不能假设"上 NN 就会更好"，需更强归纳偏置 |
 
 ---
 
-## 📁 Data Source Quick Reference (2025-12-24)
+## 3) Insights（读者应该记住的）
 
-| 属性 | 值 |
-|------|-----|
-| **Dataset** | BOSZ 50000 合成光谱 |
-| **Root** | `/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/` |
-| **Train** | 5 shards × 200k = 1M samples |
-| **Test** | test_1k_0 (1000 samples) |
-| **Features** | 4096 (MR arm) |
-| **Target** | log_g ∈ [1.0, 5.0] |
-| **Noise** | σ=1.0 (heteroscedastic Gaussian) |
+### I1 — "数据不是瓶颈；结构才是"
 
-**Data Files**:
-- Train: `train_200k_{0-4}/dataset.h5` (19 GB each)
-- Test: `test_1k_0/dataset.h5` (128 MB, pre-noised)
+| 项 | 内容 |
+|----|------|
+| **观察** | 传统 ML 从 100k 到 1M 只有小幅增益，而 Oracle MoE 却显著提升 |
+| **解释** | 在极低 SNR 下，全局模型被"跨域异质性"拖累；分域后每个子域更可学 |
+| **决策影响** | 下一步优先验证"可落地 MoE 是否能接近 Oracle"，而非继续堆数据 |
 
----
+### I2 — "理论上限高 ≠ 实际可达；但足以证明值得投入更强建模"
 
-## 2025-12-24 核心发现
+| 项 | 内容 |
+|----|------|
+| **观察** | Fisher/CRLB (V2) 给出 R²_max≈0.89，显著高于 LGBM≈0.57 |
+| **解释** | 任务并未被噪声彻底信息论封死，存在可提取信息；差距来自估计器/表示/结构 |
+| **决策影响** | 可合理投入（CNN、MoE、multi-task）——关键是选择能把信息提出来的结构 |
 
-### Gate Feature Sanity Check @ noise=1 (MVP-16A-1) ✅ 完成
+### I3 — "pipeline 不是中性：同一 preprocessing 对不同模型是灾难/无害"
 
-**🔑 Key Insight**: Gate 特征在 noise=1 高噪声条件下仍具有极强的 bin 区分能力，远超预期！
+| 项 | 内容 |
+|----|------|
+| **观察** | Ridge 对线性可逆变换近似不敏感；树模型对 standardize 可能灾难性下降 |
+| **决策影响** | 所有 baseline 对比必须固定"模型族匹配的输入协议"，否则结论被 artifact 污染 |
 
-| Metric | Expected | Actual | Status |
-|--------|----------|--------|--------|
-| 9-class Accuracy | > 60% (pass) or < 40% (fail) | **87.8%** | ✅ 远超预期 |
-| Ca II F-statistic | > 10 | **25,618** | ✅ 远超预期 |
-| Avg SNR @ noise=1 | > 1.0 | **6.21** | ✅ 信号充足 |
+### I4 — "高噪声下 MoE 可能更有价值，而不是更没价值"
 
-**意外发现**：
-1. **PCA 特征最强**：PCA_1 F-stat = 287,966，全局光谱形状在 bin 区分中贡献最大
-2. **Mg I 比 Ca II 更强**：可能因为窗口更窄，信号更集中
-3. **噪声容忍度高**：即使 noise=2.0，准确率仍达 75.1%（远超 40% 失败阈值）
-4. **SNR 几乎不随噪声变化**：noise=0.2 和 noise=1.0 的窗口 SNR 几乎相同
+| 项 | 内容 |
+|----|------|
+| **观察** | noise=1 下 Oracle MoE 的 ΔR²=+0.16 比 noise=0.2 时 ΔR²=+0.05 更大 |
+| **解释** | 高噪声时全局模型更容易被域混合拖垮；分域显著降低有效复杂度 |
+| **决策影响** | 如真实观测接近低 SNR，MoE/分域路线更可能是主线而非备选 |
 
-**设计原则更新**：
+### I5 — "Gate 可落地性已从最大风险变成较小风险"
 
-| Principle | Description |
-|-----------|-------------|
-| **P-A1.1** | 物理窗口特征在 noise=1 下仍可用于 gate routing |
-| **P-A1.2** | PCA 特征对 bin 区分贡献最大，应包含在 gate 输入中 |
-| **P-A1.3** | 37 维 gate 特征足够区分 9 个 bins (Acc=88%) |
+| 项 | 内容 |
+|----|------|
+| **观察** | noise=1 下 gate 特征仍能高准确率区分 bins（88%） |
+| **决策影响** | MoE 的关键风险从"能不能 gate"转移为"怎么让 soft routing 稳定逼近 oracle" |
 
-**决策**：✅ 继续 MVP-16A-2 (Soft-gate MoE 开发)
+### I6 — "单模型 NN 不一定自动赢；结构/归纳偏置更关键"
 
-**Report**: [exp_scaling_gate_feat_sanity_20251224.md](./exp/exp_scaling_gate_feat_sanity_20251224.md)
-
----
-
-# ✅ MVP-16T V2 洞见更新 (2025-12-24)
-
-## 假设验证状态 (V2 可信结果)
-
-| Hypothesis | Criteria | V1 (异常) | V2 (可信) | Status |
-|------------|----------|-----------|-----------|--------|
-| **H-16T.1** | R²_max ≥ 0.75 | 0.97 ⚠️ | **0.8914** | ✅ 验证通过 |
-| **H-16T.2** | Schur decay < 0.9 | 0.24 ⚠️ | **0.6906** | ✅ 验证通过 |
-
-## 洞见汇合站更新
-
-### I-16T.1 (V2): 理论上限高，存在大 headroom
-
-> **核心发现**：noise=1 下 Fisher/CRLB 理论上限 R²_max = 0.89 (median)。
-> 
-> **含义**：
-> - 当前最佳 LightGBM (0.57) 仅利用了约 64% 的理论可提取信息
-> - Headroom = +32%，继续投入 CNN/Transformer 是值得的
-
-### I-16T.2 (V2): Degeneracy 显著但非极端
-
-> **核心发现**：Schur decay = 0.69，边缘化后保留 69% Fisher 信息。
-> 
-> **含义**：
-> - log_g 与 Teff/[M/H] 存在纠缠，但并非完全退化
-> - Multi-task 解纠缠可能有帮助但非必须
-> - 比 V1 的 0.24 更合理（V1 数值不可靠）
-
-### I-16T.3 (V2): 参数空间存在异质性
-
-> **核心发现**：高 log_g (>4) + 高 T_eff (>5000K) 区域 R²_max 更高。
-> 
-> **设计启示**：
-> - 低温矮星区域估计更困难（物理上谱线混叠更严重）
-> - 可考虑区域特化模型
-
-## 关键数字速查 (V2)
-
-| Metric | Value | V1 对比 |
-|--------|-------|---------|
-| R²_max (median) | **0.8914** | V1=0.97 (不可靠) |
-| R²_max (90%) | 0.9804 | - |
-| Schur decay | 0.6906 | V1=0.24 (不可靠) |
-| Gap vs Ridge | +0.43 | V1=+0.47 |
-| Gap vs LightGBM | +0.32 | V1=+0.40 |
-| CRLB range (orders) | **2.9** | V1=20 ❌ |
-| Condition max | 3.78e+06 | V1=5e+16 ❌ |
+| 项 | 内容 |
+|----|------|
+| **观察** | 当前 MLP≈Ridge，CNN 甚至更弱 |
+| **解释** | 更像"实现/归纳偏置不对"而不是"NN 不行" |
+| **决策影响** | NN 路线要么换更贴谱线结构的模型，要么优先走"MoE + 强 gate + 轻 expert"组合 |
 
 ---
 
-### C7 🆕: NN Baseline @ noise=1 (MVP-NN-0) - 2025-12-24
+## 4) Decision Gaps（下一步要补的知识空白）
 
-- **来源**: SCALING-20251224-nn-baseline-framework-01
-- **核心发现**:
-  1. **MLP 复现 Ridge**: R²=0.4671 @ 100k ≈ Ridge (0.46) ✅
-  2. **CNN 弱于 MLP**: Best CNN R²=0.41 < MLP R²=0.47
-  3. **Whitening 失败**: 导致训练崩溃，需改用 StandardScaler
-  4. **Gap to Oracle**: 单模型 NN 难以突破 0.50，距离 Oracle (0.62) 有 0.15 gap
-- **结论**: 单模型 NN 可匹配 Ridge，但难以超越 LightGBM (0.57)，需要 MoE 架构
+> 这里写"要回答什么"，不写"怎么做实验"
+
+### DG1 — Baseline ceiling 的统计可信度有多高？
+
+| 项 | 内容 |
+|----|------|
+| **为什么重要** | 如果 baseline 方差很大，所有"headroom/提升"都可能是噪声 |
+| **什么能关闭它** | 多 seed + 更大 test 下方差足够小（std < 0.01） |
+| **决策规则** | 若方差小 → ceiling 是稳定事实，进 master hub |
+
+### DG2 — 线性模型族上限（LMMSE）距离 Ridge 还有多远？
+
+| 项 | 内容 |
+|----|------|
+| **为什么重要** | 若 Ridge≈LMMSE，则线性族已榨干，继续做表示变化收益上限低 |
+| **决策规则** | 若差距 < 0.01 → linear track 关闭，只保留 baseline |
+
+### DG3 — 可训练 gate 的 MoE 能否保住 ≥70% Oracle 增益？
+
+| 项 | 内容 |
+|----|------|
+| **为什么重要** | 这是"结构路线是否主线"的关键门 |
+| **决策规则** | 若 ρ ≥ 0.7 且 ΔR² 明显为正 → MoE 列为 noise=1 场景主线解法 |
+
+### DG4 — 单模型 CNN/其它结构能否直接达到或超过 Oracle MoE（~0.62）？
+
+| 项 | 内容 |
+|----|------|
+| **为什么重要** | 若单模型已吃到结构红利，MoE 复杂度可避免 |
+| **决策规则** | 若单模型 ≥0.62 → MoE 变为可选；若 <0.60 → MoE 是正确方向 |
+
+---
+
+## 5) Parallel Lanes（多线程探索保持可读）
+
+| Lane | 目标 | 当前状态 | 会改变什么 |
+|------|------|---------|-----------|
+| **L-A: Baseline & Statistics** | 把"ceiling"变成硬事实 | ⏳ Pending | 决定是否彻底停止传统 ML 微优化 |
+| **L-B: Theoretical ceiling** | 定义可达到的上限与瓶颈来源 | ✅ Strong | 决定是否值得上复杂结构/多任务 |
+| **L-C: Structural headroom (MoE)** | 把 Oracle headroom 变成可落地收益 | 🟡 Promising | 决定主线是否 MoE |
+| **L-D: Single-model NN** | 找到能吃 headroom 的归纳偏置 | ⏳ Uncertain | 决定是否投入大规模 NN 训练 |
+
+---
+
+## 6) Design Principles（可移植规则）
+
+| # | 原则 | 建议 | 证据 | 适用 |
+|---|------|------|------|------|
+| P1 | **Ridge α 应更大** | α ∈ [1e4, 1e5] 而非 5000 | MVP-1.4 倒 U 曲线 | noise=1 场景 |
+| P2 | **α 与数据量正相关** | 更多数据 → 更大的最优 α | 100k: α=3e4, 1M: α=1e5 | 线性模型 |
+| P3 | **LightGBM 必须用 raw 输入** | ❌ 禁止 StandardScaler | standardized ΔR²=-0.36 | 树模型 |
+| P4 | **Ridge 对 scaling 不敏感** | StandardScaler 可用可不用 | raw ≈ standardized | 线性模型 |
+| P5 | **高噪声优先分域** | 结构化/分域比堆数据划算 | Oracle MoE ΔR²=+0.16 | noise≥1 |
+| P6 | **Gate 特征优先用 PCA+物理窗口** | 37 维 gate 足够区分 9 bins | Acc=88% | MoE routing |
+
+---
+
+## 7) Pointers（详细内容在哪里）
+
+| 类型 | 文件 | 说明 |
+|------|------|------|
+| 📍 Roadmap | [scaling_roadmap_20251222.md](./scaling_roadmap_20251222.md) | 实验规划与执行 |
+| 📗 Experiments | `exp/exp_*.md` | 详细实验报告 |
+| 📥 Child Hubs | [ridge_hub](../ridge/ridge_hub_20251223.md), [moe_hub](../moe/moe_hub_20251203.md) | 子主题深潜 |
+| 📤 Parent Hub | [master_hub](../master_hub.md) | 全局战略 |
+
+---
+
+## 8) Changelog（仅记录知识改变）
+
+| 日期 | 变更 | 影响 |
+|------|------|------|
+| 2025-12-22 | 创建 Hub | - |
+| 2025-12-22 | C1-C3 确认：Ridge=0.46, LGBM=0.57, 边际递减 | baseline 已锁定 |
+| 2025-12-23 | C5 确认：Fisher V2 R²_max=0.89 可信 | 理论上限锁定 |
+| 2025-12-23 | C6 确认：Oracle MoE ΔR²=+0.16 | MoE 路线继续 |
+| 2025-12-24 | C7 确认：Gate Acc=88% @ noise=1 | Gate 可落地性大幅提升 |
+| 2025-12-24 | C8 初步：单模型 NN 未超 baseline | NN 路线需更强归纳偏置 |
+| **2025-12-24** | **Hub v2 重构：精简假设→结论账本，分 Lane** | 提升可读性 |
+
+---
+
+## 📎 Appendix: Canonical Evaluation History
+
+> 以下数字已被 canonical scoreboard 取代，仅供追溯
+
+| 日期 | test size | Ridge R² | LGBM R² | 备注 |
+|------|-----------|----------|---------|------|
+| 2025-12-22 | 500 | 0.50 | 0.57 | 旧口径 |
+| 2025-12-23 | 1000 | **0.46** | **0.57** | 当前 canonical |
+
+---
+
+## 📎 Appendix: Multi-Magnitude Fisher 扩展
+
+| Magnitude | SNR | R²_max (median) | Schur Decay |
+|-----------|-----|-----------------|-------------|
+| 18.0 | 87.4 | 0.999 | 0.66 |
+| 20.0 | 24.0 | 0.990 | 0.68 |
+| **21.5** | 7.1 | **0.89** | 0.69 |
+| 23.0 | 1.9 | 0.00 (50%+ 失败) | 0.69 |
+
+**关键洞见:**
+- SNR > 20 时信息饱和，瓶颈是特征提取
+- SNR < 2 时信息悬崖，需额外先验
+- Schur decay ≈ 0.68 恒定，multi-task 策略在所有 SNR 等效
+
+---
+
+# 📊 Multi-Magnitude Fisher/CRLB 完整汇总 (2024-12-25)
+
+## 6 Magnitude 完整结果
+
+| Magnitude | SNR | R²_max (median) | R²_max (90%) | Schur Decay |
+|-----------|-----|-----------------|--------------|-------------|
+| 18.0 | 87.4 | **0.9994** | 0.9999 | 0.6641 |
+| 20.0 | 24.0 | **0.9906** | 0.9983 | 0.6842 |
+| 21.5 | 7.1 | **0.8914** | 0.9804 | 0.6906 |
+| 22.0 | 4.6 | **0.7396** | 0.9530 | 0.6921 |
+| 22.5 | 3.0 | **0.3658** | 0.8854 | 0.6922 |
+| 23.0 | 1.9 | **0.0000** | 0.7180 | 0.6923 |
+
+## 关键阈值
+
+| SNR 阈值 | Magnitude | R²_max (median) | 状态 |
+|----------|-----------|-----------------|------|
+| SNR > 20 | mag ≤ 20 | > 0.99 | ✅ 近乎完美 |
+| **SNR ≈ 4** | **mag ≈ 22** | **0.74** | ⚠️ 临界点 |
+| SNR < 2 | mag > 23 | 0.00 | ❌ 信息悬崖 |
+
+## 关键洞见更新
+
+### I-Multi-2 (新): 临界 SNR ≈ 4
+> SNR=4 是 R²_max median > 0.5 的临界点。
+> mag=22 是有效估计的极限边界。
+
+![R²_max vs SNR](img/fisher_multi_mag_snr_trend.png)

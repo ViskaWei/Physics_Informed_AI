@@ -1,11 +1,11 @@
-# 📘 <Topic Name> — Consolidated Experiment Summary
-
----
-> **Date:** YYYY-MM-DD  
-> **Author:** Viska Wei  
-> **Topic:** `<topic>`  
-> **Merged Experiments:** N  
-> **Focus:** [e.g., "Best config across noise levels", "Model comparison", "Parameter sweep"]
+# 📊 <TOPIC> Consolidated Summary
+> **Name:** TODO | **ID:** `[PROJECT]-[YYYYMMDD]-[topic]-consolidated`  
+> **Topic:** `<topic>` | **Merged:** N experiments | **Project:** `VIT`/`SD`  
+> **Author:** Viska Wei | **Date:** TODO | **Status:** 🔄/✅
+```
+💡 一句话总结合并目的  
+Focus：<如 "Best config across noise levels">
+```
 
 ---
 

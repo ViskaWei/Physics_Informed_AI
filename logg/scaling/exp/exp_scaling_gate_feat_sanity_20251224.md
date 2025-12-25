@@ -1,6 +1,22 @@
-# Gate Feature Sanity Check @ noise=1
+# 📘 Gate Feature Sanity Check @ noise=1
+> **Name:** TODO | **ID:** `VIT-20251224-scaling-01`  
+> **Topic:** `scaling` | **MVP:** MVP-16A | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
-> experiment_id: SCALING-20251223-gate-feat-01 | date: 2025-12-24 | status: ✅ 完成
+---
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/scaling/scaling_hub.md` |
+| 🗺️ Roadmap | `logg/scaling/scaling_roadmap.md` |
+
+---
 
 ## ⚡ 核心结论速览
 | 项目 | 内容 |

@@ -1,13 +1,22 @@
 # 📘 子实验报告：Global Feature Tower + MLP
+> **Name:** TODO | **ID:** `VIT-20251201-global-01`  
+> **Topic:** `global` | **MVP:** MVP-X.X | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-01 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** Global Feature Tower MLP for log_g Prediction  
-> **对应 MVP：** MVP-Global-1  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-01  
-> **数据版本：** 32k train / 512 val / 512 test  
-> **模型版本：** GlobalFeatureMLP v1  
-> **状态：** ✅ 已完成
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/global/global_hub.md` |
+| 🗺️ Roadmap | `logg/global/global_roadmap.md` |
+
+---
 
 ---
 

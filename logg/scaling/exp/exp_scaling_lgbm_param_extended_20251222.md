@@ -1,13 +1,14 @@
 # 📘 Experiment Report: LightGBM Parameter Extended Sweep
+> **Name:** TODO | **ID:** `SCALING-20251222-lgbm-param-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.5 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** ⏳ Planned
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** LightGBM Parameter Space Exploration  
-> **ID:** `SCALING-20251222-lgbm-param-01`  
-> **Topic ｜ MVP:** `scaling` | MVP-1.5  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** VIT  
-> **Status:** ⏳ Planned
+
 ---
 
 ## 🔗 Upstream Links

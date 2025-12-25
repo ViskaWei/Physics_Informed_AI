@@ -1,40 +1,22 @@
 # 📘 子实验报告：1D U-Net DDPM Baseline
-
----
-> **实验名称：** 1D U-Net DDPM Baseline for Stellar Spectra  
-> **对应 MVP：** MVP-0.0  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-03  
-> **数据版本：** BOSZ 50000 z0  
-> **模型版本：** UNet1D v1.0  
-> **状态：** ❌ 失败 - 采样生成高斯噪声，未学到光谱分布
-
----
-| Upstream Links |  |
-|------|-----|
-| **来源会话** | `logg/diffusion/sessions/session_20251203_diffusion_init.md` |
-| **队列入口** | `status/kanban.md` 中的 `SD-20251203-diff-baseline-01` 条目 |
----
-| cross-Repo Metadata |  |
-|------|-----|
-| **experiment_id** | `SD-20251203-diff-baseline-01` |
-| **project** | `SpecDiffusion` |
-| **topic** | `diffusion` |
-| **source_repo_path** | `~/SpecDiffusion/lightning_logs/diffusion/baseline` |
-| **config_path** | `configs/diffusion/baseline.yaml` |
-| **output_path** | `lightning_logs/diffusion/baseline` |
+> **Name:** TODO | **ID:** `VIT-20251203-diffusion-01`  
+> **Topic:** `diffusion` | **MVP:** MVP-0.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
 
-# 📑 目录
 
-- [⚡ 核心结论速览](#-核心结论速览供-main-提取)
-- [1. 🎯 目标](#1--目标)
-- [2. 🧪 实验设计](#2--实验设计)
-- [3. 📊 实验图表](#3--实验图表)
-- [4. 💡 关键洞见](#4--关键洞见)
-- [5. 📝 结论](#5--结论)
-- [6. 📎 附录](#6--附录)
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/diffusion/diffusion_hub.md` |
+| 🗺️ Roadmap | `logg/diffusion/diffusion_roadmap.md` |
+
+---
 
 ---
 

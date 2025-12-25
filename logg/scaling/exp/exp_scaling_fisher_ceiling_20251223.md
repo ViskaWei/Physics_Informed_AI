@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Fisher/CRLB 理论上限
+> **Name:** TODO | **ID:** `SCALING-20251223-fisher-ceiling-01`  
+> **Topic:** `scaling` | **MVP:** MVP-16T | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-23 | **Status:** ❌ Failed (方法论缺陷)
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Fisher/CRLB Theoretical Upper Bound for noise=1  
-> **ID:**  `SCALING-20251223-fisher-ceiling-01`  
-> **Topic ｜ MVP:** `scaling` ｜ MVP-16T (P0 最高优先级)  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-23  
-> **Project:** `VIT`  
-> **Status:** ❌ Failed (方法论缺陷)
+
 ---
 
 ## 🔗 Upstream Links

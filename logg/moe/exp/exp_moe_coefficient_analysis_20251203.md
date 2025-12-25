@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Ridge Coefficient Band Analysis
+> **Name:** TODO | **ID:** `VIT-20251203-moe-coef-01`  
+> **Topic:** `VIT` | **MVP:** MVP-5.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Ridge Coefficient Band Analysis (Physical Interpretation)  
-> **ID:** `VIT-20251203-moe-coef-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-5.0  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-03  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
 
 ---
 

@@ -1,13 +1,14 @@
 # 📘 Experiment Report: Foundation Protocol
+> **Name:** TODO | **ID:** `VIT-20251222-logg_1m-foundation`  
+> **Topic:** `VIT` | **MVP:** MVP-0.A | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** 🔄 In Progress
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Low-noise Protocol & Baseline Bounds  
-> **ID:** `VIT-20251222-logg_1m-foundation`  
-> **Topic ｜ MVP:** `VIT` | `logg_1m` | MVP-0.A + MVP-0.B  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-22  
-> **Project:** `VIT`  
-> **Status:** 🔄 In Progress
+
 ---
 
 ## 🔗 Upstream Links

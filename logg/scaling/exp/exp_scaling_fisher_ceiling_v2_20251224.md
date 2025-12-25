@@ -6,25 +6,9 @@
 > **Root:** `scaling` | **Parent:** `Phase 16` | **Child:** -
 
 > 🎯 **Target:** 使用规则网格数据计算 noise=1 时的理论可达上限 R²_max，量化 degeneracy  
-> 🦾 **Decide:** 理论上限高低 → 决定是否继续投入 CNN/Transformer
+> 🚀 **Next:** 理论上限高低 → 决定是否继续投入 CNN/Transformer
 
 ---
-
-## 🔗 Upstream Links
-
-| Type | Link |
-|------|------|
-| 🧠 Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) § H3.1, H-16T.1~2 |
-| 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](../scaling_roadmap_20251222.md) § MVP-16T |
-| 📋 Kanban | `status/kanban.md` § Phase 16 |
-| ❌ V1 Report | [`exp_scaling_fisher_ceiling_20251223.md`](./exp_scaling_fisher_ceiling_20251223.md) (方法失败) |
-
----
-
-> ⚠️ **语言**: Header 全英文 | 正文中文 | 图表文字全英文（中文乱码）
-
----
-
 ## ⚡ 核心结论速览
 
 > **一句话**: V2 成功验证理论上限：noise=1 下 R²_max = **0.89** (median)，与当前最佳 LightGBM (0.57) 存在 **+32% headroom**。Schur decay = 0.69 表明 degeneracy 显著但并非极端。
@@ -39,6 +23,13 @@
 | R²_max (median) | **0.8914** | 理论上限高 |
 | Gap vs LightGBM | **+0.32** | 大幅提升空间 |
 | Schur decay | 0.6906 | 69% 信息保留，multi-task 可选 |
+
+| Type | Link |
+|------|------|
+| 🧠 Hub | [`scaling_hub_20251222.md`](../scaling_hub_20251222.md) § H3.1, H-16T.1~2 |
+| 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](../scaling_roadmap_20251222.md) § MVP-16T |
+| 📋 Kanban | `status/kanban.md` § Phase 16 |
+| ❌ V1 Report | [`exp_scaling_fisher_ceiling_20251223.md`](./exp_scaling_fisher_ceiling_20251223.md) (方法失败) |
 
 ---
 

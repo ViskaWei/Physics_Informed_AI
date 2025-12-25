@@ -1,11 +1,20 @@
-# 📗 实验报告：Hard Bins 小 LightGBM Expert
+# 📘 📗 实验报告：Hard Bins 小 LightGBM Expert
+> **Name:** TODO | **ID:** `VIT-20251205-moe-01`  
+> **Topic:** `moe` | **MVP:** MVP-15 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** MVP-15: Hard Bins 小 LightGBM Expert  
-> **对应 MVP：** MVP-15  
-> **日期：** 2025-12-05 (执行: 2025-12-10)  
-> **状态：** ✅ 完成  
-> **验证假设：** H-15
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/moe/moe_hub.md` |
+| 🗺️ Roadmap | `logg/moe/moe_roadmap.md` |
 
 ---
 

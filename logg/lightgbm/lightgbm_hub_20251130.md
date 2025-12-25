@@ -1,12 +1,11 @@
-# 🧠 LightGBM 智库导航（Hub）
-
----
-> **主题名称：** LightGBM for $\log g$ Prediction  
-> **作者：** Viska Wei  
-> **创建日期：** 2025-11-30  
-> **最后更新：** 2025-12-24  
-> **状态：** 🎯 收敛中  
-> **Layer:** L2 (Topic Hub)
+# 🧠 LightGBM Hub
+> **Name:** LightGBM for log_g | **ID:** `VIT-20251130-lightgbm-hub`  
+> **Topic:** `lightgbm` | **Layer:** L2 (Topic Hub) | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-11-30 | **Status:** 🎯 Converging
+```
+💡 LightGBM 在 log_g 预测任务上的最优配置  
+决定：树模型超参选择、是否作为 baseline
+```
 
 ---
 

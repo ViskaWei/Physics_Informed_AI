@@ -1,13 +1,13 @@
 # 📘 Experiment Report: Fixed Gate + NN Experts
+> **Name:** TODO | **ID:** `VIT-20251204-moe-nn-expert-01`  
+> **Topic:** `VIT` | **MVP:** MVP-1.1 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-04 | **Status:** ✅ Completed
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **Name:** Fixed Physical Window Gate + NN Experts (Expert Capacity Verification)  
-> **ID:** `VIT-20251204-moe-nn-expert-01`  
-> **Topic ｜ MVP:** `VIT` | `moe` ｜ MVP-NN1  
-> **Author:** Viska Wei  
-> **Date:** 2025-12-04  
-> **Project:** `VIT`  
-> **Status:** ✅ Completed
 
 ---
 

@@ -1,14 +1,22 @@
-# 📗 实验报告：Coverage++ (Full Coverage)
+# 📘 📗 实验报告：Coverage++ (Full Coverage)
+> **Name:** TODO | **ID:** `VIT-20251205-moe-01`  
+> **Topic:** `moe` | **MVP:** MVP-12B | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-05 | **Status:** 🔄
+```
+💡 实验目的  
+决定：影响的决策
+```
 
 ---
-> **实验名称：** MVP-12B: Coverage++  
-> **对应 MVP：** MVP-12B  
-> **作者：** Viska Wei  
-> **日期：** 2025-12-05  
-> **数据版本：** full-1000 (覆盖 out-of-range 样本)  
-> **模型版本：** 10× Ridge (9 + oor expert) + fallback  
-> **状态：** 🔄 立项中  
-> **验证假设：** H-12B
+
+
+## 🔗 Upstream Links
+| Type | Link |
+|------|------|
+| 🧠 Hub | `logg/moe/moe_hub.md` |
+| 🗺️ Roadmap | `logg/moe/moe_roadmap.md` |
+
+---
 
 ---
 
