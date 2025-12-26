@@ -37,15 +37,16 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ## 1.2 Gate定义
 
-### Gate-1: Leakage Audit & Error 表示冻结
+### Gate-1: Leakage Audit & Error 表示冻结 ❌ FAIL
 
 | 项   | 内容                                             |
 | --- | ---------------------------------------------- |
-| 验证  | error 特征是否携带 logg 泄露；是否能构造“只表达观测质量”的 error 表示  |
+| 验证  | error 特征是否携带 logg 泄露；是否能构造"只表达观测质量"的 error 表示  |
 | MVP | MVP-0.1, MVP-0.2                               |
 | 若A  | error-only R² < 0.05（或接近 0）→ 通过，进入 Gate-2      |
 | 若B  | error-only R² ≥ 0.05 → 继续压缩/去对齐（禁用波长对齐信息），直到通过 |
-| 状态  | ⏳                                              |
+| 状态  | ❌ **FAIL: R² = 0.99 >> 0.05，严重泄露！**           |
+| 结果  | error vector 几乎完美预测 logg，Shuffle 后崩溃，必须进入 MVP-0.2 去泄露 |
 
 **推荐的去泄露策略（按成本从低到高）**
 
@@ -110,8 +111,9 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 | 优先级   | MVP               | Gate   | 状态 |
 | ----- | ----------------- | ------ | -- |
-| 🔴 P0 | MVP-0.1 / MVP-0.2 | Gate-1 | ⏳  |
-| 🟡 P1 | MVP-1.0           | Gate-2 | ⏳  |
+| 🔴 P0 | **MVP-0.2 (去泄露)** | Gate-1 | ⏳  |
+| ✅    | MVP-0.1           | Gate-1 | ✅ ❌ FAIL (R²=0.99) |
+| ✅    | MVP-1.0           | Gate-2 | ✅ PASS (ΔR²=+0.05) |
 
 ---
 
@@ -121,7 +123,7 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 | MVP | 名称                                                        | Phase | Gate   | 状态 | exp_id                | 报告 |
 | --- | --------------------------------------------------------- | ----- | ------ | -- | --------------------- | -- |
-| 0.1 | error-only 泄露基线                                           | 0     | Gate-1 | ⏳  | `LOGG-ERR-BASE-01`    | -  |
+| 0.1 | error-only 泄露基线                                           | 0     | Gate-1 | ✅  | `LOGG-ERR-BASE-01`    | `exp/exp_logg_err_base_01_20251226.md`  |
 | 0.2 | error 表示去泄露（template×scale/quantiles）                     | 0     | Gate-1 | ⏳  | `LOGG-ERR-REPR-01`    | -  |
 | 1.0 | Oracle SNR-binned Experts（真 SNR 路由）                       | 1     | Gate-2 | ✅  | `LOGG-SNR-ORACLE-01`  | `exp/exp_logg_snr_oracle_01_20251226.md`  |
 | 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ⏳  | `LOGG-SNR-GATE-01`    | -  |
@@ -211,9 +213,9 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ```
 ⏳计划          🔴就绪    🚀运行    ✅完成
-MVP-0.1                                 
-MVP-0.2                                 
-                                        MVP-1.0
+                                        MVP-0.1 ❌ (R²=0.99,严重泄露)
+MVP-0.2 → 下一步                                 
+                                        MVP-1.0 ✅ (ΔR²=+0.05)
 MVP-2.0
 MVP-3.0
 ```
@@ -224,6 +226,7 @@ MVP-3.0
 
 | MVP | 结论 | 关键数字 |
 |-----|------|---------|
+| **0.1** | ❌ error 严重泄露 logg | R²=0.99, Shuffle 后崩溃 -0.98, 必须去泄露 |
 | **1.0** | ✅ SNR 分域有显著 headroom | ΔR²=+0.05, Bin M 最大 +9.6% |
 
 ---
