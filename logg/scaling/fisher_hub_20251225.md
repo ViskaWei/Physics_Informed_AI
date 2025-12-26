@@ -90,9 +90,13 @@
 │   ├── Q3.1: Schur decay 是多少？ → ✅ 0.69 (69% 信息保留)
 │   └── Q3.2: 是否随 SNR 变化？ → ✅ 恒定，由光谱物理决定
 │
-└── Q4: 计算方法是否正确？
+├── Q4: 计算方法是否正确？
     ├── Q4.1: V1 为什么失败？ → ✅ 连续采样+邻近差分，偏导混参
     └── Q4.2: V2 如何验证？ → ✅ CRLB range 2.9 orders，数值自洽
+│
+└── Q5: 当前 ceiling 是否过于乐观？
+    ├── Q5.1: V2 忽略了哪些 nuisance？ → ✅ 固定 (C_M=0, a_M=0)，只对 (T_eff, logg, [M/H]) 边缘化
+    └── Q5.2: 加入化学丰度 (C_M, O_M, a_M) 后 ceiling 下降多少？ → ✅ 仅下降 1.93%，V2 结论稳健
 
 Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️ 已关闭
 ```
@@ -134,6 +138,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | Q2: SNR | 临界 SNR≈4 | 🟢 | mag≥22.5 需额外策略 | Multi-Mag |
 | Q3: 纠缠 | Schur=0.69 | 🟢 | multi-task 可选 | Multi-Mag |
 | Q4: 方法 | V2 框架正确 | 🟢 | 可用于论文 | 数值自洽 |
+| Q5: 乐观度 | V2 对化学丰度稳健 | 🟢 | V3-A 验证：Δceiling=1.93% < 10% | V3-A |
 
 ---
 
@@ -147,6 +152,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | I4 | 纠缠恒定 | Schur≈0.69 across SNR | 纠缠由光谱物理决定 | multi-task 在所有 SNR 等效 | Multi-Mag |
 | I5 | V1→V2 教训 | V1 CRLB 跨 20 orders | 差分方法对数据结构敏感 | 必须用规则网格 | V1 失败 |
 | I6 | 误差未利用 | Fisher 用 Σ⁻¹ 加权 | 当前 ML 多数 unweighted | weighted loss 可能是增益点 | 框架审核 |
+| I7 | 化学丰度稳健性 | V3-A Δceiling=1.93% | 化学丰度 nuisance 几乎不影响 ceiling | V2 结论对实际观测稳健 | V3-A |
 
 ---
 
@@ -183,10 +189,13 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 
 | 指标 | 值 | 条件 | 来源 |
 |------|-----|------|------|
-| R²_max (median) | **0.8914** | noise=1, mag=21.5 | V2 |
+| R²_max (median) | **0.8914** | noise=1, mag=21.5 (V2) | V2 |
+| R²_max (median, V3-A) | **0.8742** | noise=1, mag=21.5 (5D with chemical) | V3-A |
 | R²_max (90%) | 0.9804 | 高分位 | V2 |
 | Gap vs LightGBM | **+0.32** | - | V2 |
 | Schur decay | **0.6906** | 恒定 | Multi-Mag |
+| Schur decay (V3-A) | **0.5778** | 5D with chemical | V3-A |
+| Δceiling (V3-A vs V2) | **-1.93%** | 化学丰度 nuisance 影响 | V3-A |
 | 临界 SNR | **~4** | R²_max>0.5 边界 | Multi-Mag |
 | 信息悬崖 | **SNR<2** | median=0 | Multi-Mag |
 
@@ -206,10 +215,12 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 类型 | 路径 | 说明 |
 |------|------|------|
 | 🌳 Root Hub | [`scaling_hub_20251222.md`](./scaling_hub_20251222.md) | 上层战略 |
-| 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](./scaling_roadmap_20251222.md) | 执行追踪 |
+| 🗺️ **Fisher Roadmap** | [`fisher_roadmap_20251225.md`](./fisher_roadmap_20251225.md) | **Fisher 专题执行追踪** |
+| 🗺️ Scaling Roadmap | [`scaling_roadmap_20251222.md`](./scaling_roadmap_20251222.md) | 完整实验追踪 |
 | 📗 Exp V1 | [`exp/exp_scaling_fisher_ceiling_20251223.md`](./exp/exp_scaling_fisher_ceiling_20251223.md) | 失败尝试 |
 | 📗 Exp V2 | [`exp/exp_scaling_fisher_ceiling_v2_20251224.md`](./exp/exp_scaling_fisher_ceiling_v2_20251224.md) | 基线成功 |
 | 📗 Exp Multi-Mag | [`exp/exp_scaling_fisher_multi_mag_20251224.md`](./exp/exp_scaling_fisher_multi_mag_20251224.md) | 扩展验证 |
+| 📗 Exp V3-A | [`exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md`](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) | 化学丰度 nuisance |
 | 📊 Card | [`card/card_fisher_ceiling_20251224.md`](./card/card_fisher_ceiling_20251224.md) | 知识卡片 |
 
 ---
@@ -223,6 +234,9 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 2025-12-25 | Multi-Mag 扩展：临界 SNR=4，信息悬崖 SNR<2 | SNR 分层决策 |
 | 2025-12-25 | 按 hub.md 模板重构 | 结构规范化 |
 | 2025-12-25 | 核心共识改为表格形式，区分抽象洞见与数值证据 | 共识=物理规律，Evidence=数值 |
+| 2025-12-25 | 添加 Q5（当前 ceiling 是否过于乐观）和 V3-A 实验计划 | §1, §3.2 |
+| 2025-12-25 | 创建 Fisher Roadmap | 独立执行追踪 |
+| 2025-12-25 | V3-A 完成：化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | §1 Q5.2, §4 I7, §6.3 |
 
 ---
 
@@ -294,3 +308,6 @@ $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(g)}$$
 | 数据索引 | `data/bosz50k/z0/grid_fisher_datasets.md` |
 
 </details>
+
+|| I7 | V2 对化学丰度稳健 | V3-A Δceiling=1.93% | 化学丰度 nuisance 几乎不影响 ceiling | V2 R²_max=0.89 可直接用于指导模型部署 | V3-A |
+
