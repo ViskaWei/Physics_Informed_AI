@@ -2,21 +2,23 @@
 > **ID:** SCALING-20251225-fisher-hub | **Status:** 🌺稳定 |  
 > **Date:** 2025-12-25 | **Update:** 2025-12-25  
 > **Root:** [scaling_hub](./scaling_hub_20251222.md) | **Child:** - |
+> **🎯 大方向:** 找到理论上界 → 指导模型设计 → 在哪些 mag 继续堆模型有意义，在哪些 mag 只能靠更多曝光/先验/换任务
 
 | # | 💡 共识 | 证据 | 决策 |
 |---|--------|------|------|
 | K1 | log g 信息远未被现有模型榨干，存在显著提升空间 | R²_max=0.89 vs LightGBM=0.57, gap=+32% | 继续投 CNN/MoE 值得 |
 | K2 | 信息提取存在 SNR 阈值效应，低 SNR 区间信息悬崖式消失 | 临界 SNR≈4, SNR<2 时 median R²_max=0 | mag≥22.5 需改变策略 |
 | K3 | 参数纠缠由光谱物理决定，与噪声水平无关 | Schur≈0.69 across all SNR（恒定） | multi-task 可选非必须 |
+| K4 | **理论上限曲线是 Ceiling–Gap–Structure 叙事的锚点** | 6个mag点完整覆盖 SNR=1.9~87 | 用于量化模型 headroom |
 
 **🦾 现阶段信念 / 洞见（≤3条）**
 - **任务未被噪声封死**：R²_max=0.89 证明信息仍可提取，差距来自估计器/表示/结构（So what：继续投入 CNN/MoE 值得）
 - **分层决策是关键**：全局 R² 掩盖区域差异，必须按 mag/SNR 分桶评估（So what：先做 efficiency 图再决定方向）
-- **Error-aware 可能是低垂果实**：Fisher 最优估计用 Σ⁻¹ 加权，当前 ML 多数未利用（So what：P0 优先验证 weighted loss）
+- **理论上限曲线是论文叙事核心**：R²_max(SNR) 和 σ_min(SNR) 两条曲线定义物理边界（So what：产出带 CI 的 upper bound 图用于 Ceiling–Gap–Structure）
 
 **下一步最有价值（≤2条）**
-- 🔴 **P0**：按 mag/SNR 分桶评估所有模型 → If efficiency<80%@高SNR then 继续投模型 else 转结构化
-- 🟡 **P1**：Error-aware 输入 + weighted loss → If CNN/MLP≥Ridge then 误差是瓶颈 else 结构是瓶颈
+- 🔴 **P0**：产出 **R²_max vs SNR** 和 **σ_min vs SNR** 两张理论上限曲线图（带 [p10,p90] 分位带）→ 作为 Ceiling–Gap–Structure 叙事的 upper bound 标尺
+- 🟡 **P1**：按 mag/SNR 分桶评估所有模型 → If efficiency<80%@高SNR then 继续投模型 else 转结构化
 
 > **权威数字**：Ceiling=0.89；LightGBM=0.57；Gap=+32%；条件=noise=1, mag=21.5, R²  
 > **Protocol:** grid_mag215_lowT, 规则网格 (10×9×14), heteroscedastic noise
@@ -31,6 +33,27 @@
 ---
 
 ## 📊 核心图表
+
+### 🆕 Fig 0: 理论上限曲线（Ceiling–Gap–Structure 核心叙事）
+
+> **⏳ MVP-FU-1 产出：`SCALING-20251225-fisher-upperbound-curve-01`**
+
+**目标产出两张图**：
+
+| 图表 | 内容 | 作用 |
+|------|------|------|
+| **Fig-FU1: R²_max vs SNR** | 理论可解释方差上限 (median + [p10,p90] band) | **Ceiling**：模型最多能达到多少 R² |
+| **Fig-FU2: σ_min vs SNR** | 理论最小误差下限 (median + [p10,p90] band) | **Ceiling**：RMSE 最少能到多少 |
+
+**核心公式**：
+$$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \quad \sigma_{\min}=\sqrt{\mathrm{CRLB}_{g,\mathrm{marg}}}$$
+
+**与 Ceiling–Gap–Structure 的对接**：
+- **Ceiling**: 这两条理论曲线定义 upper bound
+- **Gap**: 把现有模型 R² 画在同一张图，gap = ceiling − model
+- **Structure**: MoE 在低 SNR 区域 gap 收敛更快（oracle MoE 结论）
+
+---
 
 ### Fig 1: R²_max 随 Magnitude/SNR 变化
 ![R²_max vs Magnitude](img/fisher_multi_mag_r2max.png)
@@ -91,12 +114,16 @@
 │   └── Q3.2: 是否随 SNR 变化？ → ✅ 恒定，由光谱物理决定
 │
 ├── Q4: 计算方法是否正确？
-    ├── Q4.1: V1 为什么失败？ → ✅ 连续采样+邻近差分，偏导混参
-    └── Q4.2: V2 如何验证？ → ✅ CRLB range 2.9 orders，数值自洽
+│   ├── Q4.1: V1 为什么失败？ → ✅ 连续采样+邻近差分，偏导混参
+│   └── Q4.2: V2 如何验证？ → ✅ CRLB range 2.9 orders，数值自洽
 │
-└── Q5: 当前 ceiling 是否过于乐观？
-    ├── Q5.1: V2 忽略了哪些 nuisance？ → ✅ 固定 (C_M=0, a_M=0)，只对 (T_eff, logg, [M/H]) 边缘化
-    └── Q5.2: 加入化学丰度 (C_M, O_M, a_M) 后 ceiling 下降多少？ → ✅ 仅下降 1.93%，V2 结论稳健
+├── Q5: 当前 ceiling 是否过于乐观？
+│   ├── Q5.1: V2 忽略了哪些 nuisance？ → ✅ 固定 (C_M=0, a_M=0)
+│   └── Q5.2: 加入化学丰度后 ceiling 下降多少？ → ✅ 仅下降 1.93%，稳健
+│
+└── 🆕 Q6: 如何产出可用于论文的理论上限曲线？
+    ├── Q6.1: R²_max(SNR) 带 CI 的曲线如何画？ → 🔆 MVP-FU-1 进行中
+    └── Q6.2: σ_min(SNR) 带 CI 的曲线如何画？ → 🔆 MVP-FU-1 进行中
 
 Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️ 已关闭
 ```
@@ -139,6 +166,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | Q3: 纠缠 | Schur=0.69 | 🟢 | multi-task 可选 | Multi-Mag |
 | Q4: 方法 | V2 框架正确 | 🟢 | 可用于论文 | 数值自洽 |
 | Q5: 乐观度 | V2 对化学丰度稳健 | 🟢 | V3-A 验证：Δceiling=1.93% < 10% | V3-A |
+| 🆕 Q6: 曲线产出 | 数据已有 (6个mag点), 待画图 | 🔆 | Ceiling–Gap–Structure 核心叙事 | Multi-Mag + MVP-FU-1 |
 
 ---
 
@@ -153,6 +181,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | I5 | V1→V2 教训 | V1 CRLB 跨 20 orders | 差分方法对数据结构敏感 | 必须用规则网格 | V1 失败 |
 | I6 | 误差未利用 | Fisher 用 Σ⁻¹ 加权 | 当前 ML 多数 unweighted | weighted loss 可能是增益点 | 框架审核 |
 | I7 | 化学丰度稳健性 | V3-A Δceiling=1.93% | 化学丰度 nuisance 几乎不影响 ceiling | V2 结论对实际观测稳健 | V3-A |
+| 🆕 I8 | 理论曲线即叙事锚点 | 6个mag点→连续曲线+CI | R²_max(SNR)和σ_min(SNR)定义物理边界 | 用于论文 Ceiling–Gap–Structure 叙事 | Multi-Mag |
 
 ---
 
@@ -160,6 +189,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 
 | DG | 我们缺的答案 | 为什么重要 | 什么结果能关闭它 | 决策规则 |
 |----|-------------|-----------|-----------------|---------|
+| 🔴 DG0 | **理论上限曲线图（带 CI）** | Ceiling–Gap–Structure 叙事的锚点 | R²_max(SNR) + σ_min(SNR) 两张图产出 | 产出即关闭，用于论文 Fig 1 |
 | DG1 | 各模型按 mag/SNR 分桶的 efficiency | 决定投模型还是投结构 | efficiency 图 | If <80%@高SNR → 投模型；Else → 投结构 |
 | DG2 | weighted loss 能提升多少 | 决定误差是否是瓶颈 | CNN/MLP ≥ Ridge | If 显著提升 → 误差是瓶颈；Else → 结构是瓶颈 |
 | DG3 | Trainable gate 能否保住 Oracle 70%+ 增益 | 决定 MoE 是否可落地 | R² ≥ 0.58 | If 是 → MoE 主线；Else → 需更强 gate |
@@ -222,6 +252,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 📗 Exp Multi-Mag | [`exp/exp_scaling_fisher_multi_mag_20251224.md`](./exp/exp_scaling_fisher_multi_mag_20251224.md) | 扩展验证 |
 | 📗 Exp V3-A | [`exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md`](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) | 化学丰度 nuisance |
 | 📊 Card | [`card/card_fisher_ceiling_20251224.md`](./card/card_fisher_ceiling_20251224.md) | 知识卡片 |
+| 🆕 📗 MVP-FU-1 | **待创建**: `exp/exp_scaling_fisher_upperbound_curves_20251225.md` | **理论上限曲线 (P0)** |
 
 ---
 
@@ -237,6 +268,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 2025-12-25 | 添加 Q5（当前 ceiling 是否过于乐观）和 V3-A 实验计划 | §1, §3.2 |
 | 2025-12-25 | 创建 Fisher Roadmap | 独立执行追踪 |
 | 2025-12-25 | V3-A 完成：化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | §1 Q5.2, §4 I7, §6.3 |
+| 2025-12-25 | 🆕 **添加 MVP-FU-1：理论上限曲线**，Q6 分支，DG0，I8 | 论文核心图表 Ceiling–Gap–Structure |
 
 ---
 

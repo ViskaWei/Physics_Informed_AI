@@ -1,12 +1,13 @@
 # 🗺️ Fisher Roadmap: 理论上限与信息诊断
 > **Name:** Fisher Information & CRLB Ceiling | **ID:** `SCALING-20251225-fisher-roadmap`  
-> **Topic:** `fisher` | **Phase:** Phase 2 (V2 完成，V3-A 进行中) | **Project:** `VIT`  
+> **Topic:** `fisher` | **Phase:** Phase 2.5 (V3-A ✅, Upper-Bound Curves 🔆) | **Project:** `VIT`  
 > **Author:** Viska Wei | **Date:** 2025-12-25 | **Status:** 🔄 Active
+> **🎯 大方向:** 找到理论上界 → 指导模型设计 → 在哪些 mag 继续堆模型有意义，在哪些 mag 只能靠更多曝光/先验/换任务
 
 ```
 💡 当前阶段目标  
-验证 Fisher 上限的"世界定义"：conditional vs marginal ceiling
-Gate：V3-A 验证化学丰度 nuisance 的影响
+产出 Ceiling–Gap–Structure 叙事的锚点图：R²_max(SNR) 和 σ_min(SNR) 两条理论上限曲线（带 CI）
+Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 ```
 
 ---
@@ -72,7 +73,8 @@ Gate：V3-A 验证化学丰度 nuisance 的影响
 
 | 优先级 | MVP | Gate | 状态 |
 |--------|-----|------|------|
-| 🔴 P0 | MVP-F-V3A | Gate-3 | 🔄 进行中 |
+| 🔴 **P0** | 🆕 **MVP-FU-1: Upper-Bound Curves** | - | 🔆 进行中 |
+| ✅ | MVP-F-V3A | Gate-3 | ✅ 完成 (Δceiling=1.93%) |
 | 🟡 P1 | MVP-F-EFF | Gate-1 | ⏳ 待启动 |
 | 🟡 P1 | MVP-F-WGT | Gate-2 | ⏳ 待启动 |
 
@@ -88,12 +90,13 @@ Gate：V3-A 验证化学丰度 nuisance 的影响
 | **MVP-F-V2** | Fisher/CRLB V2 (规则网格) | 1 | - | ✅ | `SCALING-20251224-fisher-ceiling-02` | [Link](./exp/exp_scaling_fisher_ceiling_v2_20251224.md) |
 | **MVP-F-MM** | Multi-Magnitude Sweep | 1 | - | ✅ | `SCALING-20251224-fisher-multi-mag` | [Link](./exp/exp_scaling_fisher_multi_mag_20251224.md) |
 | **MVP-F-V3A** | V3-A: 化学丰度 Nuisance | 2 | Gate-3 | ✅ | `SCALING-20251225-fisher-ceiling-03` | [Link](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) |
+| 🆕 **MVP-FU-1** | **Upper-Bound Curves (R² & σ vs SNR)** | **2.5** | - | 🔆 | `SCALING-20251225-fisher-upperbound-curve-01` | 待创建 |
 | **MVP-F-V3B** | V3-B: Redshift/RV Nuisance | 3 | - | ⏳ | - | - |
 | **MVP-F-V3C** | V3-C: Moon/Sky 条件扫描 | 3 | - | ⏳ | - | - |
 | **MVP-F-EFF** | Efficiency 分桶评估 | 4 | Gate-1 | 🔴 | `SCALING-20251225-fisher-efficiency-01` | [Link](./exp/exp_scaling_fisher_efficiency_binned_20251225.md) |
 | **MVP-F-WGT** | Weighted Loss 验证 | 4 | Gate-2 | ⏳ | - | - |
 
-**状态**: ⏳计划 | 🔴就绪 | 🚀运行 | ✅完成 | ❌取消
+**状态**: ⏳计划 | 🔴就绪 | 🔆进行中 | ✅完成 | ❌取消
 
 ## 2.2 配置速查
 
@@ -164,6 +167,56 @@ Gate：V3-A 验证化学丰度 nuisance 的影响
 - **Schur 恒定**: Schur≈0.69 across all SNR（由光谱物理决定）
 
 **决策影响**: 按 mag/SNR 分层评估，mag≥22.5 需改变策略
+
+---
+
+## Phase 2.5: 🆕 Upper-Bound Curves（论文核心图表）
+
+### MVP-FU-1: Fisher Upper-Bound Curves (R² & σ vs SNR)（🔆 进行中）
+
+| 项 | 配置 |
+|----|------|
+| **ID** | `SCALING-20251225-fisher-upperbound-curve-01` |
+| **目标** | 用 Fisher/CRLB 给出 log g 推断的理论下界：R²_max(SNR) 和 σ_min(SNR) 两条曲线（带 CI） |
+| **用途** | Ceiling–Gap–Structure 叙事的 **upper bound 标尺** |
+| **输入** | 现成 Fisher multi-mag 结果（6 个 mag → SNR median, R²_max 分布, CRLB） |
+| **优先级** | 🔴 P0 |
+
+**核心公式**：
+$$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \quad \sigma_{\min}=\sqrt{\mathrm{CRLB}_{g,\mathrm{marg}}}$$
+
+**产出（必须）**：
+
+| 图表 | 内容 | 坐标轴 | 备注 |
+|------|------|--------|------|
+| **Fig-FU1: R²_max vs SNR** | 理论可解释方差上限 | x: SNR (log scale), y: R²_max | median + [p10,p90] band |
+| **Fig-FU2: σ_min vs SNR** | 理论最小误差下限 | x: SNR (log scale), y: σ_min | median + [p10,p90] band |
+| **Table-FU1** | 各数据集的分布统计 | - | mag/SNR/R²_max/σ_min/Schur |
+
+**置信带方法（推荐 A）**：
+
+| 方法 | 说明 | 优点 |
+|------|------|------|
+| **A. 分位带** | 对每个 SNR 桶画 median + [p10,p90] | 不依赖正态假设，快速稳定 |
+| B. Bootstrap CI | Bootstrap 1000 次取 median 的 95% CI | 更严格的 CI |
+
+**验收标准**：
+- ✅ 复现关键数字：SNR>20 时 R²_max≈0.99+；SNR≈4.6 时 R²_max≈0.74；SNR≈1.9 时 median≈0
+- ✅ 两张图都带 [p10,p90] band
+- ✅ 生成 3 句可直接放 paper intro 的解释
+
+**与 Ceiling–Gap–Structure 的对接**：
+- **Ceiling**: 这两条理论曲线定义 upper bound
+- **Gap**: 把现有模型 R² 画在同一张 R² vs SNR 图，gap = ceiling − model
+- **Structure**: 展示 MoE 在低 SNR 区域 gap 收敛更快
+
+**P1 可选扩展（不影响 MVP）**：
+
+| P1 | 内容 | 备注 |
+|----|------|------|
+| P1-1 | 加入 V3 ceiling (C_M/O_M) | 同样画两条曲线，但会整体下移 |
+| P1-2 | 连续 SNR 曲线 | 不按 dataset 点，而按 per-star SNR 分桶 |
+| P1-3 | 条件 sweep | moon/sky/seeing 改 Σ，得到不同观测条件下的 ceiling family |
 
 ---
 
@@ -278,10 +331,10 @@ Gate：V3-A 验证化学丰度 nuisance 的影响
 ## 4.1 看板
 
 ```
-⏳计划          🔴就绪          🚀运行          ✅完成
-MVP-F-V3B       MVP-F-EFF                       MVP-F-V2
-MVP-F-V3C       MVP-F-WGT                       MVP-F-MM
-                                                                 MVP-F-V3A
+⏳计划          🔴就绪          🔆进行中          ✅完成
+MVP-F-V3B       MVP-F-EFF       MVP-FU-1          MVP-F-V2
+MVP-F-V3C       MVP-F-WGT                         MVP-F-MM
+                                                  MVP-F-V3A
                                                 
 ❌取消
 MVP-F-V1
@@ -302,7 +355,8 @@ MVP-F-V1
 | **MVP-F-V2** | ✅ 理论上限 R²_max=0.89，headroom +32% vs LightGBM | R²_max=0.8914, Schur=0.6906 | ✅ §2.1 |
 | **MVP-F-MM** | ✅ 临界 SNR≈4，信息悬崖 SNR<2，Schur 恒定 | SNR_threshold=4, Schur=0.69 | ✅ §2.1 |
 | **MVP-F-V3A** | ✅ 化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | R²_max=0.8742, Δceiling=1.93% | ✅ §2.1 |
-| **MVP-F-EFF** | 🔄 进行中 | ⏳ | ⏳ |
+| 🆕 **MVP-FU-1** | 🔆 **Upper-Bound Curves：R²_max(SNR) + σ_min(SNR) 带 CI** | ⏳ 待产出 | ⏳ |
+| **MVP-F-EFF** | ⏳ 待启动 | ⏳ | ⏳ |
 
 ## 4.4 时间线
 
@@ -314,6 +368,7 @@ MVP-F-V1
 | 2025-12-25 | MVP-F-V3A 立项 | 化学丰度 nuisance 实验框架创建 |
 | 2025-12-25 | MVP-F-V3A 完成 | Δceiling=1.93%, Gate-3 通过验证 |
 | 2025-12-25 | MVP-F-EFF 立项 | Efficiency 分桶评估实验框架创建 |
+| 2025-12-25 | 🆕 **MVP-FU-1 立项** | **Upper-Bound Curves：R²_max(SNR) + σ_min(SNR) 带 CI** |
 
 ---
 
@@ -327,6 +382,7 @@ MVP-F-V1
 | `SCALING-20251224-fisher-ceiling-02` | VIT | fisher | ✅ | MVP-F-V2 |
 | `SCALING-20251224-fisher-multi-mag` | VIT | fisher | ✅ | MVP-F-MM |
 | `SCALING-20251225-fisher-ceiling-03` | VIT | fisher | ✅ | MVP-F-V3A |
+| 🆕 `SCALING-20251225-fisher-upperbound-curve-01` | VIT | fisher | 🔆 | MVP-FU-1 |
 
 ## 5.2 仓库链接
 
@@ -396,6 +452,7 @@ MVP-F-V1
 | 2025-12-25 | 整合 V1/V2/Multi-Mag/V3-A 所有实验 | §2.1, §3, §4.3 |
 | 2025-12-25 | 规划 Phase 3-4 后续实验 | §3 |
 | 2025-12-25 | MVP-F-V3A 完成：Δceiling=1.93%，Gate-3 通过验证 | §2.1, §3, §4.2, §4.3, §6.1 |
+| 2025-12-25 | 🆕 **MVP-FU-1 立项：Upper-Bound Curves**，添加 Phase 2.5 | §1.3, §2.1, §3, §4.1, §4.4, §5.1 |
 
 ---
 
@@ -404,13 +461,15 @@ MVP-F-V1
 ```
 V2 完成 (R²_max=0.89)
     │
-    ├─ Multi-Mag 完成 (SNR阈值效应)
+    ├─ Multi-Mag 完成 (SNR阈值效应: 6个mag点)
     │
-    ├─ V3-A 进行中 (化学丰度 nuisance)
+    ├─ V3-A ✅ 完成 (Δceiling=1.93% < 10%, V2 结论稳健)
+    │
+    ├─ 🔆 MVP-FU-1: Upper-Bound Curves (当前 P0)
     │   │
-    │   ├─ Δceiling < 10% → V2 结论稳健，继续投模型
-    │   ├─ Δceiling 10-20% → 需重新评估
-    │   └─ Δceiling > 20% → 可能已接近真实上限
+    │   ├─ 产出 Fig-FU1: R²_max vs SNR (median + [p10,p90] band)
+    │   ├─ 产出 Fig-FU2: σ_min vs SNR (median + [p10,p90] band)
+    │   └─ 用于 Ceiling–Gap–Structure 叙事的 upper bound 锚点
     │
     ├─ Phase 3: 进一步 Nuisance (V3-B, V3-C)
     │
