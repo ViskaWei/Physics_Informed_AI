@@ -10,6 +10,7 @@
 | K2 | 信息提取存在 SNR 阈值效应，低 SNR 区间信息悬崖式消失 | 临界 SNR≈4, SNR<2 时 median R²_max=0 | mag≥22.5 需改变策略 |
 | K3 | 参数纠缠由光谱物理决定，与噪声水平无关 | Schur≈0.69 across all SNR（恒定） | multi-task 可选非必须 |
 | K4 | **理论上限曲线是 Ceiling–Gap–Structure 叙事的锚点** | 6个mag点完整覆盖 SNR=1.9~87 | 用于量化模型 headroom |
+| K5 | **5D ceiling ≈ 3D @ 高SNR，显著低于 3D @ 低SNR** | Δ=-0.01%~-1.93% (mag≤21.5), Δ=-28% (mag=22.5) | 论文用 5D ceiling 作为 upper bound |
 
 **🦾 现阶段信念 / 洞见（≤3条）**
 - **任务未被噪声封死**：R²_max=0.89 证明信息仍可提取，差距来自估计器/表示/结构（So what：继续投入 CNN/MoE 值得）
@@ -197,6 +198,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | I6 | 误差未利用 | Fisher 用 Σ⁻¹ 加权 | 当前 ML 多数 unweighted | weighted loss 可能是增益点 | 框架审核 |
 | I7 | 化学丰度稳健性 | V3-A Δceiling=1.93% | 化学丰度 nuisance 几乎不影响 ceiling | V2 结论对实际观测稳健 | V3-A |
 | 🆕 I8 | 理论曲线即叙事锚点 | 6个mag点→连续曲线+CI | R²_max(SNR)和σ_min(SNR)定义物理边界 | 用于论文 Ceiling–Gap–Structure 叙事 | Multi-Mag |
+| 🆕 I9 | 5D vs 3D 差异随 SNR 变化 | 高SNR: Δ<2%, 低SNR: Δ=28% | 化学丰度 nuisance 在低 SNR 放大参数纠缠 | 论文必须用 5D ceiling 作为 upper bound | 5D Multi-Mag |
 
 ---
 
@@ -241,6 +243,8 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | Schur decay | **0.6906** | 恒定 | Multi-Mag |
 | Schur decay (V3-A) | **0.5778** | 5D with chemical | V3-A |
 | Δceiling (V3-A vs V2) | **-1.93%** | 化学丰度 nuisance 影响 | V3-A |
+| **5D R²_max (all mag)** | **0.87/0.70/0.26/0** | mag=21.5/22/22.5/23 | 5D Multi-Mag |
+| **Δceiling (5D vs 3D)** | **-0.01% ~ -28%** | 随 SNR 下降而增大 | 5D Multi-Mag |
 | 临界 SNR | **~4** | R²_max>0.5 边界 | Multi-Mag |
 | 信息悬崖 | **SNR<2** | median=0 | Multi-Mag |
 
@@ -268,6 +272,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 📗 Exp V3-A | [`exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md`](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) | 化学丰度 nuisance |
 | 📊 Card | [`card/card_fisher_ceiling_20251224.md`](./card/card_fisher_ceiling_20251224.md) | 知识卡片 |
 | 📗 MVP-FU-1 | [`exp/exp_scaling_fisher_upperbound_curves_20251225.md`](./exp/exp_scaling_fisher_upperbound_curves_20251225.md) | ✅ 理论上限曲线 |
+| 📗 MVP-FU-2 | [`exp/exp_scaling_fisher_5d_multi_mag_20251226.md`](./exp/exp_scaling_fisher_5d_multi_mag_20251226.md) | ✅ 5D Multi-Mag (真正 upper bound) |
 
 ---
 
@@ -285,6 +290,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 2025-12-25 | V3-A 完成：化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | §1 Q5.2, §4 I7, §6.3 |
 | 2025-12-25 | 添加 MVP-FU-1：理论上限曲线，Q6 分支，DG0，I8 | 论文核心图表 Ceiling–Gap–Structure |
 | 2025-12-25 | ✅ **MVP-FU-1 完成**：Fig-FU1 (R²_max vs SNR) + Fig-FU2 (σ_min vs SNR) 产出 | DG0 关闭，Q6 完成 |
+| 2025-12-26 | ✅ **MVP-FU-2 完成**：5D Multi-Mag，高SNR Δ<2%，低SNR Δ=28% | 5D ceiling 是真正 upper bound |
 
 ---
 

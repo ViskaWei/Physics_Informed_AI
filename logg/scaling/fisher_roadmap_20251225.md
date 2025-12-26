@@ -91,6 +91,7 @@ Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 | **MVP-F-MM** | Multi-Magnitude Sweep | 1 | - | ✅ | `SCALING-20251224-fisher-multi-mag` | [Link](./exp/exp_scaling_fisher_multi_mag_20251224.md) |
 | **MVP-F-V3A** | V3-A: 化学丰度 Nuisance | 2 | Gate-3 | ✅ | `SCALING-20251225-fisher-ceiling-03` | [Link](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) |
 | **MVP-FU-1** | **Upper-Bound Curves (R² & σ vs SNR)** | **2.5** | - | ✅ | `SCALING-20251225-fisher-upperbound-curve-01` | [Link](./exp/exp_scaling_fisher_upperbound_curves_20251225.md) |
+| **MVP-FU-2** | **5D Multi-Mag (精确理论上限)** | **2.6** | - | ✅ | `SCALING-20251226-fisher-5d-multimag` | [Link](./exp/exp_scaling_fisher_5d_multi_mag_20251226.md) |
 | **MVP-F-V3B** | V3-B: Redshift/RV Nuisance | 3 | - | ⏳ | - | - |
 | **MVP-F-V3C** | V3-C: Moon/Sky 条件扫描 | 3 | - | ⏳ | - | - |
 | **MVP-F-EFF** | Efficiency 分桶评估 | 4 | Gate-1 | 🔴 | `SCALING-20251225-fisher-efficiency-01` | [Link](./exp/exp_scaling_fisher_efficiency_binned_20251225.md) |
@@ -105,6 +106,7 @@ Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 | V1 | BOSZ 连续采样 | 非规则网格 | 3D (T_eff, logg, [M/H]) | - |
 | V2 | grid_mag215_lowT | 规则网格 (10×9×14) | 3D (T_eff, logg, [M/H]) | noise=1 |
 | Multi-Mag | grid_mag{18,20,215,22,225,23}_lowT | 规则网格 | 3D | mag sweep |
+| **5D Multi-Mag** | grid_mag{18,20,215,22,225,23}_lowT | 规则网格 | **5D** (+C_M, a_M) | **精确理论上限** |
 | V3-A | 规则网格（需含化学丰度轴） | 规则网格 | 5/6D (+C_M, O_M, a_M) | 化学丰度 nuisance |
 | V3-B | 规则网格 | 规则网格 | 4D (+redshift/RV) | redshift/RV nuisance |
 | V3-C | 规则网格 | 规则网格 | 3D | moon_phase/sky_level sweep |
@@ -357,6 +359,7 @@ MVP-F-V1
 | **MVP-F-MM** | ✅ 临界 SNR≈4，信息悬崖 SNR<2，Schur 恒定 | SNR_threshold=4, Schur=0.69 | ✅ §2.1 |
 | **MVP-F-V3A** | ✅ 化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | R²_max=0.8742, Δceiling=1.93% | ✅ §2.1 |
 | **MVP-FU-1** | ✅ **Upper-Bound Curves：R²_max(SNR) + σ_min(SNR) 带 CI** | Fig-FU1 + Fig-FU2 产出 | ✅ §2.1, §0 |
+| **MVP-FU-2** | ✅ 5D ceiling：高 SNR≈3D (Δ<2%)，低 SNR 显著下降 (Δ=28%) | 5D R²_max=0.87@21.5, Δ=-1.93% | ✅ §2.1 |
 | **MVP-F-EFF** | ⏳ 待启动 | ⏳ | ⏳ |
 
 ## 4.4 时间线
@@ -371,6 +374,7 @@ MVP-F-V1
 | 2025-12-25 | MVP-F-EFF 立项 | Efficiency 分桶评估实验框架创建 |
 | 2025-12-25 | **MVP-FU-1 立项** | Upper-Bound Curves 规划 |
 | 2025-12-25 | **MVP-FU-1 ✅ 完成** | R²_max(SNR) + σ_min(SNR) 两张论文级图表产出 |
+| 2025-12-26 | **MVP-FU-2 ✅ 完成** | 5D Multi-Mag：高 SNR Δ<2%, 低 SNR Δ=28% |
 
 ---
 
@@ -385,6 +389,7 @@ MVP-F-V1
 | `SCALING-20251224-fisher-multi-mag` | VIT | fisher | ✅ | MVP-F-MM |
 | `SCALING-20251225-fisher-ceiling-03` | VIT | fisher | ✅ | MVP-F-V3A |
 | `SCALING-20251225-fisher-upperbound-curve-01` | VIT | fisher | ✅ | MVP-FU-1 |
+| `SCALING-20251226-fisher-5d-multimag` | VIT | fisher | ✅ | MVP-FU-2 |
 
 ## 5.2 仓库链接
 
