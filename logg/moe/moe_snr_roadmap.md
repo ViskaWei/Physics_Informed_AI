@@ -56,15 +56,16 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ---
 
-### Gate-2: Oracle SNR Split Headroom
+### Gate-2: Oracle SNR Split Headroom ✅ PASS
 
 | 项   | 内容                                                    |
 | --- | ----------------------------------------------------- |
-| 验证  | “按 SNR 分专家”是否真的有 headroom（oracle 路由）                  |
+| 验证  | "按 SNR 分专家"是否真的有 headroom（oracle 路由）                  |
 | MVP | MVP-1.0                                               |
 | 若A  | Oracle SNR-MoE ΔR² ≥ 0.02（相对单模型/全局）→ 值得做可落地 gate      |
 | 若B  | ΔR² < 0.02 → MoE 不如做 whitening/conditional（跳到 Gate-4） |
-| 状态  | ⏳                                                     |
+| 状态  | ✅ **PASS: ΔR² = +0.05 ≥ 0.02**                        |
+| 结果  | Global R²=0.4629, Oracle R²=0.5129, Bin M 提升最大 +9.6%  |
 
 **SNR bins 建议（来自 Fisher multi-mag）**：
 
@@ -122,7 +123,7 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 | --- | --------------------------------------------------------- | ----- | ------ | -- | --------------------- | -- |
 | 0.1 | error-only 泄露基线                                           | 0     | Gate-1 | ⏳  | `LOGG-ERR-BASE-01`    | -  |
 | 0.2 | error 表示去泄露（template×scale/quantiles）                     | 0     | Gate-1 | ⏳  | `LOGG-ERR-REPR-01`    | -  |
-| 1.0 | Oracle SNR-binned Experts（真 SNR 路由）                       | 1     | Gate-2 | 🔴  | `LOGG-SNR-ORACLE-01`  | `exp/exp_logg_snr_oracle_01_20251226.md`  |
+| 1.0 | Oracle SNR-binned Experts（真 SNR 路由）                       | 1     | Gate-2 | ✅  | `LOGG-SNR-ORACLE-01`  | `exp/exp_logg_snr_oracle_01_20251226.md`  |
 | 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ⏳  | `LOGG-SNR-GATE-01`    | -  |
 | 2.1 | 回归最优 gate（直接学权重）                                          | 2     | Gate-3 | ⏳  | `LOGG-SNR-REGGATE-01` | -  |
 | 3.0 | Whitening/Conditional 对照                                  | 3     | Gate-4 | ⏳  | `LOGG-WHITEN-01`      | -  |
@@ -210,12 +211,20 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ```
 ⏳计划          🔴就绪    🚀运行    ✅完成
-MVP-0.1         
-MVP-0.2         
-                MVP-1.0
+MVP-0.1                                 
+MVP-0.2                                 
+                                        MVP-1.0
 MVP-2.0
 MVP-3.0
 ```
+
+---
+
+## 4.2 核心结论快照
+
+| MVP | 结论 | 关键数字 |
+|-----|------|---------|
+| **1.0** | ✅ SNR 分域有显著 headroom | ΔR²=+0.05, Bin M 最大 +9.6% |
 
 ---
 

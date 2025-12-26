@@ -1,7 +1,9 @@
-# 🤖 Coding Prompt: LOGG-ERR-BASE-01
+# 🤖 实验 Coding Prompt
 
-> **日期:** 2025-12-26 | **来源:** `logg/moe/moe_snr_roadmap.md` MVP-0.1
-> **Exp ID:** `LOGG-ERR-BASE-01` | **Gate:** Gate-1 (Leakage Audit)
+> **Experiment ID:** `LOGG-ERR-BASE-01`  
+> **日期:** 2025-12-26 | **来源:** `logg/moe/moe_snr_roadmap.md` MVP-0.1  
+> **MVP:** MVP-0.1 (Gate-1: Leakage Audit & Error 表示冻结)  
+> **Status:** 🔴 P0
 
 ---
 
@@ -11,146 +13,234 @@
 |------|------|
 | **nohup 后台运行** | 所有训练必须 `nohup ... &`，>5分钟不持续追踪 |
 | **跨仓库用终端** | 写入 Physics_Informed_AI 用 `cat/echo/cp`，禁止 IDE 工具 |
-| **图片必须入报告** | 所有图表必须在报告 §3 中引用，路径 `logg/moe/img/` |
+| **图片必须入报告** | 所有图表必须在报告 §3 中引用，路径 `logg/moe/exp/img/` |
 | **语言** | Header 英文 \| 正文中文 \| 图表文字英文 |
+
+---
+
+## 🚀 仓库路由
+
+| Topic | 仓库 | 前缀 |
+|-------|------|------|
+| **error-leakage** | `~/VIT` | VIT- |
 
 ---
 
 ## 🎯 实验目标
 
-**一句话**: 量化 error vector 预测 logg 的"泄露程度"——如果 error-only 模型 R² 很高，说明 error 携带了天体参数信息，必须先去泄露再用于 MoE gate。
+量化 **error vector 预测 logg 的"泄露程度"**：
+- 核心问题：error vector 是否携带天体参数信息（logg 泄露）？
+- 验收标准：**error-only R² < 0.05** → 通过 Gate-1
+- 若 R² ≥ 0.05 → error 泄露严重，需进入 MVP-0.2 去泄露
 
-**验收标准**:
-- ✅ 若 error-only R² < 0.05 → 通过，可进入 Gate-2 (Oracle SNR headroom)
-- ❌ 若 error-only R² ≥ 0.05 → 需要进一步压缩/去泄露（进入 MVP-0.2）
+**背景**：
+- 用户观察到 error-only 线性回归 R²=0.91（极高泄露）
+- 96% error 像素相似，仅 **40/4096** 不同
+- 这 40 个位置可能对应"随谱型/谱线深度变化的 Poisson 项 / mask / throughput 特征"
 
-**产物**:
-1. error-only 的 R²（train/val/test）
-2. feature importance 分析：哪些像素贡献最大？是否集中在特定 40 个位置？
-3. Sanity checks: Shuffle Test, Mask-only Test
+---
+
+## 🧪 实验设计
+
+### 1. 数据配置
+
+```yaml
+data:
+  source: "BOSZ/PFS simulator"
+  root: "/home/swei20/data/data-20-30-100k"
+  train_file: "train.h5"
+  val_file: "val.h5"
+  test_file: "test.h5"
+  num_samples: 100000  # train
+  num_test_samples: 10000  # val/test
+  feature_dim: 4096
+  target: "log_g"
+
+input:
+  X: error  # ⚠️ 关键：只用 error，不用 flux
+  y: log_g
+```
+
+### 2. 模型配置
+
+```yaml
+models:
+  linear:
+    - type: LinearRegression  # OLS baseline
+    - type: Ridge
+      alpha: [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
+  
+  tree:
+    - type: LightGBM
+      n_estimators: 100
+      max_depth: 6
+      learning_rate: 0.1
+      
+noise_levels: [0.0, 0.5, 1.0]  # 测试不同噪声下的泄露程度
+seed: 42
+```
+
+### 3. Sanity Checks（必做）
+
+| Check | 目的 | 方法 | 判断标准 |
+|-------|------|------|---------|
+| **Shuffle Test** | 检验是否用了波长对齐信息 | 在同一 mag/SNR 组内随机打乱 error 向量 | 性能几乎不变 → 只用整体尺度；大幅下降 → 用了位置细节（泄露） |
+| **Mask-only Test** | 检验 mask 位置是否是泄露源 | 只用 mask 向量（binary: 有效=0, 坏像素=1）做回归 | R² 高 → mask 是泄露源 |
+| **Top-40 Test** | 检验那 40 个异常像素 | 只用 Top-40 高 importance 像素做回归 | R² 高 → 这些像素是泄露核心 |
+
+---
+
+## 📊 要生成的图表
+
+| # | 图表类型 | X轴 | Y轴 | 保存路径 |
+|---|---------|-----|-----|---------|
+| 1 | Bar (对比) | Model | Test R² | `logg_err_base_01_r2_models.png` |
+| 2 | Spectrum | Wavelength (pixel index) | Feature Importance | `logg_err_base_01_importance_spectrum.png` |
+| 3 | Histogram | Importance value | Count | `logg_err_base_01_importance_hist.png` |
+| 4 | Bar (sanity) | Test Type | R² | `logg_err_base_01_sanity_checks.png` |
+
+### 图表要求
+
+- 所有文字 **英文**
+- Spectrum 图需标注 Top-40 像素位置（用红色竖线）
+- 包含 threshold 参考线（R² = 0.05）
+- 必须显示 error-only 与 flux-only 对照
 
 ---
 
 ## 🗂️ 参考代码
 
-| 参考脚本 | 可复用 | 说明 |
-|---------|--------|------|
-| `~/VIT/src/lnreg/core.py` | `load_dataset()`, `add_noise()`, `compute_metrics()` | 数据加载、噪声注入、指标计算 |
-| `~/VIT/src/dataloader/base.py` | `RegSpecDataset` | 数据集类，含 `.flux`, `.error`, `.labels` |
-| `~/VIT/scripts/scaling_oracle_moe_noise1.py` | 数据加载流程 | 参考数据配置 |
-| `~/VIT/models/linear_error_sweep/results.csv` | 已有结果 | 对照（但那是用 error 做 flux 回归，不是本实验） |
+| 参考脚本 | 可复用 | 需修改 |
+|---------|--------|--------|
+| `src/lnreg/core.py` | `load_dataset()`, `add_noise()`, `compute_metrics()`, `get_importance()` | 直接使用 |
+| `src/dataloader/base.py` | `RegSpecDataset` (含 `.flux`, `.error`, `.logg`) | 直接使用 |
+| `scripts/scaling_oracle_moe_noise1.py` | 数据加载流程、可视化框架 | 参考 |
+| `train_lightgbm.py` | LightGBM 训练模板 | 参考 |
 
----
+### 关键复用函数
 
-## 🎯 实验规格
+```python
+# 从 src/lnreg/core.py:
+load_dataset(data_config, stage)   # 加载数据集
+add_noise(X, error, noise_level)   # 添加异方差噪声
+compute_metrics(y_true, y_pred)    # 计算 R², MAE, RMSE
+get_importance(model)              # 提取 |coef_| 或 feature_importances_
 
-```yaml
-experiment_id: "LOGG-ERR-BASE-01"
-repo_path: "~/VIT"
-
-data:
-  source: "BOSZ/PFS simulator"
-  train_path: "/home/swei20/data/data-20-30-100k/train.h5"
-  val_path: "/home/swei20/data/data-20-30-100k/val.h5"  
-  test_path: "/home/swei20/data/data-20-30-100k/test.h5"
-  num_samples: 100000  # train
-  num_test_samples: 10000  # val/test
-  split: "100k/10k/10k"
-  param: "log_g"
-  
-input:
-  X: error  # ⚠️ 关键：只用 error，不用 flux
-  y: log_g
-
-models:
-  - type: LinearRegression  # OLS baseline
-  - type: Ridge
-    alpha: [0.001, 0.01, 0.1, 1.0, 10.0, 100.0]
-  - type: LightGBM
-    n_estimators: 100
-    max_depth: 6
-    learning_rate: 0.1
-
-noise_levels: [0.0, 0.5, 1.0]  # 测试不同噪声下的泄露程度
-
-seed: 42
-
-plots:
-  - type: "r2_bar_chart"
-    desc: "Error-only R² across models"
-    save: "logg_err_base_01_r2_models.png"
-  - type: "feature_importance_spectrum"
-    desc: "Feature importance vs wavelength (identify leaky pixels)"
-    save: "logg_err_base_01_importance_spectrum.png"
-  - type: "importance_histogram"
-    desc: "Importance distribution (check if concentrated)"
-    save: "logg_err_base_01_importance_hist.png"
+# 从 src/dataloader/base.py:
+ds.flux     # 光谱 flux
+ds.error    # 误差向量
+ds.logg     # log_g 标签 (需先调用 load_params)
 ```
 
 ---
 
 ## 📋 执行流程
 
-### Step 0: 环境准备
-```bash
-cd ~/VIT && source init.sh
-mkdir -p logs results/logg_snr_moe
-```
-
 ### Step 1: 创建实验脚本
 
 创建 `~/VIT/scripts/logg_error_leakage_audit.py`：
 
-**核心逻辑**:
 ```python
-# 1. 加载数据（只取 error，不取 flux）
-train_ds = RegSpecDataset.from_config(cfg)
-train_ds.load_data(stage='train')
-train_ds.load_params(stage='train')
+#!/usr/bin/env python
+"""
+LOGG-ERR-BASE-01: Error-Only Leakage Baseline
+量化 error vector 预测 logg 的泄露程度
+"""
+import argparse
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
+import lightgbm as lgb
 
-X_train = train_ds.error.numpy()  # ⚠️ 只用 error
-y_train = train_ds.logg
+# 关键点：
+# 1. 只用 error 作为输入 X（不是 flux）
+# 2. 训练多个模型对比
+# 3. 提取 feature importance 定位泄露像素
+# 4. 做 Shuffle Test 和 Mask-only Test
 
-# 2. 训练多个模型
-models = {
-    'OLS': LinearRegression(),
-    'Ridge_0.001': Ridge(alpha=0.001),
-    'Ridge_0.01': Ridge(alpha=0.01),
-    'Ridge_0.1': Ridge(alpha=0.1),
-    'Ridge_1': Ridge(alpha=1.0),
-    'Ridge_10': Ridge(alpha=10.0),
-    'Ridge_100': Ridge(alpha=100.0),
-}
+def main():
+    # 1. 加载数据
+    from src.dataloader import RegSpecDataset
+    cfg = {
+        'data': {
+            'file_path': '/home/swei20/data/data-20-30-100k/train.h5',
+            'val_path': '/home/swei20/data/data-20-30-100k/val.h5',
+            'test_path': '/home/swei20/data/data-20-30-100k/test.h5',
+            'num_samples': 100000,
+            'num_test_samples': 10000,
+        },
+        'noise': {'noise_level': 0.0},
+        'output_dir': './temp'
+    }
+    
+    train_ds = RegSpecDataset.from_config(cfg)
+    train_ds.load_data(stage='train')
+    train_ds.load_params(stage='train')
+    
+    test_ds = RegSpecDataset.from_config(cfg)
+    test_ds.load_data(stage='test')
+    test_ds.load_params(stage='test')
+    
+    # ⚠️ 关键：只用 error，不用 flux
+    X_train = train_ds.error.numpy()
+    y_train = train_ds.logg
+    X_test = test_ds.error.numpy()
+    y_test = test_ds.logg
+    
+    # 2. 训练模型
+    models = {
+        'OLS': LinearRegression(),
+        'Ridge_0.001': Ridge(alpha=0.001),
+        'Ridge_0.01': Ridge(alpha=0.01),
+        'Ridge_0.1': Ridge(alpha=0.1),
+        'Ridge_1': Ridge(alpha=1.0),
+        'Ridge_10': Ridge(alpha=10.0),
+        'Ridge_100': Ridge(alpha=100.0),
+    }
+    
+    results = []
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        r2 = r2_score(y_test, y_pred)
+        mae = mean_absolute_error(y_test, y_pred)
+        results.append({'model': name, 'r2': r2, 'mae': mae})
+        print(f"{name}: R² = {r2:.4f}, MAE = {mae:.4f}")
+    
+    # 3. LightGBM
+    lgb_model = lgb.LGBMRegressor(n_estimators=100, max_depth=6, learning_rate=0.1)
+    lgb_model.fit(X_train, y_train)
+    y_pred_lgb = lgb_model.predict(X_test)
+    r2_lgb = r2_score(y_test, y_pred_lgb)
+    results.append({'model': 'LightGBM', 'r2': r2_lgb, 'mae': mean_absolute_error(y_test, y_pred_lgb)})
+    
+    # 4. Feature Importance
+    best_ridge = Ridge(alpha=0.001).fit(X_train, y_train)
+    importance = np.abs(best_ridge.coef_)
+    top_40_idx = np.argsort(importance)[-40:]
+    
+    # 5. Sanity Checks
+    # ... Shuffle Test, Mask-only Test, Top-40 Test
+    
+    # 6. 可视化
+    # ... 生成 4 张图表
+    
+    # 7. 保存结果
+    pd.DataFrame(results).to_csv('results/logg_snr_moe/logg_err_base_01_results.csv', index=False)
 
-# 3. 评估并记录 R²
-# 4. 提取 feature importance（|coef_| for linear, feature_importances_ for LightGBM）
-# 5. 可视化：importance vs wavelength，找出高重要性像素
+if __name__ == '__main__':
+    main()
 ```
 
-### Step 2: Sanity Checks
-
-**Shuffle Test** (检验是否用了波长对齐信息):
-```python
-# 在同一 mag/SNR 组内随机打乱 error 向量
-# 如果性能几乎不变 → 模型只用"整体尺度"
-# 如果大幅下降 → 模型用了"波长对齐细节"（泄露风险高）
-```
-
-**Mask-only Test** (检验 mask 位置是否是泄露源):
-```python
-# 创建 binary mask：有效像素=0，mask 像素=1
-# 用 mask 向量做回归
-# 如果 R² 很高 → mask 位置是泄露源
-```
-
-### Step 3: 运行实验
+### Step 2: 启动训练
 
 ```bash
-cd ~/VIT
-nohup python scripts/logg_error_leakage_audit.py \
-    --exp-id LOGG-ERR-BASE-01 \
-    --output-dir results/logg_snr_moe \
-    > logs/LOGG-ERR-BASE-01.log 2>&1 &
+cd ~/VIT && source init.sh
+mkdir -p logs results/logg_snr_moe
+nohup python scripts/logg_error_leakage_audit.py > logs/LOGG-ERR-BASE-01.log 2>&1 &
 echo $! > logs/LOGG-ERR-BASE-01.pid
 ```
 
@@ -161,48 +251,54 @@ echo $! > logs/LOGG-ERR-BASE-01.pid
 ⏱️ 预计 ~5min，完成后告诉我继续
 ```
 
-### Step 4: 生成图表
+### Step 3: 生成图表
 
+图表保存到：
 ```bash
-# 图表会在脚本中直接生成
-# 保存到: ~/VIT/results/logg_snr_moe/
+IMG_DIR="/home/swei20/Physics_Informed_AI/logg/moe/exp/img"
+cp ~/VIT/results/logg_snr_moe/*.png "$IMG_DIR/"
 ```
 
-### Step 5: 写报告
+### Step 4: 写报告
+
+📄 **模板**: `_backend/template/exp.md`
 
 ```bash
-KNOWLEDGE_CENTER="/home/swei20/Physics_Informed_AI"
-cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/moe/exp/exp_logg_err_base_01_20251226.md"
-# 📗 LOGG-ERR-BASE-01: Error-Only Leakage Baseline
+cat << 'EOF' > "/home/swei20/Physics_Informed_AI/logg/moe/exp/exp_logg_err_base_01_20251226.md"
+# 🧪 Experiment: Error-Only Leakage Baseline
 
-> **MVP:** 0.1 | **Gate:** Gate-1 (Leakage Audit)
-> **Author:** Viska Wei | **Date:** 2025-12-26 | **Status:** ✅/❌
+**Experiment ID:** `LOGG-ERR-BASE-01`
+**Date:** 2025-12-26
+**Status:** ✅/❌
+**MVP:** MVP-0.1 (Gate-1)
 
 ---
 
 ## 🔗 上游追溯
 
-| 类型 | 链接 |
+| Type | Link |
 |------|------|
-| Hub | `moe_snr_hub.md` §DG1 |
-| Roadmap | `moe_snr_roadmap.md` MVP-0.1 |
-| Session | - |
+| Hub | `logg/moe/moe_snr_hub.md` §DG1 |
+| Roadmap | `logg/moe/moe_snr_roadmap.md` MVP-0.1 |
+| 验证假设 | Q2.1: error-only R² 能否压到 < 0.05？ |
 
 ---
 
 ## ⚡ 核心结论速览
 
-**一句话**: [TODO: error-only R² = ?，泄露程度 = ?]
+> **一句话总结**: [TODO: error-only R² = ?, 泄露程度 = ?]
 
-**假设验证**:
-- [ ] H1: error vector 预测 logg 的 R² < 0.05 → [结果]
+| 假设 | 预期 | 实际 | 验证 |
+|------|------|------|------|
+| H1: error-only R² < 0.05 | < 0.05 | [TODO] | ✅/❌ |
 
-**关键数字**:
-| 指标 | 值 |
-|------|---|
-| error-only R² (Ridge best) | TODO |
-| error-only R² (LightGBM) | TODO |
-| Top-40 像素贡献占比 | TODO |
+| 关键数字 | 值 |
+|---------|-----|
+| error-only R² (Ridge best) | [TODO] |
+| error-only R² (LightGBM) | [TODO] |
+| Top-40 像素贡献占比 | [TODO] |
+| Shuffle Test ΔR² | [TODO] |
+| Mask-only R² | [TODO] |
 
 ---
 
@@ -218,34 +314,44 @@ cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/moe/exp/exp_logg_err_base_01_20251226.md"
 
 ### 2.1 数据
 - 训练集: 100k，验证集: 10k，测试集: 10k
-- 输入: error vector（4096 维）
+- 输入: **error vector（4096 维）** ← 不是 flux
 - 输出: log_g
 
 ### 2.2 模型
 - LinearRegression (OLS)
 - Ridge (alpha = 0.001, 0.01, 0.1, 1.0, 10.0, 100.0)
-- LightGBM
+- LightGBM (n_estimators=100, max_depth=6)
 
 ### 2.3 Sanity Checks
-- Shuffle Test: 打乱波长对齐，检验是否依赖位置信息
-- Mask-only Test: 只用 mask 位置，检验是否是泄露源
+| Test | 目的 | 结果 |
+|------|------|------|
+| Shuffle Test | 检验波长对齐依赖 | [TODO] |
+| Mask-only Test | 检验 mask 是否是泄露源 | [TODO] |
+| Top-40 Test | 检验 40 个像素是否核心泄露 | [TODO] |
 
 ---
 
 ## 📊 实验图表
 
-### Fig 1: Error-Only R² Across Models
+### Figure 1: Error-Only R² Across Models
 ![r2_models](img/logg_err_base_01_r2_models.png)
 **描述**: [TODO]
 **关键观察**: [TODO]
 
-### Fig 2: Feature Importance Spectrum
+### Figure 2: Feature Importance Spectrum
 ![importance](img/logg_err_base_01_importance_spectrum.png)
-**描述**: [TODO]
-**关键观察**: 高重要性像素是否集中在特定 40 个位置？
+**描述**: 高重要性像素是否集中在特定位置？
+**关键观察**: [TODO: 标注 Top-40 像素位置]
 
-### Fig 3: Sanity Check Results
-[TODO: Shuffle Test, Mask-only Test 结果]
+### Figure 3: Importance Histogram
+![hist](img/logg_err_base_01_importance_hist.png)
+**描述**: 重要性分布是否集中？
+**关键观察**: [TODO]
+
+### Figure 4: Sanity Check Results
+![sanity](img/logg_err_base_01_sanity_checks.png)
+**描述**: Shuffle Test, Mask-only Test, Top-40 Test 对比
+**关键观察**: [TODO]
 
 ---
 
@@ -253,7 +359,8 @@ cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/moe/exp/exp_logg_err_base_01_20251226.md"
 
 | # | 洞见 | 证据 | 决策影响 |
 |---|------|------|----------|
-| 1 | [TODO] | [TODO] | [TODO] |
+| I1 | [TODO] | [TODO] | [TODO] |
+| I2 | [TODO] | [TODO] | [TODO] |
 
 ---
 
@@ -263,11 +370,17 @@ cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/moe/exp/exp_logg_err_base_01_20251226.md"
 [TODO]
 
 ### 5.2 Gate-1 判定
-- [ ] 通过 (R² < 0.05) → 进入 Gate-2
+- [ ] 通过 (R² < 0.05) → 进入 Gate-2 (Oracle SNR headroom)
 - [ ] 未通过 (R² ≥ 0.05) → 进入 MVP-0.2 (去泄露)
 
 ### 5.3 设计启示
 [TODO]
+
+### 5.4 关键数字速查
+| 指标 | 值 | 意义 |
+|------|-----|------|
+| error-only R² | [TODO] | 泄露程度 |
+| Top-40 占比 | [TODO] | 泄露是否集中 |
 
 ---
 
@@ -279,18 +392,29 @@ cat << 'EOF' > "$KNOWLEDGE_CENTER/logg/moe/exp/exp_logg_err_base_01_20251226.md"
 |-------|----------|--------|---------|-----|------|
 | OLS | | | | | |
 | Ridge_0.001 | | | | | |
-| ... | | | | | |
+| Ridge_0.01 | | | | | |
+| Ridge_0.1 | | | | | |
+| Ridge_1 | | | | | |
+| Ridge_10 | | | | | |
+| Ridge_100 | | | | | |
+| LightGBM | | | | | |
 
 ### 6.2 Sanity Check 详细结果
 
 **Shuffle Test**:
-- 原始 R²: 
-- 打乱后 R²: 
-- 结论: 
+- 原始 R²: [TODO]
+- 打乱后 R²: [TODO]
+- ΔR²: [TODO]
+- 结论: [TODO]
 
 **Mask-only Test**:
-- Mask-only R²: 
-- 结论: 
+- Mask-only R²: [TODO]
+- 结论: [TODO]
+
+**Top-40 Test**:
+- Top-40 only R²: [TODO]
+- 占全部 R² 比例: [TODO]
+- 结论: [TODO]
 
 EOF
 ```
@@ -299,12 +423,12 @@ EOF
 
 ## ✅ 检查清单
 
-- [ ] 脚本创建并运行成功
-- [ ] 训练完成，结果保存
-- [ ] 图表生成（英文标签）+ 已在报告 §3 引用
-- [ ] 报告撰写完成（中文）
-- [ ] 同步结果到 hub.md §DG1
-- [ ] 同步结果到 roadmap.md MVP-0.1 状态
+- [ ] 脚本创建完成 (`scripts/logg_error_leakage_audit.py`)
+- [ ] 训练完成
+- [ ] 4 张图表生成 + 保存到 `logg/moe/exp/img/`
+- [ ] 报告写入 `logg/moe/exp/exp_logg_err_base_01_20251226.md`
+- [ ] 同步关键数字到 `moe_snr_roadmap.md` MVP-0.1 状态
+- [ ] 同步假设验证到 `moe_snr_hub.md` §DG1
 
 ---
 
@@ -315,15 +439,31 @@ EOF
 | 数据路径错误 | 检查 `/home/swei20/data/data-20-30-100k/` 是否存在 |
 | LightGBM 安装问题 | `pip install lightgbm` |
 | 内存不足 | 减少 num_samples |
+| logg 属性不存在 | 确保调用 `load_params()` 后再访问 `ds.logg` |
 
 ---
 
-## 📌 后续步骤
+## 📐 Decision Gate
 
-根据本实验结果决定：
-- **若 R² < 0.05**: 直接进入 MVP-1.0 (Oracle SNR-binned Experts)
-- **若 R² ≥ 0.05**: 进入 MVP-0.2 (error 表示去泄露)
-  - 策略 S1: 同口径归一化
-  - 策略 S2: template×scale
-  - 策略 S3: 无对齐统计
+**Gate-1 验收标准**：
 
+| 结果 | 判定 | 下一步 |
+|------|------|--------|
+| R² < 0.05 | ✅ 通过 | 继续 MVP-1.0 (Oracle SNR-binned Experts) |
+| R² ≥ 0.05 | ❌ 不通过 | 进入 MVP-0.2 (error 表示去泄露) |
+
+**去泄露策略（若不通过）**：
+- S1: 同口径归一化（error 与 flux 同 scale）
+- S2: template×scale（只保留标量 s）
+- S3: 无对齐统计（sorted quantiles / histogram）
+- S4: 残差仅做异常检测
+
+---
+
+## 📚 相关实验
+
+| Experiment ID | 关系 |
+|---------------|------|
+| `LOGG-ERR-REPR-01` | MVP-0.2: error 表示去泄露 |
+| `LOGG-SNR-ORACLE-01` | MVP-1.0: Oracle SNR-binned Experts |
+| `models/linear_error_sweep/results.csv` | 已有 error 回归结果（对照） |
