@@ -322,3 +322,14 @@
   - 详见: \`logg/scaling/exp/exp_scaling_fisher_ceiling_v2_20251224.md\`
 
 - [x] SCALING-20251224-nn-baseline-framework-01: MLP=0.47, CNN=0.43, vs Oracle gap=0.15~0.19
+
+## ✅ Done (2025-12-25)
+
+- [x] **SCALING-20251225-fisher-ceiling-03**: Fisher/CRLB V3-A (Chemical Abundance Nuisance) ✅
+  - V3-A 扩展参数空间至 5D（加入 C_M, a_M 作为 nuisance）
+  - R²_max (median) = **0.8742** (仅比 V2 的 0.8914 下降 1.93%)
+  - Schur decay = **0.5778** (比 V2 的 0.6906 更低，说明化学丰度 nuisance 带来额外退化)
+  - ✅ **Gate-3 通过验证**：Δceiling = 1.93% < 10% → V2 结论高度稳健
+  - **决策影响**: V2 的 R²_max=0.89 可直接用于指导模型部署，无需考虑化学丰度 nuisance
+  - 详见: `logg/scaling/exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md`
+

@@ -106,6 +106,7 @@
 | MVP-3.2                         | Feature Analysis                 | 3     | ⏳      | -                                       | -                                                          |
 | **MVP-16T (V1)**                | **❌ Fisher/CRLB (失败-非网格数据)**     | 16    | ❌      | `SCALING-20251223-fisher-ceiling-01`    | [Link](./exp/exp_scaling_fisher_ceiling_20251223.md)       |
 | **MVP-16T (V2)** ✅             | **✅ Fisher/CRLB (规则网格数据)**        | 16    | ✅     | `SCALING-20251224-fisher-ceiling-02`    | [Link](./exp/exp_scaling_fisher_ceiling_v2_20251224.md)    |
+| **MVP-16T (V3-A)** 🆕           | **🟡 Fisher/CRLB + 化学丰度 Nuisance** | 16    | ⏳      | `SCALING-20251225-fisher-ceiling-03`    | [Link](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) |
 | **MVP-16B**                     | **🔴 Baseline 统计可信度 (P0)**       | 16    | 🔴     | `SCALING-20251223-baseline-stats-01`    | [Link](./exp/exp_scaling_baseline_stats_20251223.md)       |
 | **MVP-16L**                     | **🟡 LMMSE 线性上限 (P1)**           | 16    | ⏳      | `SCALING-20251223-lmmse-ceiling-01`     | -                                                          |
 | **MVP-16W**                     | **🟡 Whitening 表示 (P1)**         | 16    | ⏳      | `SCALING-20251223-whitening-noise1-01`  | -                                                          |
@@ -479,6 +480,44 @@ $$R^2_{\max} \lesssim 1 - \frac{\mathbb{E}[\mathrm{CRLB}_{\log g}]}{\mathrm{Var}
 - Fisher/CRLB：统计学经典推导
 - van Trees 不等式（Bayesian CRLB）
 - 天文应用：Gaia XP 光谱参数估计工作
+
+---
+
+### MVP-16T-V3A: Fisher/CRLB + 化学丰度 Nuisance（🟡 P1 - 2025-12-25 新增）
+
+> **核心问题**：Fisher 上限到底是在给"哪种世界"算上限？固定哪些 nuisance、未知哪些 nuisance，会直接决定上限是"乐观的 conditional ceiling"还是"更真实的 marginal ceiling"。
+> 
+> **V2 状态**：固定了 (C_M=0, a_M=0)，只对 (T_eff, logg, [M/H]) 做边缘化 → **conditional ceiling**
+> 
+> **V3-A 目标**：将化学丰度参数 (C_M, O_M, a_M) 作为 nuisance 加入 Fisher 计算，评估 V2 ceiling (R²_max=0.89) 是否因忽略化学丰度变化而过于乐观
+
+| Item | Config |
+|------|--------|
+| **Objective** | 评估 V2 ceiling 是否因忽略化学丰度变化而过于乐观，回答审稿人质疑 |
+| **Hypothesis** | H-16T-V3A.1: 加入化学丰度后 ceiling 下降 < 10% (即 R²_max ≥ 0.80) |
+| **Hypothesis** | H-16T-V3A.2: 新 Schur decay 数值稳定（CRLB range < 3 数量级） |
+| **Data** | 规则网格数据，需包含 (C_M, O_M, a_M) 轴（固定间隔） |
+| **Grid** | 参数从 3 维扩展到 5/6 维：$(T_{\rm eff}, \log g, [M/H], C_M, a_M, O_M)$ |
+| **Method** | 沿网格轴有限差分 → Fisher → Schur complement → CRLB（与 V2 一致） |
+| **计算范围** | 2-3 个关键 mag（21.5, 22.0, 22.5） |
+
+**关键输出**：
+- R²_max (V3-A, median + 分位数)
+- Schur decay (V3-A)
+- **Δceiling = V3-A vs V2 的下降幅度**
+
+**决策规则**：
+- 如果 Δceiling < 10% (R²_max ≥ 0.80) → V2 结论稳健，继续投模型
+- 如果 Δceiling 10-20% (R²_max 0.70-0.80) → 需重新评估，可能已接近真实上限
+- 如果 Δceiling > 20% (R²_max < 0.70) → MoE=0.62 可能已接近"真实上限"，论文方向需调整
+
+**论文影响**：
+- 若新 ceiling 仍高：主张"算法还有大量可挖掘信息"
+- 若新 ceiling 明显下降：主张"已接近物理极限，改进需靠先验/观测策略/任务定义"
+
+**参考**：
+- V2 报告：`exp_scaling_fisher_ceiling_v2_20251224.md`
+- Fisher Hub：`fisher_hub_20251225.md` § Q5
 
 ---
 
