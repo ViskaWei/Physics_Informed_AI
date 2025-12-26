@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/moe/moe_snr_roadmap.md",
+                "file": "data/bosz50k/z0/mag205_225_lowT_1M.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "moe_snr_roadmap"
+              "title": "mag205_225_lowT_1M"
             }
           }
         ],
@@ -274,8 +274,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "95b094f5d53bc452",
+  "active": "3a028c204be029e1",
   "lastOpenFiles": [
+    "logg/moe/moe_snr_roadmap.md",
     "logg/scaling/exp/exp_whitening_design_principles_20251226.md",
     "logg/scaling/card/card_whitening_design_principles_20251226.md",
     "logg/moe/img/logg_err_base_01_sanity_checks.png",
@@ -290,7 +291,6 @@
     "logg/moe/exp/exp_logg_snr_oracle_01_20251226.md",
     "logg/moe/exp/exp_logg_err_base_01_20251226.md",
     "conflict-files-obsidian-git.md",
-    "logg/moe/moe_snr_roadmap.md",
     "logg/scaling/exp/img/fisher_5d_vs_3d_schur.png",
     "logg/scaling/exp/img/fisher_5d_vs_3d_comparison.png",
     "logg/scaling/exp/exp_scaling_fisher_5d_multi_mag_20251226.md",
