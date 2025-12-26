@@ -68,7 +68,7 @@ Examples:
 
 #### 🧠 智库导航（Hub）
 
-**⚠️ 模板文件**: `_backend/template/root_hub.md`（必须使用此模板！）
+**⚠️ 模板文件**: `_backend/template/hub.md`（必须使用此模板！）
 
 **适用场景**：
 - 管理研究问题的层级结构（问题树）
@@ -301,6 +301,60 @@ This project focuses on:
 - Concise and quantitative
 - Use ❌/✅ for hypothesis verification
 - Include physical explanations where applicable
+
+---
+
+## 🚀 程序运行规则（重要！）
+
+### 所有程序必须用 nohup 后台运行
+
+```bash
+# ✅ 正确方式：使用 nohup
+cd [repo]
+nohup python script.py > logs/exp_id.log 2>&1 &
+echo $! > logs/exp_id.pid  # 记录 PID
+
+# ❌ 禁止：直接前台运行长时间任务
+python script.py  # 不要这样做
+```
+
+### 超过 20 分钟的任务不持续追踪
+
+**规则**：
+1. 启动任务后，立即输出 tail 命令给用户
+2. **不要等待任务完成**，结束当前对话轮次
+3. 用户通知任务完成后，再继续后续步骤
+
+**标准输出格式**：
+```
+✅ 任务已启动 (PID: xxx)
+📋 查看日志: tail -f [full_path]/logs/[exp_id].log
+📋 查看最后100行: tail -n 100 [full_path]/logs/[exp_id].log
+⏱️ 预计运行时间: [估计时间]
+💡 任务完成后请告诉我，我继续后续步骤（生成图表、写报告等）
+```
+
+**示例**：
+```
+用户: 跑一个 ridge 实验
+
+AI: 🚀 启动实验...
+    
+    cd ~/VIT
+    nohup python scripts/ridge_experiment.py --noise 0.1 > logs/ridge_exp.log 2>&1 &
+    
+    ✅ 任务已启动 (PID: 12345)
+    📋 查看日志: tail -f ~/VIT/logs/ridge_exp.log
+    ⏱️ 预计运行时间: ~30分钟
+    💡 完成后请告诉我，我继续生成图表和报告
+```
+
+### 快速任务（<5分钟）
+
+对于明确快速的任务（如生成图表、数据预处理），可以正常追踪：
+```bash
+python plot.py --input results.csv --output fig.png  # 几秒完成，可以追踪
+```
 
 ---
 
