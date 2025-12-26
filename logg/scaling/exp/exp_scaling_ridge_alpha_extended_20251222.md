@@ -87,7 +87,7 @@ feature_dim: 4096
 ## §3 图表分析
 
 ### 图 1: R² vs Alpha (Log-X Scale)
-![Ridge Alpha Extended](img/scaling_ridge_alpha_extended.png)
+![Ridge Alpha Extended](../img/scaling_ridge_alpha_extended.png)
 
 **观察：**
 - 两条曲线都呈现明显的**倒 U 型**
@@ -96,7 +96,7 @@ feature_dim: 4096
 - 更大的数据量需要更大的最优 α
 
 ### 图 2: Optimal Alpha vs Data Size
-![Optimal Alpha](img/scaling_ridge_optimal_alpha.png)
+![Optimal Alpha](../img/scaling_ridge_optimal_alpha.png)
 
 **观察：**
 - 最优 α 随数据量增加而增加（约 3x）

@@ -333,3 +333,8 @@
   - **决策影响**: V2 的 R²_max=0.89 可直接用于指导模型部署，无需考虑化学丰度 nuisance
   - 详见: `logg/scaling/exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md`
 
+
+- [x] **SCALING-20251225-fisher-upperbound-curve-01**: R²_max & σ_min vs SNR 理论上限曲线产出 ✅
+  - Fig-FU1: R²_max vs SNR (median + [p10,p90] band)
+  - Fig-FU2: σ_min vs SNR (median + [p10,p90] band)
+  - 详见: `logg/scaling/exp/exp_scaling_fisher_upperbound_curves_20251225.md`

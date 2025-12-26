@@ -169,7 +169,7 @@ $$\text{efficiency} = \frac{R^2_{\text{model}}}{R^2_{\max}}$$
 > ⚠️ 图表文字必须全英文！
 
 ### Fig 1: Efficiency Heatmap (Model × Magnitude)
-![](./img/fisher_efficiency_heatmap_mag.png)
+![](../img/fisher_efficiency_heatmap_mag.png)
 
 **预期观察**:
 - 高 SNR 区域 (mag≤20): efficiency 可能接近 1.0（模型接近理论上限）
@@ -178,7 +178,7 @@ $$\text{efficiency} = \frac{R^2_{\text{model}}}{R^2_{\max}}$$
 - **关键**: 识别高 SNR 区 efficiency < 80% 的区域，决定是否继续投模型
 
 ### Fig 2: Efficiency vs SNR
-![](./img/fisher_efficiency_vs_snr.png)
+![](../img/fisher_efficiency_vs_snr.png)
 
 **预期观察**:
 - SNR > 20: efficiency 接近 1.0
@@ -188,7 +188,7 @@ $$\text{efficiency} = \frac{R^2_{\text{model}}}{R^2_{\max}}$$
 - **验证**: SNR≈4 是否为 efficiency 的临界点
 
 ### Fig 3: Headroom by Model and Magnitude
-![](./img/fisher_headroom_by_model_mag.png)
+![](../img/fisher_headroom_by_model_mag.png)
 
 **预期观察**:
 - Headroom = 1 - efficiency = (R²_max - R²_model) / R²_max
@@ -198,7 +198,7 @@ $$\text{efficiency} = \frac{R^2_{\text{model}}}{R^2_{\max}}$$
 - **量化**: 各模型在不同 mag 的剩余 headroom，指导资源分配
 
 ### Fig 4: Efficiency Distribution by Bucket
-![](./img/fisher_efficiency_distribution.png)
+![](../img/fisher_efficiency_distribution.png)
 
 **预期观察**:
 - 展示每个 magnitude 桶内 efficiency 的分布（箱线图或 violin plot）

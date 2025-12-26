@@ -161,7 +161,7 @@ def detect_chemical_parameters(df):
 
 ### 图 1: V3-A vs V2 R²_max 对比
 
-![R²_max Comparison](img/fisher_v3_chemical_r2max_vs_v2.png)
+![R²_max Comparison](../img/fisher_v3_chemical_r2max_vs_v2.png)
 
 **观察**：
 - V3-A (红色) 与 V2 (蓝色) 曲线几乎重叠
@@ -170,7 +170,7 @@ def detect_chemical_parameters(df):
 
 ### 图 2: Δceiling 下降幅度
 
-![Delta Ceiling](img/fisher_v3_chemical_delta_ceiling.png)
+![Delta Ceiling](../img/fisher_v3_chemical_delta_ceiling.png)
 
 **观察**：
 - mag=21.5 处，Δceiling = **1.93%**
@@ -179,7 +179,7 @@ def detect_chemical_parameters(df):
 
 ### 图 3: Schur Decay 对比
 
-![Schur Comparison](img/fisher_v3_chemical_schur_comparison.png)
+![Schur Comparison](../img/fisher_v3_chemical_schur_comparison.png)
 
 **观察**：
 - V3-A (0.5778) < V2 (0.6906)，说明化学丰度 nuisance 带来额外退化
@@ -187,7 +187,7 @@ def detect_chemical_parameters(df):
 
 ### 图 4: CRLB 分布对比
 
-![CRLB Distribution](img/fisher_v3_chemical_crlb_dist.png)
+![CRLB Distribution](../img/fisher_v3_chemical_crlb_dist.png)
 
 **观察**：
 - V2 和 V3-A 的 CRLB 分布形状相似
@@ -196,7 +196,7 @@ def detect_chemical_parameters(df):
 
 ### 图 5: 检测到的化学丰度参数
 
-![Parameters Detected](img/fisher_v3_chemical_params_detected.png)
+![Parameters Detected](../img/fisher_v3_chemical_params_detected.png)
 
 **信息**：
 - 检测到 2 个化学丰度参数：C_M, a_M

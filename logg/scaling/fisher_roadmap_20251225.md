@@ -73,7 +73,7 @@ Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 
 | 优先级 | MVP | Gate | 状态 |
 |--------|-----|------|------|
-| 🔴 **P0** | 🆕 **MVP-FU-1: Upper-Bound Curves** | - | 🔆 进行中 |
+| ✅ | **MVP-FU-1: Upper-Bound Curves** | - | ✅ 完成 |
 | ✅ | MVP-F-V3A | Gate-3 | ✅ 完成 (Δceiling=1.93%) |
 | 🟡 P1 | MVP-F-EFF | Gate-1 | ⏳ 待启动 |
 | 🟡 P1 | MVP-F-WGT | Gate-2 | ⏳ 待启动 |
@@ -90,7 +90,7 @@ Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 | **MVP-F-V2** | Fisher/CRLB V2 (规则网格) | 1 | - | ✅ | `SCALING-20251224-fisher-ceiling-02` | [Link](./exp/exp_scaling_fisher_ceiling_v2_20251224.md) |
 | **MVP-F-MM** | Multi-Magnitude Sweep | 1 | - | ✅ | `SCALING-20251224-fisher-multi-mag` | [Link](./exp/exp_scaling_fisher_multi_mag_20251224.md) |
 | **MVP-F-V3A** | V3-A: 化学丰度 Nuisance | 2 | Gate-3 | ✅ | `SCALING-20251225-fisher-ceiling-03` | [Link](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) |
-| 🆕 **MVP-FU-1** | **Upper-Bound Curves (R² & σ vs SNR)** | **2.5** | - | 🔆 | `SCALING-20251225-fisher-upperbound-curve-01` | 待创建 |
+| **MVP-FU-1** | **Upper-Bound Curves (R² & σ vs SNR)** | **2.5** | - | ✅ | `SCALING-20251225-fisher-upperbound-curve-01` | [Link](./exp/exp_scaling_fisher_upperbound_curves_20251225.md) |
 | **MVP-F-V3B** | V3-B: Redshift/RV Nuisance | 3 | - | ⏳ | - | - |
 | **MVP-F-V3C** | V3-C: Moon/Sky 条件扫描 | 3 | - | ⏳ | - | - |
 | **MVP-F-EFF** | Efficiency 分桶评估 | 4 | Gate-1 | 🔴 | `SCALING-20251225-fisher-efficiency-01` | [Link](./exp/exp_scaling_fisher_efficiency_binned_20251225.md) |
@@ -172,7 +172,7 @@ Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 
 ## Phase 2.5: 🆕 Upper-Bound Curves（论文核心图表）
 
-### MVP-FU-1: Fisher Upper-Bound Curves (R² & σ vs SNR)（🔆 进行中）
+### MVP-FU-1: Fisher Upper-Bound Curves (R² & σ vs SNR)（✅ 完成）
 
 | 项 | 配置 |
 |----|------|
@@ -332,9 +332,10 @@ $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \qu
 
 ```
 ⏳计划          🔴就绪          🔆进行中          ✅完成
-MVP-F-V3B       MVP-F-EFF       MVP-FU-1          MVP-F-V2
+MVP-F-V3B       MVP-F-EFF                         MVP-F-V2
 MVP-F-V3C       MVP-F-WGT                         MVP-F-MM
                                                   MVP-F-V3A
+                                                  MVP-FU-1
                                                 
 ❌取消
 MVP-F-V1
@@ -355,7 +356,7 @@ MVP-F-V1
 | **MVP-F-V2** | ✅ 理论上限 R²_max=0.89，headroom +32% vs LightGBM | R²_max=0.8914, Schur=0.6906 | ✅ §2.1 |
 | **MVP-F-MM** | ✅ 临界 SNR≈4，信息悬崖 SNR<2，Schur 恒定 | SNR_threshold=4, Schur=0.69 | ✅ §2.1 |
 | **MVP-F-V3A** | ✅ 化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | R²_max=0.8742, Δceiling=1.93% | ✅ §2.1 |
-| 🆕 **MVP-FU-1** | 🔆 **Upper-Bound Curves：R²_max(SNR) + σ_min(SNR) 带 CI** | ⏳ 待产出 | ⏳ |
+| **MVP-FU-1** | ✅ **Upper-Bound Curves：R²_max(SNR) + σ_min(SNR) 带 CI** | Fig-FU1 + Fig-FU2 产出 | ✅ §2.1, §0 |
 | **MVP-F-EFF** | ⏳ 待启动 | ⏳ | ⏳ |
 
 ## 4.4 时间线
@@ -368,7 +369,8 @@ MVP-F-V1
 | 2025-12-25 | MVP-F-V3A 立项 | 化学丰度 nuisance 实验框架创建 |
 | 2025-12-25 | MVP-F-V3A 完成 | Δceiling=1.93%, Gate-3 通过验证 |
 | 2025-12-25 | MVP-F-EFF 立项 | Efficiency 分桶评估实验框架创建 |
-| 2025-12-25 | 🆕 **MVP-FU-1 立项** | **Upper-Bound Curves：R²_max(SNR) + σ_min(SNR) 带 CI** |
+| 2025-12-25 | **MVP-FU-1 立项** | Upper-Bound Curves 规划 |
+| 2025-12-25 | **MVP-FU-1 ✅ 完成** | R²_max(SNR) + σ_min(SNR) 两张论文级图表产出 |
 
 ---
 
@@ -382,7 +384,7 @@ MVP-F-V1
 | `SCALING-20251224-fisher-ceiling-02` | VIT | fisher | ✅ | MVP-F-V2 |
 | `SCALING-20251224-fisher-multi-mag` | VIT | fisher | ✅ | MVP-F-MM |
 | `SCALING-20251225-fisher-ceiling-03` | VIT | fisher | ✅ | MVP-F-V3A |
-| 🆕 `SCALING-20251225-fisher-upperbound-curve-01` | VIT | fisher | 🔆 | MVP-FU-1 |
+| `SCALING-20251225-fisher-upperbound-curve-01` | VIT | fisher | ✅ | MVP-FU-1 |
 
 ## 5.2 仓库链接
 

@@ -43,14 +43,46 @@ EOF
 执行流程
 ═══════════════════════════════════════
 
+⚠️ **长时间任务提醒**：
+- 预计运行时间 >30分钟 → 必须使用 `screen` 或 `tmux` 后台运行
+- 使用 `tail -f logs/[exp_id].log` 按需查看日志，不要持续监控
+- 任务完成后用户会通知，再继续后续步骤（避免消耗大量token）
+
 【Step 1】启动训练
+
+⚠️ **长时间任务（>30分钟）必须使用 screen/tmux，不要持续监控！**
+
 ```bash
+# 方式1: 使用 screen（推荐）
 cd [repo]
 source init.sh
-python .../driver.py --cmd "[训练命令]" --exp-id [exp_id]
+screen -S [exp_id]  # 创建新session
+python .../driver.py --cmd "[训练命令]" --exp-id [exp_id] 2>&1 | tee logs/[exp_id].log
+# 按 Ctrl+A 然后 D 退出（detach），任务继续运行
+
+# 方式2: 使用 tmux
+cd [repo]
+source init.sh
+tmux new -s [exp_id]  # 创建新session
+python .../driver.py --cmd "[训练命令]" --exp-id [exp_id] 2>&1 | tee logs/[exp_id].log
+# 按 Ctrl+B 然后 D 退出（detach），任务继续运行
+
+# 查看日志（不持续监控，按需查看）
+tail -f logs/[exp_id].log  # 实时查看最后几行
+# 或查看最后100行
+tail -n 100 logs/[exp_id].log
+
+# 重新连接session
+screen -r [exp_id]  # screen
 # 或
-python .../driver.py --config xxx.yaml --exp-id [exp_id]
+tmux attach -t [exp_id]  # tmux
 ```
+
+**重要**：
+- ✅ 使用 `tee` 将输出同时保存到日志文件
+- ✅ 使用 screen/tmux 后台运行，避免SSH断开导致任务中断
+- ✅ 用 `tail -f` 按需查看日志，不要持续监控（会消耗大量token）
+- ✅ 任务完成后用户会通知，再继续后续步骤
 
 健康检查失败？根据修复建议调整后重试。
 

@@ -17,7 +17,7 @@
 - **理论上限曲线是论文叙事核心**：R²_max(SNR) 和 σ_min(SNR) 两条曲线定义物理边界（So what：产出带 CI 的 upper bound 图用于 Ceiling–Gap–Structure）
 
 **下一步最有价值（≤2条）**
-- 🔴 **P0**：产出 **R²_max vs SNR** 和 **σ_min vs SNR** 两张理论上限曲线图（带 [p10,p90] 分位带）→ 作为 Ceiling–Gap–Structure 叙事的 upper bound 标尺
+- ✅ **完成**：**R²_max vs SNR** 和 **σ_min vs SNR** 两张理论上限曲线图（带 [p10,p90] 分位带）已产出 → Ceiling–Gap–Structure 叙事的 upper bound 标尺就绪
 - 🟡 **P1**：按 mag/SNR 分桶评估所有模型 → If efficiency<80%@高SNR then 继续投模型 else 转结构化
 
 > **权威数字**：Ceiling=0.89；LightGBM=0.57；Gap=+32%；条件=noise=1, mag=21.5, R²  
@@ -34,11 +34,9 @@
 
 ## 📊 核心图表
 
-### 🆕 Fig 0: 理论上限曲线（Ceiling–Gap–Structure 核心叙事）
+### ✅ Fig 0: 理论上限曲线（Ceiling–Gap–Structure 核心叙事）
 
-> **⏳ MVP-FU-1 产出：`SCALING-20251225-fisher-upperbound-curve-01`**
-
-**目标产出两张图**：
+> **✅ MVP-FU-1 完成：`SCALING-20251225-fisher-upperbound-curve-01`**
 
 | 图表 | 内容 | 作用 |
 |------|------|------|
@@ -47,6 +45,23 @@
 
 **核心公式**：
 $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \quad \sigma_{\min}=\sqrt{\mathrm{CRLB}_{g,\mathrm{marg}}}$$
+
+### Fig-FU1: R²_max vs SNR
+![R²_max vs SNR](img/fisher_upperbound_r2max_vs_snr.png)
+
+**关键观察**:
+- SNR > 20: R²_max ≈ 0.99 (信息饱和区)
+- SNR ≈ 4: R²_max ≈ 0.74 (临界区域)
+- SNR < 2: median R²_max = 0 (信息悬崖)
+- Gap vs LightGBM = +32%，模型远未榨干信息
+
+### Fig-FU2: σ_min vs SNR
+![σ_min vs SNR](img/fisher_upperbound_sigma_vs_snr.png)
+
+**关键观察**:
+- σ_min 随 SNR 降低指数增长
+- SNR > 20 时 σ_min ≈ 0.12 dex
+- SNR < 2 时 σ_min > 1.6 dex (信息悬崖)
 
 **与 Ceiling–Gap–Structure 的对接**：
 - **Ceiling**: 这两条理论曲线定义 upper bound
@@ -121,9 +136,9 @@ $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \qu
 │   ├── Q5.1: V2 忽略了哪些 nuisance？ → ✅ 固定 (C_M=0, a_M=0)
 │   └── Q5.2: 加入化学丰度后 ceiling 下降多少？ → ✅ 仅下降 1.93%，稳健
 │
-└── 🆕 Q6: 如何产出可用于论文的理论上限曲线？
-    ├── Q6.1: R²_max(SNR) 带 CI 的曲线如何画？ → 🔆 MVP-FU-1 进行中
-    └── Q6.2: σ_min(SNR) 带 CI 的曲线如何画？ → 🔆 MVP-FU-1 进行中
+└── Q6: 如何产出可用于论文的理论上限曲线？ ✅
+    ├── Q6.1: R²_max(SNR) 带 CI 的曲线如何画？ → ✅ Fig-FU1 已产出
+    └── Q6.2: σ_min(SNR) 带 CI 的曲线如何画？ → ✅ Fig-FU2 已产出
 
 Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️ 已关闭
 ```
@@ -166,7 +181,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | Q3: 纠缠 | Schur=0.69 | 🟢 | multi-task 可选 | Multi-Mag |
 | Q4: 方法 | V2 框架正确 | 🟢 | 可用于论文 | 数值自洽 |
 | Q5: 乐观度 | V2 对化学丰度稳健 | 🟢 | V3-A 验证：Δceiling=1.93% < 10% | V3-A |
-| 🆕 Q6: 曲线产出 | 数据已有 (6个mag点), 待画图 | 🔆 | Ceiling–Gap–Structure 核心叙事 | Multi-Mag + MVP-FU-1 |
+| Q6: 曲线产出 | ✅ Fig-FU1 + Fig-FU2 已产出 | 🟢 | Ceiling–Gap–Structure 核心叙事完成 | MVP-FU-1 |
 
 ---
 
@@ -189,7 +204,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 
 | DG | 我们缺的答案 | 为什么重要 | 什么结果能关闭它 | 决策规则 |
 |----|-------------|-----------|-----------------|---------|
-| 🔴 DG0 | **理论上限曲线图（带 CI）** | Ceiling–Gap–Structure 叙事的锚点 | R²_max(SNR) + σ_min(SNR) 两张图产出 | 产出即关闭，用于论文 Fig 1 |
+| ✅ ~~DG0~~ | ~~理论上限曲线图（带 CI）~~ | ~~Ceiling–Gap–Structure 叙事的锚点~~ | ~~R²_max(SNR) + σ_min(SNR) 两张图产出~~ | ✅ **已关闭** - Fig-FU1 + Fig-FU2 产出 |
 | DG1 | 各模型按 mag/SNR 分桶的 efficiency | 决定投模型还是投结构 | efficiency 图 | If <80%@高SNR → 投模型；Else → 投结构 |
 | DG2 | weighted loss 能提升多少 | 决定误差是否是瓶颈 | CNN/MLP ≥ Ridge | If 显著提升 → 误差是瓶颈；Else → 结构是瓶颈 |
 | DG3 | Trainable gate 能否保住 Oracle 70%+ 增益 | 决定 MoE 是否可落地 | R² ≥ 0.58 | If 是 → MoE 主线；Else → 需更强 gate |
@@ -252,7 +267,7 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 📗 Exp Multi-Mag | [`exp/exp_scaling_fisher_multi_mag_20251224.md`](./exp/exp_scaling_fisher_multi_mag_20251224.md) | 扩展验证 |
 | 📗 Exp V3-A | [`exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md`](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) | 化学丰度 nuisance |
 | 📊 Card | [`card/card_fisher_ceiling_20251224.md`](./card/card_fisher_ceiling_20251224.md) | 知识卡片 |
-| 🆕 📗 MVP-FU-1 | **待创建**: `exp/exp_scaling_fisher_upperbound_curves_20251225.md` | **理论上限曲线 (P0)** |
+| 📗 MVP-FU-1 | [`exp/exp_scaling_fisher_upperbound_curves_20251225.md`](./exp/exp_scaling_fisher_upperbound_curves_20251225.md) | ✅ 理论上限曲线 |
 
 ---
 
@@ -268,7 +283,8 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 2025-12-25 | 添加 Q5（当前 ceiling 是否过于乐观）和 V3-A 实验计划 | §1, §3.2 |
 | 2025-12-25 | 创建 Fisher Roadmap | 独立执行追踪 |
 | 2025-12-25 | V3-A 完成：化学丰度 nuisance 仅使 ceiling 下降 1.93%，V2 结论稳健 | §1 Q5.2, §4 I7, §6.3 |
-| 2025-12-25 | 🆕 **添加 MVP-FU-1：理论上限曲线**，Q6 分支，DG0，I8 | 论文核心图表 Ceiling–Gap–Structure |
+| 2025-12-25 | 添加 MVP-FU-1：理论上限曲线，Q6 分支，DG0，I8 | 论文核心图表 Ceiling–Gap–Structure |
+| 2025-12-25 | ✅ **MVP-FU-1 完成**：Fig-FU1 (R²_max vs SNR) + Fig-FU2 (σ_min vs SNR) 产出 | DG0 关闭，Q6 完成 |
 
 ---
 
