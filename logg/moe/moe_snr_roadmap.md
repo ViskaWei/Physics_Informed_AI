@@ -118,14 +118,14 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ## 2.1 总览
 
-| MVP | 名称                                                        | Phase | Gate   | 状态 | exp_id                | 报告 |
-| --- | --------------------------------------------------------- | ----- | ------ | -- | --------------------- | -- |
-| 0.1 | error-only 泄露基线                                           | 0     | Gate-1 | ⏳  | `LOGG-ERR-BASE-01`    | -  |
-| 0.2 | error 表示去泄露（template×scale/quantiles）                     | 0     | Gate-1 | ⏳  | `LOGG-ERR-REPR-01`    | -  |
-| 1.0 | Oracle SNR-binned Experts（真 SNR 路由）                       | 1     | Gate-2 | ⏳  | `LOGG-SNR-ORACLE-01`  | -  |
-| 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ⏳  | `LOGG-SNR-GATE-01`    | -  |
-| 2.1 | 回归最优 gate（直接学权重）                                          | 2     | Gate-3 | ⏳  | `LOGG-SNR-REGGATE-01` | -  |
-| 3.0 | Whitening/Conditional 对照                                  | 3     | Gate-4 | ⏳  | `LOGG-WHITEN-01`      | -  |
+| MVP | 名称                                                        | Phase | Gate   | 状态  | exp_id                | 报告  |
+| --- | --------------------------------------------------------- | ----- | ------ | --- | --------------------- | --- |
+| 0.1 | error-only 泄露基线                                           | 0     | Gate-1 | ⏳   | `LOGG-ERR-BASE-01`    | -   |
+| 0.2 | error 表示去泄露（template×scale/quantiles）                     | 0     | Gate-1 | ⏳   | `LOGG-ERR-REPR-01`    | -   |
+| 1.0 | Oracle SNR-binned Experts（真 SNR 路由）                       | 1     | Gate-2 | ⏳   | `LOGG-SNR-ORACLE-01`  | -   |
+| 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ⏳   | `LOGG-SNR-GATE-01`    | -   |
+| 2.1 | 回归最优 gate（直接学权重）                                          | 2     | Gate-3 | ⏳   | `LOGG-SNR-REGGATE-01` | -   |
+| 3.0 | Whitening/Conditional 对照                                  | 3     | Gate-4 | ⏳   | `LOGG-WHITEN-01`      | -   |
 
 **状态**: ⏳计划 | 🔴就绪 | 🚀运行 | ✅完成 | ❌取消
 
