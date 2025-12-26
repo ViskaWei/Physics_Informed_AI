@@ -6,7 +6,7 @@
       {
         "id": "e69c64f63e1f5e44",
         "type": "tabs",
-        "dimension": 49.428822495606326,
+        "dimension": 46.402677077523705,
         "children": [
           {
             "id": "ba8d2fa3bd5a3042",
@@ -56,7 +56,7 @@
       {
         "id": "a4e449ee3dc708e0",
         "type": "tabs",
-        "dimension": 50.571177504393674,
+        "dimension": 53.597322922476295,
         "children": [
           {
             "id": "140d5ff8eb31ed3e",
@@ -71,8 +71,23 @@
               "icon": "lucide-file",
               "title": "fisher_hub_20251225 copy"
             }
+          },
+          {
+            "id": "f9ecbd58b3d1a997",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "exp_scaling_fisher_ceiling_v3_chemical_20251225"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -129,7 +144,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 359.50312423706055
+    "width": 511.5041847229004
   },
   "right": {
     "id": "eab51a00943c2f05",
@@ -245,22 +260,31 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "aa71e7391bb755d3",
+  "active": "f9ecbd58b3d1a997",
   "lastOpenFiles": [
+    "logg/scaling/fisher_roadmap_20251225.md",
+    "logg/scaling/fisher_hub_20251225.md",
+    "logg/moe/moe_snr_hub.md",
+    "logg/vit/exp_vit_1m_scaling_20251226.md",
+    "logg/vit",
+    "logg/scaling/exp/img/r2_vs_snr_ceiling_test_1k_0.png",
+    "logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k_unified_snr.png",
+    "logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k.png",
+    "logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k copy.png",
+    "logg/scaling/exp/img/r2_vs_snr_ceiling_combined.png",
+    "logg/moe/moe_snr_roadmap.md",
+    "design/principles.md",
+    "design",
+    "data/bosz50k/z1_data_generation_summary.md",
+    "_backend/scripts/extract_design_principles.py",
     "logg/scaling/img/summary_table.md",
     "logg/scaling/img/fisher_upperbound_sigma_vs_snr.png",
     "logg/scaling/img/fisher_upperbound_r2max_vs_snr.png",
     "logg/scaling/exp/img/r2_vs_snr_comparison_with_tempfit.png",
     "logg/scaling/exp/img/std_vs_snr_comparison.png",
     "logg/scaling/exp/img/r2_vs_snr_comparison.png",
-    "logg/scaling/exp/img/r2_vs_snr_all_methods.png",
     "logg/scaling/exp/img",
     "logg/scaling/exp/exp_scaling_fisher_upperbound_curves_20251225.md",
-    "logg/scaling/img/fisher_v3_chemical_schur_comparison.png",
-    "logg/scaling/img/fisher_v3_chemical_r2max_vs_v2.png",
-    "logg/scaling/img/fisher_v3_chemical_params_detected.png",
-    "logg/scaling/img/fisher_v3_chemical_delta_ceiling.png",
-    "logg/scaling/fisher_roadmap_20251225.md",
     "logg/scaling/exp/exp_scaling_fisher_efficiency_binned_20251225.md",
     "logg/scaling/exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md",
     "logg/scaling/coding_prompt_fisher_v3_chemical.md",
@@ -272,7 +296,6 @@
     "_backend/template/old/hub1.md",
     "_backend/template/old",
     "logg/scaling/fisher_hub_20251225 copy.md",
-    "logg/scaling/fisher_hub_20251225.md",
     "_backend/template/root_hub1.md",
     "logg/master_hub.md",
     "logg/ridge/tree/alpha/branch_ridge__alpha.md",
@@ -280,18 +303,10 @@
     "logg/ridge/ridge_hub_20251223.md",
     "logg/moe/moe_hub_20251203.md",
     "logg/scaling/scaling_hub_20251222.md",
-    "logg/moe/exp/exp_moe_regression_gate_20251204.md",
-    "logg/scaling/card/card_whitening_snr_20251222.md",
-    "logg/scaling/card/card_ridge_alpha_20251222.md",
-    "logg/scaling/card/card_pca_pls_20251223.md",
-    "logg/scaling/card/card_oracle_moe_20251223.md",
     "logg/scaling/card",
     "logg/scaling/fisher",
     "scripts/update_exp_headers.py",
     "scripts",
-    "logg/ridge/tree/alpha",
-    "logg/ridge/tree",
-    "tempfit/img",
-    "logg/benchmark/benchmark_hub_20251205.md.bak"
+    "logg/ridge/tree/alpha"
   ]
 }
