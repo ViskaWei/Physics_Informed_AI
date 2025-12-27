@@ -48,7 +48,7 @@ e \approx s \cdot e_0 + \delta
 | -- | --------------------------------- | ---------------------------------------------------------------- | -------------------------------------- |
 | K1 | **logg 的可达精度由“信息量(SNR)”强烈分段决定**   | Fisher multi-mag：SNR 7→4→3 时 (R^2_{max}) 0.89→0.74→0.37；临界 SNR≈4 | 需要把模型设计成“按 SNR 分策略”，MoE/conditional 都可 |
 | K2 | **高噪声下“分域训练”的结构红利更大**             | noise=1 Oracle MoE: 0.6249 vs Global Ridge 0.4611，ΔR²=+0.1637    | 低 SNR 场景更值得上 MoE（至少结构上限很高）             |
-| K3 | **error vector 在当前生成口径下包含强泄露信号**  | error-only linear regression R²=0.91（用户观察）                       | 必须先做 error 表示的“去泄露/口径一致化”再用            |
+| K3 | **error vector 在当前生成口径下包含极强泄露信号**  | **error-only Ridge R²=0.99** (LOGG-ERR-BASE-01)，Shuffle 后 R²=-0.98 | 必须先做 error 表示的"去泄露/口径一致化"再用            |
 | K4 | **error vector 近似“模板×标量 + 稀疏残差”** | 96% 相似，仅 40/4096 不同（用户观察）                                        | 用“低维 quality 参数”替代直接输入 error 全向量       |
 
 **🦾 现阶段信念 [≤10条，写“所以呢]**
@@ -84,8 +84,8 @@ e \approx s \cdot e_0 + \delta
 │   ├── Q1.1: Oracle 按 SNR 分专家（真 SNR 路由）ΔR²≥0.02？ → ✅ ΔR²=+0.05
 │   └── Q1.2: headroom 是否主要来自 low-SNR 子集？ → ✅ Medium SNR (4-7) 最大 +9.6%
 │
-├── Q2: error vector 如何“可用但不泄露”？
-│   ├── Q2.1: error-only 预测 logg 的 R² 能否压到 <0.05？ → ⏳
+├── Q2: error vector 如何"可用但不泄露"？
+│   ├── Q2.1: error-only 预测 logg 的 R² 能否压到 <0.05？ → ❌ 当前 R²=0.99！
 │   ├── Q2.2: template×scale 表示是否足够做 gate？ → ⏳
 │
 └── Q3: 可落地 gate 能保住多少 oracle 增益？
@@ -127,9 +127,9 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 
 | 分支       | 当前答案（1句话）                        | 置信度 | 决策含义（So what）                    | 证据（exp/MVP）      |
 | -------- | -------------------------------- | --- | -------------------------------- | ---------------- |
-| SNR 影响上限 | SNR≈4 附近出现“上限掉崖”，分段建模合理          | 🟢  | 必须做 SNR-aware（MoE 或 conditional） | Fisher multi-mag |
-| error 泄露 | 直接输入 error 会让模型走捷径               | 🟡  | 必须先做去泄露表示                        | 用户观测             |
-| MoE 价值   | noise=1 下 Oracle MoE headroom 很大 | 🟢  | MoE 在低 SNR regime 值得投入           | Oracle MoE       |
+| SNR 影响上限 | SNR≈4 附近出现"上限掉崖"，分段建模合理          | 🟢  | 必须做 SNR-aware（MoE 或 conditional） | Fisher multi-mag |
+| **error 泄露** | **error R²=0.99 极高泄露！Shuffle 崩溃** | 🔴  | **必须先做去泄露，不能直接用 error** | **LOGG-ERR-BASE-01** |
+| MoE 价值   | noise=1 下 Oracle MoE headroom 很大 | 🟢  | MoE 在低 SNR regime 值得投入           | Oracle MoE, LOGG-SNR-ORACLE-01 |
 
 ---
 
@@ -142,6 +142,8 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | I3 | error 向量可低维化 | error 96% 相似                   | 噪声形状近似由仪器决定；样本差异主要是整体尺度 | gate 应使用 quality 参数而非全 error | 用户观测              |
 | **I4** | **Medium SNR 受益最大** | Bin M (SNR 4-7) ΔR²=+9.6%，远超其他 bin | 临界区域专家化收益最大 | **SNR predictor 重点关注边界样本** | LOGG-SNR-ORACLE-01 |
 | **I5** | **SNR 4-bin 策略有效** | 所有 4 个 bin 的 Oracle Expert 均优于 Global | 分域策略全面有效 | **可继续开发 deployable gate** | LOGG-SNR-ORACLE-01 |
+| **I6** | **Error 泄露是波长对齐的** | Shuffle 后 R² 从 0.79 崩溃到 -0.98 | 模型依赖像素位置信息，不是简单统计量 | 去泄露必须破坏波长对齐 | LOGG-ERR-BASE-01 |
+| **I7** | **Top 泄露像素集中特定区域** | 像素 3277-3388, 3724-3869 重要性最高 | 可能对应特定谱线区域 | 这些区域需特殊处理或屏蔽 | LOGG-ERR-BASE-01 |
 
 ---
 
@@ -194,4 +196,5 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | ---------- | -------------- | -- |
 | 2025-12-26 | 创建 SNR-MoE Hub | -  |
 | 2025-12-26 | ✅ Gate-2 通过：ΔR²=+0.05 | Q1.1/Q1.2 验证，DG2 关闭，新增洞见 I4/I5 |
+| 2025-12-26 | ❌ Gate-1 未通过：error R²=0.99 | Q2.1 ❌，K3 更新为实际数值，新增洞见 I6/I7，下一步 MVP-0.2 |
 
