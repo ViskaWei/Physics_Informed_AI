@@ -236,27 +236,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "logg/scaling/exp/exp_scaling_fisher_ceiling_20251223.md",
+                "file": "logg/moe/exp/exp_logg_err_base_01_20251226.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of exp_scaling_fisher_ceiling_20251223"
-            }
-          },
-          {
-            "id": "95b094f5d53bc452",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
+              "title": "Outline of exp_logg_err_base_01_20251226"
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
@@ -274,7 +264,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3a028c204be029e1",
+  "active": "63a5774f02dbe350",
   "lastOpenFiles": [
     "logg/moe/moe_snr_roadmap.md",
     "logg/moe/moe_snr_hub.md",
