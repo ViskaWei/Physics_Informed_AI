@@ -6,7 +6,7 @@
       {
         "id": "e69c64f63e1f5e44",
         "type": "tabs",
-        "dimension": 73.9542665923034,
+        "dimension": 88.84551031790295,
         "children": [
           {
             "id": "ba8d2fa3bd5a3042",
@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/vit/exp_vit_1m_scaling_20251226.md",
+                "file": "logg/moe/moe_snr_hub.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "exp_vit_1m_scaling_20251226"
+              "title": "moe_snr_hub"
             }
           }
         ],
@@ -56,7 +56,7 @@
       {
         "id": "a4e449ee3dc708e0",
         "type": "tabs",
-        "dimension": 26.0457334076966,
+        "dimension": 11.154489682097044,
         "children": [
           {
             "id": "140d5ff8eb31ed3e",
@@ -276,9 +276,10 @@
   },
   "active": "3a028c204be029e1",
   "lastOpenFiles": [
-    "logg/moe/moe_snr_hub.md",
-    "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "logg/moe/moe_snr_roadmap.md",
+    "logg/moe/moe_snr_hub.md",
+    "logg/vit/exp_vit_1m_scaling_20251226.md",
+    "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "logg/scaling/exp/exp_whitening_design_principles_20251226.md",
     "logg/scaling/card/card_whitening_design_principles_20251226.md",
     "logg/moe/img/logg_err_base_01_sanity_checks.png",
@@ -302,7 +303,6 @@
     "logg/scaling/exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md",
     "logg/scaling/fisher_roadmap_20251225.md",
     "logg/scaling/fisher_hub_20251225.md",
-    "logg/vit/exp_vit_1m_scaling_20251226.md",
     "logg/vit",
     "design/principles.md",
     "design",
