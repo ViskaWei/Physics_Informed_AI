@@ -362,6 +362,3 @@ $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(g)}$$
 | 数据索引 | `data/bosz50k/z0/grid_fisher_datasets.md` |
 
 </details>
-
-|| I7 | V2 对化学丰度稳健 | V3-A Δceiling=1.93% | 化学丰度 nuisance 几乎不影响 ceiling | V2 R²_max=0.89 可直接用于指导模型部署 | V3-A |
-

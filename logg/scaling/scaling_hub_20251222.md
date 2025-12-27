@@ -1,352 +1,244 @@
-# 🧠 Scaling Hub (v2) — 数据规模与模型容量
-> **ID:** VIT-20251222-scaling-hub  
+# 🧠 Scaling Hub — 数据规模与模型容量
+> **ID:** VIT-20251222-scaling-hub | **Status:** 🌷收敛 |  
+> **Date:** 2025-12-22 | **Update:** 2025-12-27  
 > **Scope:** BOSZ 合成光谱 → log_g 回归  
-> **Focus:** noise=1 (高噪声) + 大数据 (≥100k, up to 1M)  
-> **Hub 职责:** 知识汇总（验证的/洞见/决策空白），非实验计划  
-> **Roadmap:** [scaling_roadmap_20251222.md](./scaling_roadmap_20251222.md)
+> **Focus:** noise=1 (高噪声) + 大数据 (≥100k, up to 1M)
+
+| # | 💡 共识 | 证据 | 决策 |
+|---|--------|------|------|
+| K1 | **传统 ML 存在明确 ceiling**：Ridge≈0.46, LightGBM≈0.57 | 1M/1k test | 继续堆数据无意义 |
+| K2 | **理论上限 R²_max=0.87 >> 当前最佳**，存在 +30% headroom | Fisher 5D ceiling | 继续投 CNN/MoE 值得 |
+| K3 | **Soft-gate MoE 保留 80.5% Oracle 收益** (ρ=0.805) | R²=0.59 vs Oracle=0.62 | MoE 是 noise=1 可落地主线 |
+| K4 | **100k→1M 对传统 ML 增益 <3%** | scaling 实验 | 资源应转向模型/结构 |
+| K5 | **Pipeline 对模型影响巨大**：LightGBM 必须 raw，NN 必须 flux_only | whitening 实验 | 预处理按模型定制 |
+
+**🦾 现阶段信念**
+- **Route B (MoE) 验证通过**：ρ=0.805 ≥ 0.70 → 可进入生产化阶段
+- **理论 headroom 大**：5D ceiling=0.87, 当前最佳=0.57, Gap=30% → 继续投模型值得
+- **分层决策是关键**：全局 R² 掩盖区域差异，必须按 mag/SNR 分桶评估
+
+**👣 下一步最有价值**
+- 🔴 **P0**：MLP@1M flux_only → If R² > 0.50 then Route A 可行 else Route B 主导
+- 🟡 **P1**：按 mag/SNR 分桶画 efficiency 图 → 决定高 SNR 区投模型还是投结构
+
+> **权威数字**：Best=0.62(Oracle MoE)；Baseline=0.46(Ridge)；5D Ceiling=0.87；Gap=+30%；条件=1M/1k/noise=1
+
+| 模型/方法 | R² | 配置 | 备注 |
+|-----------|-----|------|------|
+| Ridge | **0.46** | α=100k, 1M/1k | 线性 baseline |
+| LightGBM | **0.57** | raw input, 1M/500 | 非线性 baseline |
+| MLP (100k) | 0.47 | flux_only, 3L_1024 | NN baseline |
+| CNN (100k) | 0.41 | flux_only, 4L_k5_bn | NN baseline |
+| Oracle MoE | **0.62** | 9-bin 真值 routing | 结构上限 |
+| Soft-gate MoE | **0.59** | 37-dim gate | ✅ 可落地 |
+| **Fisher 5D ceiling** | **0.87** | 规则网格 5D | 理论上限 |
 
 ---
 
-## 0) Executive Snapshot
+## 1) 🌲 核心假设树
 
-### 一句话
-在 noise=1 极端低 SNR 下：**"更多数据"对传统 ML 边际收益很小**，但 **结构化建模（MoE/分域）显示出显著 headroom**，且理论上限提示仍有大量可提取信息。
+```
+🌲 核心: noise=1 下如何提升 log_g 估计？
+│
+├── Q1: 数据规模是否是瓶颈？
+│   ├── Q1.1: 100k→1M 提升多少？ → ✅ <3%，数据不是瓶颈
+│   └── Q1.2: 继续堆数据划算吗？ → ❌ 不划算，资源转向模型
+│
+├── Q2: 模型结构是否是瓶颈？
+│   ├── Q2.1: Oracle MoE 比 Ridge 高多少？ → ✅ +16%，结构红利显著
+│   ├── Q2.2: Soft-gate 能保留多少 Oracle？ → ✅ 80.5%，可落地
+│   └── Q2.3: 单模型 NN 能吃 headroom 吗？ → ⏳ MLP@1M 待验证
+│
+├── Q3: 理论上限是多少？
+│   ├── Q3.1: Fisher 3D ceiling？ → ✅ R²_max=0.89
+│   ├── Q3.2: Fisher 5D ceiling？ → ✅ R²_max=0.87（高 SNR 几乎等于 3D）
+│   └── Q3.3: 临界 SNR 在哪？ → ✅ SNR≈4 (mag≈22)
+│
+├── Q4: 预处理策略如何选择？
+│   ├── Q4.1: LightGBM 用什么输入？ → ✅ raw only（禁止 standardize）
+│   ├── Q4.2: NN 用什么输入？ → ✅ flux_only（禁止 whitening）
+│   └── Q4.3: Ridge 用什么输入？ → ✅ standardized 或 raw 均可
+│
+└── Q5: 下一步投哪个方向？
+    ├── Q5.1: Route A (单模型 NN) → ⏳ MLP@1M 待验证
+    ├── Q5.2: Route B (MoE) → ✅ Soft-gate 验证通过
+    └── Q5.3: Route C (改任务) → ⏳ 仅 mag>22.5 考虑
 
-### Canonical Scoreboard（唯一权威口径）
-
-> **Protocol:** train=1M, test=1k, noise=1.0, metric=R²
-
-| 模型 | R² | α/config | 备注 |
-|------|-----|----------|------|
-| Global Ridge | **0.46** | α=1e5 | 线性 baseline |
-| Global LightGBM | **0.57** | raw input | 非线性 baseline |
-| Oracle MoE (9-bin) | **0.62** | 真值 routing | 结构上限 |
-| Fisher/CRLB ceiling | **0.89** | V2 规则网格 | 理论上限 |
-
-### 当前信念（我们现在相信什么）
-
-1. **数据不是瓶颈**（至少对 Ridge/LGBM）：100k→1M 仅 +2-3%
-2. **瓶颈是"建模方式/结构"**：Oracle MoE 比 Global Ridge 高 +16%
-3. **Gate 可落地性已降级风险**：noise=1 下 9-class Acc=88%
-4. **单模型 NN 尚未证明能吃 headroom**：当前 MLP≈Ridge，CNN 更弱
+Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️ 已关闭
+```
 
 ---
 
-## 1) Canonical Evaluation Protocol（数字口径冻结）
+## 2) 口径冻结（唯一权威）
 
 | 项目 | 规格 |
 |------|------|
 | Dataset | BOSZ 50000, mag205_225_lowT_1M |
 | Train | 1M (5 shards × 200k) |
-| Test | test_1k_0 (1000 samples, pre-noised) |
+| **Test** | **1k (test_1k_0, pre-noised)** ← Canonical |
 | Features | 4096 (MR arm) |
 | Target | log_g ∈ [1.0, 5.0] |
-| Noise | σ=1.0 (heteroscedastic Gaussian) |
+| Noise | σ=1.0 (heteroscedastic Gaussian, pre-stored) |
 | Metric | R² over test set |
+| Ridge α | 100000 (for 1M train) |
+| LightGBM input | raw (never standardized) |
+| NN input | flux_only (never whitening) |
 
-**规则:** Hub 只保留一个 canonical scoreboard；历史口径变化只进 Changelog。
-
----
-
-## 2) Knowledge Ledger（我们知道什么 vs 仍不确定）
-
-| Claim (知识) | 状态 | 证据摘要 | 含义 |
-|-------------|------|---------|------|
-| **C1:** Ridge/LGBM 在 noise=1 下存在明显 ceiling（R²≈0.46-0.57） | ✅ 强 | 1M 下 Ridge~0.46，LGBM~0.57 | 继续堆数据对传统 ML 不划算 |
-| **C2:** 100k→1M 对传统 ML 增益很小（ΔR² <~0.03） | ✅ 强 | scaling 实验汇总 | 资源应转向模型/结构，而非数据 |
-| **C3:** Ridge α 可调，但提升幅度有限（0.4-2.5%） | ✅ 强 | α 最优在 1e4-1e5，倒U曲线 | Ridge ceiling 属于模型族限制 |
-| **C4:** 输入 scaling 对模型族影响巨大 | ✅ 强 | StandardScaler 严重伤 LGBM(-0.36)；Ridge 不敏感 | pipeline 必须按模型族定制 |
-| **C5:** Fisher ceiling (V2) 显示 noise=1 下 R²_max~0.89 | ✅ 强 | V2 规则网格修复后数值合理 | 低 baseline 不是"信息已被噪声抹平" |
-| **C6:** Oracle MoE 在 noise=1 下结构红利更大（ΔR²≈+0.16） | ✅ 强 | Oracle MoE~0.62 vs Ridge~0.46 | "结构化/分域"是高噪声场景主要增益来源 |
-| **C7:** Gate 信号在 noise=1 下仍很强（9-class Acc~88%） | ✅ 强 | gate sanity check | MoE 主要风险（gate 不可落地）已显著降低 |
-| **C8:** 当前单模型 NN baseline 未超过强 ML baseline | ✅ 强 | MLP R²=0.467≈Ridge；CNN R²=0.412 更弱；Whitening 导致 R²≈0 | NN 需 flux_only 输入 + 更强归纳偏置 |
-| **C9:** Fisher/CRLB V2 计算框架已验证正确 | ✅ 强 | 数值自洽 + 框架审核 | 理论上限可信，支撑决策 |
-| **C10:** 最优估计器应使用 Σ⁻¹ 加权（weighted loss） | 🟡 中 | Fisher 框架理论 | 当前 ML 可能未利用误差信息 |
-| **C11:** 应按 mag/SNR 分桶评估，而非全局 R² | ✅ 强 | Multi-Mag 趋势 + R² vs SNR 工具 | 全局 R² 掩盖区域差异 |
+> 规则：任何口径变更必须写入 §8 变更日志。
 
 ---
 
-## 3) Insights（读者应该记住的）
+## 3) 当前答案 & 战略推荐
 
-### I1 — "数据不是瓶颈；结构才是"
+### 3.1 战略推荐
 
-| 项 | 内容 |
-|----|------|
-| **观察** | 传统 ML 从 100k 到 1M 只有小幅增益，而 Oracle MoE 却显著提升 |
-| **解释** | 在极低 SNR 下，全局模型被"跨域异质性"拖累；分域后每个子域更可学 |
-| **决策影响** | 下一步优先验证"可落地 MoE 是否能接近 Oracle"，而非继续堆数据 |
+- **推荐路线：Route B (MoE + Structure)**（理由：ρ=0.805 验证通过，可进入生产化）
+- 备选：Route A (单模型 NN) 待 MLP@1M 验证
 
-### I2 — "理论上限高 ≠ 实际可达；但足以证明值得投入更强建模"
+| Route | 一句话定位 | 当前倾向 | 关键理由 | 需要的 Gate |
+|-------|-----------|----------|---------|-------------|
+| Route A: 单模型 NN | 继续 CNN/Transformer | 🟡 | MLP@1M 未测 | Gate-MLP-1M |
+| **Route B: MoE** | Soft-gate MoE | 🟢 推荐 | ρ=0.805 ≥ 0.70 ✅ | - |
+| Route C: 改任务 | 分类/先验/多曝光 | 🔴 | 仅 mag>22.5 考虑 | - |
 
-| 项 | 内容 |
-|----|------|
-| **观察** | Fisher/CRLB (V2) 给出 R²_max≈0.89，显著高于 LGBM≈0.57 |
-| **解释** | 任务并未被噪声彻底信息论封死，存在可提取信息；差距来自估计器/表示/结构 |
-| **决策影响** | 可合理投入（CNN、MoE、multi-task）——关键是选择能把信息提出来的结构 |
+### 3.2 分支答案表
 
-### I3 — "pipeline 不是中性：同一 preprocessing 对不同模型是灾难/无害"
-
-| 项 | 内容 |
-|----|------|
-| **观察** | Ridge 对线性可逆变换近似不敏感；树模型对 standardize 可能灾难性下降 |
-| **决策影响** | 所有 baseline 对比必须固定"模型族匹配的输入协议"，否则结论被 artifact 污染 |
-
-### I4 — "高噪声下 MoE 可能更有价值，而不是更没价值"
-
-| 项 | 内容 |
-|----|------|
-| **观察** | noise=1 下 Oracle MoE 的 ΔR²=+0.16 比 noise=0.2 时 ΔR²=+0.05 更大 |
-| **解释** | 高噪声时全局模型更容易被域混合拖垮；分域显著降低有效复杂度 |
-| **决策影响** | 如真实观测接近低 SNR，MoE/分域路线更可能是主线而非备选 |
-
-### I5 — "Gate 可落地性已从最大风险变成较小风险"
-
-| 项 | 内容 |
-|----|------|
-| **观察** | noise=1 下 gate 特征仍能高准确率区分 bins（88%） |
-| **决策影响** | MoE 的关键风险从"能不能 gate"转移为"怎么让 soft routing 稳定逼近 oracle" |
-
-### I6 — "单模型 NN 不一定自动赢；结构/归纳偏置更关键"
-
-| 项 | 内容 |
-|----|------|
-| **观察** | 当前 MLP≈Ridge，CNN 甚至更弱 |
-| **解释** | 更像"实现/归纳偏置不对"而不是"NN 不行" |
-| **决策影响** | NN 路线要么换更贴谱线结构的模型，要么优先走"MoE + 强 gate + 轻 expert"组合 |
-
-### I7 — "Fisher 框架指导：应使用 error-aware 训练"
-
-| 项 | 内容 |
-|----|------|
-| **观察** | Fisher 最优估计器使用 Σ⁻¹ 加权，当前 ML 多数用 unweighted MSE |
-| **解释** | heteroscedastic 光谱下同权看待所有像素会吃亏 |
-| **决策影响** | P0 优先：加 weighted loss 或把 error 当输入通道，可能是立竿见影的增益 |
-
-### I8 — "应按 mag/SNR 分桶评估，全局 R² 掩盖真相"
-
-| 项 | 内容 |
-|----|------|
-| **观察** | Multi-Mag 显示 R²_max 从 0.99（mag=20）到 0（mag=23）阶梯式下降 |
-| **解释** | 全局 R²=0.62 无法判断是"高 SNR 区仍有大量 headroom"还是"已接近混合分布上限" |
-| **决策影响** | 必须先完成按 mag/SNR 分桶评估，才能决定下一步投入方向 |
-| **工具** | `plot_r2_vs_snr_1m.py` 提供按SNR分桶的R²分析，支持验证此洞察 |
+| 分支 | 当前答案 | 置信度 | 决策含义 | 证据 |
+|------|---------|--------|---------|------|
+| Q1: 数据规模 | 100k→1M 增益 <3% | 🟢 | 停止堆数据 | ml-ceiling |
+| Q2: 结构红利 | Oracle MoE +16%, Soft 保留 80.5% | 🟢 | MoE 主线 | oracle-moe, soft-moe |
+| Q3: 理论上限 | 5D ceiling=0.87, Gap=30% | 🟢 | 继续投入值得 | Fisher Hub |
+| Q4: 预处理 | LightGBM=raw, NN=flux_only | 🟢 | 按模型定制 | whitening 实验 |
+| Q5: 下一步 | Route B 验证通过 | 🟢 | MoE 生产化 | soft-moe |
 
 ---
 
-## 4) Decision Gaps（下一步要补的知识空白）
+## 4) 洞见汇合（多实验 → 共识）
 
-> 这里写"要回答什么"，不写"怎么做实验"
-
-### DG1 — Baseline ceiling 的统计可信度有多高？
-
-| 项 | 内容 |
-|----|------|
-| **为什么重要** | 如果 baseline 方差很大，所有"headroom/提升"都可能是噪声 |
-| **什么能关闭它** | 多 seed + 更大 test 下方差足够小（std < 0.01） |
-| **决策规则** | 若方差小 → ceiling 是稳定事实，进 master hub |
-
-### DG2 — 线性模型族上限（LMMSE）距离 Ridge 还有多远？
-
-| 项 | 内容 |
-|----|------|
-| **为什么重要** | 若 Ridge≈LMMSE，则线性族已榨干，继续做表示变化收益上限低 |
-| **决策规则** | 若差距 < 0.01 → linear track 关闭，只保留 baseline |
-
-### DG3 — 可训练 gate 的 MoE 能否保住 ≥70% Oracle 增益？
-
-| 项 | 内容 |
-|----|------|
-| **为什么重要** | 这是"结构路线是否主线"的关键门 |
-| **决策规则** | 若 ρ ≥ 0.7 且 ΔR² 明显为正 → MoE 列为 noise=1 场景主线解法 |
-
-### DG4 — 单模型 CNN/其它结构能否直接达到或超过 Oracle MoE（~0.62）？
-
-| 项 | 内容 |
-|----|------|
-| **为什么重要** | 若单模型已吃到结构红利，MoE 复杂度可避免 |
-| **决策规则** | 若单模型 ≥0.62 → MoE 变为可选；若 <0.60 → MoE 是正确方向 |
-
-### DG5 — Error-aware 训练能提升多少？（P0-3, 新增）
-
-| 项 | 内容 |
-|----|------|
-| **为什么重要** | Fisher 框架表明最优估计应使用 Σ⁻¹ 加权 |
-| **什么能关闭它** | weighted loss 或 error 作为输入后，CNN/MLP ≥ Ridge |
-| **决策规则** | 若显著提升 → 误差建模是关键瓶颈；否则 → 瓶颈在结构/非线性 |
-
-### DG6 — 按 mag/SNR 分桶后，各区域 efficiency 是多少？（P0-1, 新增）
-
-| 项 | 内容 |
-|----|------|
-| **为什么重要** | 决定是继续投模型（高 SNR 区 efficiency < 80%）还是转向结构化（低 SNR 区） |
-| **什么能关闭它** | 画出 efficiency = R²_model / R²_max 按 mag 分桶的图 |
-| **决策规则** | 若高 SNR 区 efficiency < 80% → 继续投模型；否则 → 转向结构化/先验 |
+| # | 洞见 | 观察 | 解释 | 决策影响 | 证据 |
+|---|------|------|------|---------|------|
+| I1 | 数据不是瓶颈 | 100k→1M 仅 +2-3% | 全局模型被跨域异质性拖累 | 资源转向模型/结构 | ml-ceiling |
+| I2 | 理论上限高 | 5D ceiling=0.87 >> LightGBM=0.57 | 任务未被噪声封死 | 继续投入 CNN/MoE | Fisher Hub |
+| I3 | 结构红利显著 | Oracle MoE +16% vs Ridge | 分域降低有效复杂度 | MoE 是主线 | oracle-moe |
+| I4 | Gate 可落地 | 9-class Acc=88% @ noise=1 | Gate 特征可区分 bins | MoE 主要风险消除 | gate-sanity |
+| I5 | Pipeline 不中性 | LightGBM standardize -36% | 树模型对分布敏感 | 按模型定制输入 | whitening |
+| I6 | 5D≈3D @ 高 SNR | Δceiling <2% @ mag≤21.5 | 化学丰度影响有限 | 用 5D ceiling 作 upper bound | Fisher 5D |
+| I7 | 分层评估是关键 | R²_max 从 0.99→0 阶梯下降 | 全局 R² 掩盖区域差异 | 按 mag/SNR 分桶 | Multi-Mag |
 
 ---
 
-## 5) Parallel Lanes（多线程探索保持可读）
+## 5) 决策空白（Decision Gaps）
 
-| Lane | 目标 | 当前状态 | 会改变什么 |
-|------|------|---------|-----------|
-| **L-A: Baseline & Statistics** | 把"ceiling"变成硬事实 | ⏳ Pending | 决定是否彻底停止传统 ML 微优化 |
-| **L-B: Theoretical ceiling** | 定义可达到的上限与瓶颈来源 | ✅ Strong | 决定是否值得上复杂结构/多任务 |
-| **L-C: Structural headroom (MoE)** | 把 Oracle headroom 变成可落地收益 | 🟡 Promising | 决定主线是否 MoE |
-| **L-D: Single-model NN** | 找到能吃 headroom 的归纳偏置 | ⏳ Uncertain | 决定是否投入大规模 NN 训练 |
-
----
-
-## 6) Design Principles（可移植规则）
-
-| # | 原则 | 建议 | 证据 | 适用 |
-|---|------|------|------|------|
-| P1 | **Ridge α 应更大** | α ∈ [1e4, 1e5] 而非 5000 | MVP-1.4 倒 U 曲线 | noise=1 场景 |
-| P2 | **α 与数据量正相关** | 更多数据 → 更大的最优 α | 100k: α=3e4, 1M: α=1e5 | 线性模型 |
-| P3 | **LightGBM 必须用 raw 输入** | ❌ 禁止 StandardScaler | standardized ΔR²=-0.36 | 树模型 |
-| P4 | **Ridge 对 scaling 不敏感** | StandardScaler 可用可不用 | raw ≈ standardized | 线性模型 |
-| P5 | **高噪声优先分域** | 结构化/分域比堆数据划算 | Oracle MoE ΔR²=+0.16 | noise≥1 |
-| P6 | **Gate 特征优先用 PCA+物理窗口** | 37 维 gate 足够区分 9 bins | Acc=88% | MoE routing |
-| **P7** | **NN 必须用 flux_only 输入** | ❌ 禁止 whitening (flux/error) | whitening 导致 R²≈0 | 所有 NN |
+| DG | 我们缺的答案 | 为什么重要 | 什么结果能关闭它 | 决策规则 |
+|----|-------------|-----------|-----------------|---------|
+| DG1 | MLP@1M flux_only 性能 | 决定 Route A 是否可行 | R² 结果 | If >0.50 → A 可行；If ≈0.47 → A 饱和 |
+| DG2 | 按 mag/SNR 分桶的 efficiency | 决定高 SNR 区投模型还是结构 | efficiency 图 | If <80%@高SNR → 投模型；Else → 投结构 |
+| DG3 | Weighted loss 能提升多少 | 决定误差是否是瓶颈 | CNN/MLP ≥ Ridge | If 显著提升 → 误差是瓶颈 |
 
 ---
 
-## 7) Pointers（详细内容在哪里）
+## 6) 设计原则
 
-| 类型 | 文件 | 说明 |
+### 6.1 已确认原则
+
+| # | 原则 | 建议 | 适用范围 | 证据 |
+|---|------|------|---------|------|
+| P1 | Ridge α 应更大 | α ∈ [1e4, 1e5] | noise=1, 1M | ridge-alpha |
+| P2 | LightGBM 必须用 raw | ❌ 禁止 StandardScaler | 所有 LightGBM | whitening |
+| P3 | NN 必须用 flux_only | ❌ 禁止 whitening | 所有 NN | nn-baseline |
+| P4 | 高噪声优先分域 | MoE/分域比堆数据划算 | noise≥1 | oracle-moe |
+| P5 | Gate 特征 PCA+物理窗口 | 37 维足够 | MoE routing | gate-sanity |
+| P6 | Test 用 pre-noised | ❌ 禁止 on-fly 加噪 | 所有实验 | Canonical |
+| P7 | 论文用 5D ceiling | 高 SNR 区 5D≈3D | 理论分析 | Fisher 5D |
+
+### 6.2 待验证原则
+
+| # | 原则 | 初步建议 | 需要验证 |
+|---|------|---------|---------|
+| P8 | Weighted loss 有帮助 | 待验证 | MVP-WGT |
+| P9 | MLP 受益于 1M 规模 | 待验证 | MVP-MLP-1M |
+
+### 6.3 关键数字速查
+
+| 指标 | 值 | 条件 | 来源 |
+|------|-----|------|------|
+| Ridge R² | **0.46** | 1M/1k, α=100k | oracle-moe |
+| LightGBM R² | **0.57** | 1M/500, raw | ml-ceiling |
+| Oracle MoE R² | **0.62** | 1M/1k, 9-bin | oracle-moe |
+| Soft-gate MoE R² | **0.59** | 1M/1k, ρ=0.805 | soft-moe |
+| **5D ceiling** | **0.87** | mag=21.5, 规则网格 | Fisher 5D |
+| 3D ceiling | 0.89 | mag=21.5, 规则网格 | Fisher V2 |
+| 临界 SNR | **~4** | R²_max>0.5 边界 | Multi-Mag |
+| 信息悬崖 | **SNR<2** | median=0 | Multi-Mag |
+| MoE 结构红利 | **+16%** | Oracle vs Ridge | oracle-moe |
+
+### 6.4 已关闭方向
+
+| 方向 | 否定证据 | 关闭原因 | 教训 |
+|------|---------|---------|------|
+| ~~继续堆数据~~ | 100k→1M +3% | 边际收益太小 | 转向模型/结构 |
+| ~~LightGBM standardize~~ | -36% | 树模型对分布敏感 | 必须 raw input |
+| ~~NN whitening~~ | R²≈0 | 梯度不稳定 | 必须 flux_only |
+| ~~Fisher V1 连续采样~~ | CRLB 20 orders | 偏导混参 | 必须规则网格 |
+
+---
+
+## 7) 指针
+
+| 类型 | 路径 | 说明 |
 |------|------|------|
-| 📍 Roadmap | [scaling_roadmap_20251222.md](./scaling_roadmap_20251222.md) | 实验规划与执行 |
-| 📗 Experiments | `exp/exp_*.md` | 详细实验报告 |
-| 📥 Child Hubs | [ridge_hub](../ridge/ridge_hub_20251223.md), [moe_hub](../moe/moe_hub_20251203.md) | 子主题深潜 |
-| 🧠 **Fisher Hub** | [fisher/fisher_hub_20251225.md](./fisher/fisher_hub_20251225.md) | **Fisher/CRLB 理论上限专题汇合** |
-| 📊 **R² vs SNR 工具** | `scripts/plot_r2_vs_snr_1m.py` | **1M训练模型在test_1k_0上的SNR分桶分析** |
-| 📤 Parent Hub | [master_hub](../master_hub.md) | 全局战略 |
+| 🗺️ Roadmap | [`scaling_roadmap_20251222.md`](./scaling_roadmap_20251222.md) | 实验规划与执行 |
+| 🧠 **Fisher Hub** | [`fisher_hub_20251225.md`](./fisher_hub_20251225.md) | Fisher/CRLB 理论上限专题 |
+| 📗 Experiments | `exp/*.md` | 详细实验报告 |
+| 🔍 Audit | [`contradiction_audit.md`](./contradiction_audit.md) | 矛盾审计 |
+| 📥 Child Hubs | [`ridge_hub`](../ridge/ridge_hub_20251223.md), [`moe_hub`](../moe/moe_hub_20251203.md) | 子主题深潜 |
 
 ---
 
-## 8) Changelog（仅记录知识改变）
+## 8) 变更日志
 
 | 日期 | 变更 | 影响 |
 |------|------|------|
 | 2025-12-22 | 创建 Hub | - |
-| 2025-12-22 | C1-C3 确认：Ridge=0.46, LGBM=0.57, 边际递减 | baseline 已锁定 |
-| 2025-12-23 | C5 确认：Fisher V2 R²_max=0.89 可信 | 理论上限锁定 |
-| 2025-12-23 | C6 确认：Oracle MoE ΔR²=+0.16 | MoE 路线继续 |
-| 2025-12-24 | C7 确认：Gate Acc=88% @ noise=1 | Gate 可落地性大幅提升 |
-| 2025-12-24 | C8 初步：单模型 NN 未超 baseline | NN 路线需更强归纳偏置 |
-| 2025-12-24 | Hub v2 重构：精简假设→结论账本，分 Lane | 提升可读性 |
-| **2025-12-25** | **P7 新增：NN 必须用 flux_only 输入；Whitening 导致训练崩溃** | 所有 NN 实验必须遵守 |
-| **2025-12-25** | **C9-C11 新增：Fisher 框架验证 + error-aware + 分桶评估** | 扩展知识账本 |
-| **2025-12-25** | **I7-I8 新增：error-aware 训练 + 分桶评估洞见** | 指导 P0 优先级 |
-| **2025-12-25** | **DG5-DG6 新增：error-aware 验证 + efficiency 分桶** | P0 路线图 |
-| **2025-12-25** | **新增 R² vs SNR 分析工具：plot_r2_vs_snr_1m.py** | 支持按SNR分桶评估，验证C11 |
+| 2025-12-24 | Hub v2 重构 | 精简假设→结论账本 |
+| 2025-12-25 | C10 Soft-gate MoE ρ=0.805 验证 | MoE 路线确认 |
+| 2025-12-25 | 新增设计原则 P7: NN 必须 flux_only | 所有 NN 实验必须遵守 |
+| 2025-12-26 | Fisher 5D Multi-Mag 完成 | 5D ceiling 是真正 upper bound |
+| **2025-12-27** | **Hub v3 Audited + 合并** | 矛盾消除，协议标准化，5D ceiling 集成 |
 
 ---
 
-## 📎 Appendix: Canonical Evaluation History
+<details>
+<summary><b>附录：Canonical Scoreboard History</b></summary>
 
-> 以下数字已被 canonical scoreboard 取代，仅供追溯
+### A. Test Size 演变
 
-| 日期 | test size | Ridge R² | LGBM R² | 备注 |
-|------|-----------|----------|---------|------|
-| 2025-12-22 | 500 | 0.50 | 0.57 | 旧口径 |
-| 2025-12-23 | 1000 | **0.46** | **0.57** | 当前 canonical |
+| 日期 | test size | Ridge R² | Notes |
+|------|-----------|----------|-------|
+| 2025-12-22 | 500 | 0.50 | 旧口径 (deprecated) |
+| 2025-12-24 | **1k** | **0.46** | 当前 canonical |
 
----
+### B. Multi-Magnitude Fisher
 
-## 📎 Appendix: Multi-Magnitude Fisher 扩展
+| Mag | SNR | 5D R²_max | 3D R²_max | Δ (%) |
+|-----|-----|-----------|-----------|-------|
+| 18.0 | 87.4 | 0.9993 | 0.9994 | -0.01% |
+| 20.0 | 24.0 | 0.9892 | 0.9906 | -0.14% |
+| **21.5** | 7.1 | **0.8742** | 0.8914 | -1.93% |
+| 22.0 | 4.6 | 0.6983 | 0.7396 | -5.58% |
+| 22.5 | 3.0 | 0.2647 | 0.3658 | -27.65% |
+| 23.0 | 1.9 | 0.0000 | 0.0000 | N/A |
 
-| Magnitude | SNR | R²_max (median) | Schur Decay |
-|-----------|-----|-----------------|-------------|
-| 18.0 | 87.4 | 0.999 | 0.66 |
-| 20.0 | 24.0 | 0.990 | 0.68 |
-| **21.5** | 7.1 | **0.89** | 0.69 |
-| 23.0 | 1.9 | 0.00 (50%+ 失败) | 0.69 |
+### C. 关键阈值
 
-**关键洞见:**
-- SNR > 20 时信息饱和，瓶颈是特征提取
-- SNR < 2 时信息悬崖，需额外先验
-- Schur decay ≈ 0.68 恒定，multi-task 策略在所有 SNR 等效
-
----
-
-# 📊 Multi-Magnitude Fisher/CRLB 完整汇总 (2024-12-25)
-
-## 6 Magnitude 完整结果
-
-| Magnitude | SNR | R²_max (median) | R²_max (90%) | Schur Decay |
-|-----------|-----|-----------------|--------------|-------------|
-| 18.0 | 87.4 | **0.9994** | 0.9999 | 0.6641 |
-| 20.0 | 24.0 | **0.9906** | 0.9983 | 0.6842 |
-| 21.5 | 7.1 | **0.8914** | 0.9804 | 0.6906 |
-| 22.0 | 4.6 | **0.7396** | 0.9530 | 0.6921 |
-| 22.5 | 3.0 | **0.3658** | 0.8854 | 0.6922 |
-| 23.0 | 1.9 | **0.0000** | 0.7180 | 0.6923 |
-
-## 关键阈值
-
-| SNR 阈值 | Magnitude | R²_max (median) | 状态 |
-|----------|-----------|-----------------|------|
+| SNR 阈值 | Magnitude | R²_max | 状态 |
+|----------|-----------|--------|------|
 | SNR > 20 | mag ≤ 20 | > 0.99 | ✅ 近乎完美 |
-| **SNR ≈ 4** | **mag ≈ 22** | **0.74** | ⚠️ 临界点 |
+| **SNR ≈ 4** | **mag ≈ 22** | **0.70** | ⚠️ 临界点 |
 | SNR < 2 | mag > 23 | 0.00 | ❌ 信息悬崖 |
 
-## 关键洞见更新
-
-### I-Multi-2 (新): 临界 SNR ≈ 4
-> SNR=4 是 R²_max median > 0.5 的临界点。
-> mag=22 是有效估计的极限边界。
-
-![R²_max vs SNR](img/fisher_multi_mag_snr_trend.png)
+</details>
 
 ---
 
-## 🆕 Update 2025-12-25: R² vs SNR 分桶分析工具
-
-### 工具说明
-**脚本**: `scripts/plot_r2_vs_snr_1m.py`  
-**功能**: 在1M数据上训练所有模型（Ridge, LightGBM, MLP, CNN, Oracle MoE），在test_1k_0上测试，按SNR分桶绘制R²曲线
-
-### 图片位置
-- **本地**: `results/scaling_r2_vs_snr/r2_vs_snr_1m.png`
-- **知识中心**: `exp/img/r2_vs_snr_1m.png`
-
-### 结果展示（待运行）
-
-> **注意**: 图片将在运行脚本后生成
-
-![R² vs SNR @ 1M train, noise=1](exp/img/r2_vs_snr_1m.png)
-
-**预期洞察**:
-- 不同模型在不同SNR区间的表现差异
-- 识别哪些SNR区间模型表现最好/最差
-- 验证"全局R²掩盖区域差异"的假设（C11）
-
-### 使用方法
-```bash
-python scripts/plot_r2_vs_snr_1m.py
-```
-
----
-
-## 🆕 Update 2025-12-25: Soft-gate MoE 验证完成
-
-### DG3 结果: ✅ 已验证
-
-| 项 | 内容 |
-|----|------|
-| **Experiment ID** | SCALING-20251223-soft-moe-noise1-01 |
-| **Soft-gate MoE R²** | 0.5930 |
-| **ρ (Oracle Benefit Retention)** | **0.8052 ≥ 0.70** ✅ |
-| **Routing Accuracy** | 86.3% |
-| **决策** | MoE 列为 noise=1 场景主线解法 |
-
-### 新增 Conclusion
-
-| # | Statement | Status | Evidence | Impact |
-|---|-----------|--------|----------|--------|
-| **C10:** Soft-gate MoE 保留 80.5% Oracle 收益 (ρ=0.8052) | ✅ 强 | MVP-16A-2 实验 | MoE 可作为 noise=1 主线方案 |
-
-### Timeline 更新
-
-| Date | Event | Action Taken |
-|------|-------|--------------|
-| 2025-12-25 | C10 确认：Soft-gate MoE ρ=0.8052 | MoE 路线验证成功，可进入生产化阶段 |
+*Audited: 2025-12-27 | Source: contradiction_audit.md*
