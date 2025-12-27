@@ -1,10 +1,15 @@
 # 📘 Experiment Report: Traditional ML Ceiling at Large Scale
-> **Name:** TODO | **ID:** `SCALING-20251222-ml-ceiling-01`  
-> **Topic:** `scaling` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Name:** ML Ceiling @ 1M | **ID:** `SCALING-20251222-ml-ceiling-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.0, MVP-1.1, MVP-1.2 | **Project:** `VIT`  
 > **Author:** Viska Wei | **Date:** 2025-12-22 | **Status:** ✅ Done
+
+> ⚠️ **PROTOCOL NOTE**: This experiment used test=500. Canonical protocol is now **test=1k**.
+> The authoritative Ridge R² for 1M/noise=1 is **0.46** (from `oracle-moe-noise1-01` with test=1k, α=100k).
+> LightGBM R²=0.57 remains valid (same test=500 but confirmed by later experiments).
+
 ```
 💡 实验目的  
-决定：影响的决策
+验证传统 ML 在 1M 数据 + noise=1 下的性能天花板
 ```
 
 ---
