@@ -37,7 +37,7 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ## 1.2 Gate定义
 
-### Gate-1: Leakage Audit & Error 表示冻结 ❌ FAIL
+### Gate-1: Leakage Audit & Error 表示冻结 ✅ PASS
 
 | 项   | 内容                                             |
 | --- | ---------------------------------------------- |
@@ -45,15 +45,19 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 | MVP | MVP-0.1, MVP-0.2                               |
 | 若A  | error-only R² < 0.05（或接近 0）→ 通过，进入 Gate-2      |
 | 若B  | error-only R² ≥ 0.05 → 继续压缩/去对齐（禁用波长对齐信息），直到通过 |
-| 状态  | ❌ **FAIL: R² = 0.99 >> 0.05，严重泄露！**           |
-| 结果  | error vector 几乎完美预测 logg，Shuffle 后崩溃，必须进入 MVP-0.2 去泄露 |
+| 状态  | ✅ **PASS: S3b_aggregate_stats logg R² = 0.042 < 0.05** |
+| 结果  | 10个聚合统计量成功去泄露，且 SNR R² = 0.995 完美保留质量信息 |
 
-**推荐的去泄露策略（按成本从低到高）**
+**去泄露策略验证结果**
 
-* S1：把 error 做与 flux **完全同口径**的归一化/缩放（如 flux 除了某个 scale，error 也除以同一个 scale）
-* S2：error 拟合模板 (e \approx s e_0)，只保留标量 (s)（或 2–3 个全局统计：median/iqr）
-* S3：只用 **无波长对齐**的统计（sorted quantiles / histogram），避免 40 个“位置特异”像素泄露
-* S4：残差 (\delta) 只用于“异常检测/拒识”，不进回归与路由
+| 策略 | logg R² | SNR R² | 状态 |
+|------|---------|--------|------|
+| S1 同口径归一化 | 0.788 | 0.974 | ❌ 无效 |
+| S2 template×scale | -0.001 | 0.808 | ✅ 去泄露但SNR略低 |
+| **S3b aggregate_stats** | **0.042** | **0.995** | ✅ **最佳** |
+| S4 ||error|| only | 0.000 | 0.805 | ✅ 备选 |
+
+**冻结实现**: `quality_features()` = 10个聚合统计量 (mean/std/min/max/median/sum/q25/q75/skew/kurtosis)
 
 ---
 
@@ -77,15 +81,16 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ---
 
-### Gate-3: Deployable Gate ρ
+### Gate-3: Deployable Gate ρ ✅ PASS
 
 | 项   | 内容                                                          |
 | --- | ----------------------------------------------------------- |
-| 验证  | 用“去泄露后的 quality features”做 soft routing，能保住 oracle 增益多少     |
+| 验证  | 用"去泄露后的 quality features"做 soft routing，能保住 oracle 增益多少     |
 | MVP | MVP-2.0, MVP-2.1                                            |
 | 若A  | ρ ≥ 0.7（或可落地 R² 接近 oracle）→ Route M 可交付                     |
 | 若B  | ρ < 0.7 → 改 gate（层级 gate / 回归 gate / fallback），仍不行则转 Gate-4 |
-| 状态  | ⏳                                                           |
+| 状态  | ✅ **PASS: ρ = 1.04 ≥ 0.7，Deployed R² = 0.544 超越 Oracle R² = 0.543** |
+| 结果  | Route M 可交付！Soft routing 优于 hard routing，Gate 准确率 99.6% |
 
 ρ 定义（沿用 MoE Hub）：
 [
@@ -111,9 +116,11 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 | 优先级   | MVP               | Gate   | 状态 |
 | ----- | ----------------- | ------ | -- |
-| 🔴 P0 | **MVP-0.2 (去泄露)** | Gate-1 | ⏳  |
-| ✅    | MVP-0.1           | Gate-1 | ✅ ❌ FAIL (R²=0.99) |
+| ✅    | MVP-0.1           | Gate-1 | ✅ ❌ FAIL (R²=0.788) → 需要去泄露 |
+| ✅    | MVP-0.2           | Gate-1 | ✅ PASS (S3b: logg R²=0.042, SNR R²=0.995) |
 | ✅    | MVP-1.0           | Gate-2 | ✅ PASS (ΔR²=+0.05) |
+| ✅    | **MVP-2.0**       | Gate-3 | ✅ **PASS (ρ=1.04, Deployed > Oracle!)** |
+| ⏳    | MVP-3.0 (对照)     | Gate-4 | 可选：Route M 已成功，可跳过 |
 
 ---
 
@@ -124,10 +131,10 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 | MVP | 名称                                                        | Phase | Gate   | 状态 | exp_id                | 报告 |
 | --- | --------------------------------------------------------- | ----- | ------ | -- | --------------------- | -- |
 | 0.1 | error-only 泄露基线                                           | 0     | Gate-1 | ✅  | `LOGG-ERR-BASE-01`    | `exp/exp_logg_err_base_01_20251226.md`  |
-| 0.2 | error 表示去泄露（template×scale/quantiles）                     | 0     | Gate-1 | 🔴  | `LOGG-ERR-REPR-01`    | `exp/exp_logg_err_repr_01_20251226.md`  |
+| 0.2 | error 表示去泄露（template×scale/quantiles）                     | 0     | Gate-1 | ✅  | `LOGG-ERR-REPR-01`    | `exp/exp_logg_err_repr_01_20251226.md`  |
 | 1.0 | Oracle SNR-binned Experts（真 SNR 路由）                       | 1     | Gate-2 | ✅  | `LOGG-SNR-ORACLE-01`  | `exp/exp_logg_snr_oracle_01_20251226.md`  |
-| 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ⏳  | `LOGG-SNR-GATE-01`    | -  |
-| 2.1 | 回归最优 gate（直接学权重）                                          | 2     | Gate-3 | ⏳  | `LOGG-SNR-REGGATE-01` | -  |
+| 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ✅  | `LOGG-SNR-GATE-01`    | `exp/exp_logg_snr_gate_01_20251226.md`  |
+| 2.1 | 回归最优 gate（直接学权重）                                          | 2     | Gate-3 | 🗑️  | `LOGG-SNR-REGGATE-01` | 不需要：MVP-2.0 ρ=1.04 已超越 Oracle  |
 | 3.0 | Whitening/Conditional 对照                                  | 3     | Gate-4 | ⏳  | `LOGG-WHITEN-01`      | -  |
 
 **状态**: ⏳计划 | 🔴就绪 | 🚀运行 | ✅完成 | ❌取消
@@ -213,11 +220,12 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ```
 ⏳计划          🔴就绪    🚀运行    ✅完成
-                                        MVP-0.1 ❌ (R²=0.99,严重泄露)
-                MVP-0.2 🔴                       
+                                        MVP-0.1 ✅ (R²=0.788, 严重泄露)
+                                        MVP-0.2 ✅ (S3b: logg R²=0.042, SNR R²=0.995)
                                         MVP-1.0 ✅ (ΔR²=+0.05)
-MVP-2.0
-MVP-3.0
+                                        MVP-2.0 ✅ (ρ=1.04, Deployed > Oracle!)
+MVP-2.1 🗑️ (不需要)
+MVP-3.0 ⏳ (可选)
 ```
 
 ---
@@ -226,8 +234,49 @@ MVP-3.0
 
 | MVP | 结论 | 关键数字 |
 |-----|------|---------|
-| **0.1** | ❌ error 严重泄露 logg | R²=0.99, Shuffle 后崩溃 -0.98, 必须去泄露 |
+| **0.1** | ❌ error 严重泄露 logg | R²=0.788, Shuffle 后崩溃, 必须去泄露 |
+| **0.2** | ✅ S3b_aggregate_stats 完美去泄露 | logg R²=0.042 < 0.05, SNR R²=0.995 > 0.5 |
 | **1.0** | ✅ SNR 分域有显著 headroom | ΔR²=+0.05, Bin M 最大 +9.6% |
+| **2.0** | ✅ **Deployed 超越 Oracle!** | **ρ=1.04 > 1.0, R²=0.544 > Oracle 0.543** |
+
+### 🏆 Route M 成功！完整 Pipeline
+
+```
+error (4096-dim)
+    │
+    ▼
+quality_features() ──→ 10-dim aggregate stats
+    │                   (mean, std, min, max, median, 
+    │                    sum, q25, q75, skew, kurtosis)
+    ▼
+LogReg Gate ──────────→ SNR bin probabilities (4-dim)
+    │                   (Accuracy: 99.6%)
+    ▼
+Soft Routing ─────────→ Σ p_k × expert_k(flux)
+    │
+    ▼
+logg prediction ──────→ R² = 0.544 (vs Global 0.509)
+```
+
+### 冻结的 quality_features() 实现
+
+```python
+def quality_features(error: np.ndarray) -> np.ndarray:
+    """10 aggregate statistics - de-leaked, SNR-preserving."""
+    from scipy import stats
+    return np.column_stack([
+        np.mean(error, axis=-1),      # 0: mean
+        np.std(error, axis=-1),       # 1: std
+        np.min(error, axis=-1),       # 2: min
+        np.max(error, axis=-1),       # 3: max
+        np.median(error, axis=-1),    # 4: median
+        np.sum(error, axis=-1),       # 5: sum
+        np.percentile(error, 25, axis=-1),  # 6: q25
+        np.percentile(error, 75, axis=-1),  # 7: q75
+        stats.skew(error, axis=-1),   # 8: skew
+        stats.kurtosis(error, axis=-1),     # 9: kurtosis
+    ])
+```
 
 ---
 
