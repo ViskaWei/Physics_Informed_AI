@@ -6,7 +6,7 @@
       {
         "id": "e69c64f63e1f5e44",
         "type": "tabs",
-        "dimension": 58.17066369213608,
+        "dimension": 58.561070831009474,
         "children": [
           {
             "id": "ba8d2fa3bd5a3042",
@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/moe/exp/exp_logg_err_repr_01_20251226.md",
+                "file": "logg/moe/moe_snr_roadmap.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "exp_logg_err_repr_01_20251226"
+              "title": "moe_snr_roadmap"
             }
           }
         ],
@@ -56,7 +56,7 @@
       {
         "id": "a4e449ee3dc708e0",
         "type": "tabs",
-        "dimension": 41.82933630786392,
+        "dimension": 41.43892916899052,
         "children": [
           {
             "id": "140d5ff8eb31ed3e",
@@ -276,28 +276,29 @@
   },
   "active": "3a028c204be029e1",
   "lastOpenFiles": [
-    "logg/moe/prompts/p_LOGG-ERR-REPR-01.md",
-    "logg/moe/moe_snr_roadmap.md",
     "logg/moe/moe_snr_hub.md",
     "logg/moe/exp/exp_logg_err_repr_01_20251226.md",
+    "logg/moe/img/logg_snr_gate_01_rho.png",
+    "logg/moe/img/logg_snr_gate_01_r2_comparison.png",
+    "logg/moe/img/logg_snr_gate_01_perbin_r2.png",
+    "logg/moe/img/logg_snr_gate_01_confusion.png",
+    "logg/moe/img/logg_err_repr_01_tradeoff.png",
+    "logg/moe/img/logg_err_repr_01_summary.png",
+    "logg/moe/img/logg_err_repr_01_snr_r2.png",
+    "logg/moe/img/logg_err_repr_01_logg_r2.png",
+    "logg/moe/exp/exp_logg_snr_gate_01_20251226.md",
+    "logg/moe/prompts/p_LOGG-ERR-REPR-01.md",
+    "logg/moe/moe_snr_roadmap.md",
     "logg/vit/exp_vit_1m_scaling_20251226.md",
     "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "logg/scaling/exp/exp_whitening_design_principles_20251226.md",
     "logg/scaling/card/card_whitening_design_principles_20251226.md",
     "logg/moe/img/logg_err_base_01_sanity_checks.png",
     "logg/moe/img/logg_err_base_01_r2_models.png",
-    "logg/moe/img/logg_err_base_01_importance_spectrum.png",
-    "logg/moe/img/logg_err_base_01_importance_hist.png",
-    "logg/moe/exp/img/snr_oracle_moe_pred_vs_true.png",
-    "logg/moe/exp/img/snr_oracle_moe_perbin_r2.png",
-    "logg/moe/exp/img/snr_oracle_moe_delta_heatmap.png",
-    "logg/moe/exp/img/snr_oracle_moe_comparison.png",
     "logg/moe/exp/img",
     "logg/moe/exp/exp_logg_snr_oracle_01_20251226.md",
     "logg/moe/exp/exp_logg_err_base_01_20251226.md",
     "conflict-files-obsidian-git.md",
-    "logg/scaling/exp/img/fisher_5d_vs_3d_schur.png",
-    "logg/scaling/exp/img/fisher_5d_vs_3d_comparison.png",
     "logg/scaling/exp/exp_scaling_fisher_5d_multi_mag_20251226.md",
     "logg/moe/prompts/p_LOGG-ERR-BASE-01.md",
     "logg/moe/prompts/coding_prompt_LOGG-SNR-ORACLE-01.md",
@@ -316,8 +317,6 @@
     "logg/scaling/exp/exp_scaling_fisher_efficiency_binned_20251225.md",
     "logg/scaling/coding_prompt_fisher_v3_chemical.md",
     "logg/scaling/exp/exp_scaling_soft_moe_noise1_20251225.md",
-    "logg/scaling/card/card_schur_complement_20251225.md",
-    "logg/design_principles_consolidated_20251225.md",
     "_backend/template/old",
     "logg/scaling/card",
     "logg/scaling/fisher",
