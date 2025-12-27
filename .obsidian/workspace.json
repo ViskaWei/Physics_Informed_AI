@@ -158,7 +158,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 511.5041847229004
+    "width": 247.5041847229004
   },
   "right": {
     "id": "eab51a00943c2f05",
@@ -260,7 +260,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 348.5
+    "width": 828.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -274,7 +274,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3a028c204be029e1",
+  "active": "95b094f5d53bc452",
   "lastOpenFiles": [
     "logg/moe/moe_snr_hub.md",
     "logg/moe/exp/exp_logg_err_repr_01_20251226.md",
