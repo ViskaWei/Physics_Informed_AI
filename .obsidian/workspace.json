@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "data/bosz50k/z0/mag205_225_lowT_1M.md",
+                "file": "logg/moe/moe_snr_hub.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mag205_225_lowT_1M"
+              "title": "moe_snr_hub"
             }
           }
         ],
@@ -276,6 +276,7 @@
   },
   "active": "3a028c204be029e1",
   "lastOpenFiles": [
+    "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "logg/moe/moe_snr_roadmap.md",
     "logg/scaling/exp/exp_whitening_design_principles_20251226.md",
     "logg/scaling/card/card_whitening_design_principles_20251226.md",
@@ -317,7 +318,6 @@
     "logg/design_principles_consolidated_20251225.md",
     "_backend/template/old/hub3.md",
     "_backend/template/old/hub2.md",
-    "_backend/template/old/hub1.md",
     "_backend/template/old",
     "logg/scaling/card",
     "logg/scaling/fisher",
