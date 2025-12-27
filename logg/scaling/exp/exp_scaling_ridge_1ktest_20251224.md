@@ -1,7 +1,54 @@
 # 📘 Ridge Alpha Sweep & Y-Scaling @ 1k Test (2025-12-24)
-> **Name:** TODO | **ID:** `TODO`  
-> **Topic:** `` | **MVP:** MVP-1.0 | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:**  | **Status:** 🔄
+> **Name:** Ridge 1k Test Validation | **ID:** `SCALING-20251224-ridge-1ktest-01`  
+> **Topic:** `scaling` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-24 | **Status:** ✅ Done
+
+---
+
+## ⚡ TL;DR
+
+### Verdict
+> Ridge R² = **0.4551** @ 1k test 成为 canonical baseline，取代旧的 500 test 协议。
+
+### Key Numbers
+| Metric | Value | Notes |
+|--------|-------|-------|
+| **Best Ridge R² (1k test)** | 0.4551 | Canonical |
+| **Best α** | 100,000 | 1M 数据最优 |
+| **Y-Scaling Effect** | 无影响 | R² 不变 |
+
+### Hypothesis Validation
+| Hypothesis | Threshold | Actual | Result |
+|------------|-----------|--------|--------|
+| Test size 影响 | 500 vs 1k | ΔR² = -0.047 | ✅ 更准确估计 |
+
+---
+
+## 📐 Scope Card
+
+| Field | Value |
+|-------|-------|
+| **Dataset** | BOSZ 50000, mag205_225_lowT_1M |
+| **Train Size** | 1,000,000 (5 shards × 200k) |
+| **Test Size** | **1,000** (full test_1k_0) |
+| **Test Protocol** | **pre-noised** |
+| **Noise Level** | σ=1.0 |
+| **Features** | 4096 (MR arm) |
+| **Target** | log_g ∈ [1.0, 5.0] |
+| **X Scaling** | StandardScaler |
+| **Y Scaling** | None (validated no effect) |
+
+---
+
+## ✅ Sanity Checks
+
+| Check | Expected | Actual | Pass |
+|-------|----------|--------|------|
+| R² 范围合理 | [0, 1] | 0.4551 | ✅ |
+| α=100k 与 oracle-moe 一致 | Same α | Same α | ✅ |
+| 过正则化拐点存在 | α > 500k 下降 | ✅ 0.4360 @ α=1M | ✅ |
+
+---
 ```
 💡 实验目的  
 决定：影响的决策

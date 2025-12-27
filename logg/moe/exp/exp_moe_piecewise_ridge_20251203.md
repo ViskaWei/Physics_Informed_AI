@@ -1,10 +1,19 @@
 # 📘 Experiment Report: MoE-1 Piecewise Ridge
-> **Name:** TODO | **ID:** `VIT-20251203-moe-piecewise-01`  
-> **Topic:** `VIT` | **MVP:** MVP-1.0 | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ✅ Completed
+
+> ⚠️ **数值修正说明 (2025-12-03)**
+> 
+> 本报告中的 **ΔR²=0.078 已被 MVP-1.1 修正为 ΔR²=0.050**。
+> 
+> **原因**: 本报告使用了不公平比较（MoE 评估 81.6% 样本 vs Global 评估 100% 样本）。
+> 
+> **权威结论请参见**: [`exp_moe_rigorous_validation_20251203.md`](./exp_moe_rigorous_validation_20251203.md)
+
+> **Name:** Piecewise Ridge | **ID:** `VIT-20251203-moe-piecewise-01`  
+> **Topic:** `moe` | **MVP:** MVP-1.0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-03 | **Status:** ⚠️ Superseded by MVP-1.1
 ```
 💡 实验目的  
-决定：影响的决策
+决定：MoE 是否值得投入
 ```
 
 ---

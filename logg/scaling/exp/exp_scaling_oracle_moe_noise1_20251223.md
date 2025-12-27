@@ -1,7 +1,56 @@
 # 📘 Oracle MoE @ noise=1 Structure Bonus Verification (1M Data)
-> **Name:** TODO | **ID:** `TODO`  
-> **Topic:** `` | **MVP:** MVP-16A | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:**  | **Status:** 🔄
+> **Name:** Oracle MoE @ noise=1 | **ID:** `SCALING-20251223-oracle-moe-noise1-01`  
+> **Topic:** `scaling` | **MVP:** MVP-16A-0 | **Project:** `VIT`  
+> **Author:** Viska Wei | **Date:** 2025-12-23 | **Status:** ✅ Done
+
+---
+
+## ⚡ TL;DR
+
+### Verdict
+> Oracle MoE 在 noise=1 下展示 **极强结构红利**：ΔR² = +0.16 远超 0.03 阈值，所有 9 bins 均正向提升。
+
+### Key Numbers
+| Metric | Value | vs Baseline |
+|--------|-------|-------------|
+| **Global Ridge R²** | 0.4611 | baseline |
+| **Oracle MoE R²** | 0.6249 | +0.1637 |
+| **ΔR² (structure bonus)** | +0.1637 | >> 0.03 阈值 |
+
+### Hypothesis Validation
+| Hypothesis | Threshold | Actual | Result |
+|------------|-----------|--------|--------|
+| H-A0.1 (ΔR² ≥ 0.03) | ≥ 0.03 | **+0.1637** | ✅ PASS |
+| H4.1.1 (Oracle MoE R² > 0.55) | > 0.55 | **0.6249** | ✅ PASS |
+
+---
+
+## 📐 Scope Card
+
+| Field | Value |
+|-------|-------|
+| **Dataset** | BOSZ 50000, mag205_225_lowT_1M |
+| **Train Size** | 1,000,000 (5 shards × 200k) |
+| **Test Size** | 1,000 (test_1k_0) |
+| **Test Protocol** | **pre-noised** (使用 test_1k_0 中预存的 noisy 数据) |
+| **Noise Level** | σ=1.0 |
+| **Features** | 4096 (MR arm) |
+| **Target** | log_g ∈ [1.0, 5.0] |
+| **Seed** | numpy default |
+| **Ridge α** | 100000 |
+| **9-Bin 划分** | Teff × [M/H] (3 × 3) |
+
+---
+
+## ✅ Sanity Checks
+
+| Check | Expected | Actual | Pass |
+|-------|----------|--------|------|
+| Global Ridge 与其他实验一致 | ≈ 0.46 | 0.4611 | ✅ |
+| 所有 9 bins 均正向提升 | All ΔR² > 0 | All positive | ✅ |
+| 样本分布合理 | 62k-117k per bin | 62.7k-116.7k | ✅ |
+
+---
 ```
 💡 实验目的  
 决定：影响的决策
