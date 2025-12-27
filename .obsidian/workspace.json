@@ -276,6 +276,8 @@
   },
   "active": "3a028c204be029e1",
   "lastOpenFiles": [
+    "logg/moe/prompts/p_LOGG-ERR-REPR-01.md",
+    "logg/moe/exp/exp_logg_err_repr_01_20251226.md",
     "logg/moe/moe_snr_roadmap.md",
     "logg/moe/moe_snr_hub.md",
     "logg/vit/exp_vit_1m_scaling_20251226.md",
@@ -316,8 +318,6 @@
     "logg/scaling/exp/exp_scaling_soft_moe_noise1_20251225.md",
     "logg/scaling/card/card_schur_complement_20251225.md",
     "logg/design_principles_consolidated_20251225.md",
-    "_backend/template/old/hub3.md",
-    "_backend/template/old/hub2.md",
     "_backend/template/old",
     "logg/scaling/card",
     "logg/scaling/fisher",
