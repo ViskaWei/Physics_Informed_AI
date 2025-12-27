@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/moe/moe_snr_hub.md",
+                "file": "logg/moe/moe_snr_roadmap.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "moe_snr_hub"
+              "title": "moe_snr_roadmap"
             }
           }
         ],
@@ -276,10 +276,10 @@
   },
   "active": "3a028c204be029e1",
   "lastOpenFiles": [
+    "logg/moe/moe_snr_hub.md",
     "logg/moe/prompts/p_LOGG-ERR-REPR-01.md",
     "logg/moe/exp/exp_logg_err_repr_01_20251226.md",
     "logg/moe/moe_snr_roadmap.md",
-    "logg/moe/moe_snr_hub.md",
     "logg/vit/exp_vit_1m_scaling_20251226.md",
     "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "logg/scaling/exp/exp_whitening_design_principles_20251226.md",
