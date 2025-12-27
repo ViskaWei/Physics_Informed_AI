@@ -42,12 +42,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "logg/moe/moe_snr_hub.md",
+                "file": "logg/vit/exp_vit_1m_scaling_20251226.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "moe_snr_hub"
+              "title": "exp_vit_1m_scaling_20251226"
             }
           }
         ],
@@ -276,6 +276,7 @@
   },
   "active": "3a028c204be029e1",
   "lastOpenFiles": [
+    "logg/moe/moe_snr_hub.md",
     "data/bosz50k/z0/mag205_225_lowT_1M.md",
     "logg/moe/moe_snr_roadmap.md",
     "logg/scaling/exp/exp_whitening_design_principles_20251226.md",
@@ -298,7 +299,6 @@
     "logg/moe/prompts/p_LOGG-ERR-BASE-01.md",
     "logg/moe/prompts/coding_prompt_LOGG-SNR-ORACLE-01.md",
     "logg/moe/prompts",
-    "logg/moe/moe_snr_hub.md",
     "logg/scaling/exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md",
     "logg/scaling/fisher_roadmap_20251225.md",
     "logg/scaling/fisher_hub_20251225.md",
