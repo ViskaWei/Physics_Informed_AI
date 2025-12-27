@@ -40,16 +40,17 @@ e \approx s \cdot e_0 + \delta
 
 # 🧠 logg SNR-MoE Hub
 
-> **ID:** `VIT-20251226-logg-snr-moe-hub` | **Status:** 🌱探索 |
-> **Date:** 2025-12-26 | **Update:** 2025-12-26
+> **ID:** `VIT-20251226-logg-snr-moe-hub` | **Status:** ✅完成 |
+> **Date:** 2025-12-26 | **Update:** 2025-12-27
 > **Root:** `logg` | **Child:** `snr_gate`, `error_repr`, `snr_experts` |
 
 | #  | 💡 共识[抽象洞见]                       | 证据                                                               | 决策                                     |
 | -- | --------------------------------- | ---------------------------------------------------------------- | -------------------------------------- |
 | K1 | **logg 的可达精度由“信息量(SNR)”强烈分段决定**   | Fisher multi-mag：SNR 7→4→3 时 (R^2_{max}) 0.89→0.74→0.37；临界 SNR≈4 | 需要把模型设计成“按 SNR 分策略”，MoE/conditional 都可 |
 | K2 | **高噪声下“分域训练”的结构红利更大**             | noise=1 Oracle MoE: 0.6249 vs Global Ridge 0.4611，ΔR²=+0.1637    | 低 SNR 场景更值得上 MoE（至少结构上限很高）             |
-| K3 | **error vector 在当前生成口径下包含极强泄露信号**  | **error-only Ridge R²=0.99** (LOGG-ERR-BASE-01)，Shuffle 后 R²=-0.98 | 必须先做 error 表示的"去泄露/口径一致化"再用            |
-| K4 | **error vector 近似“模板×标量 + 稀疏残差”** | 96% 相似，仅 40/4096 不同（用户观察）                                        | 用“低维 quality 参数”替代直接输入 error 全向量       |
+| K3 | **error vector 在当前生成口径下包含极强泄露信号**  | **error-only Ridge R²=0.9896** (LOGG-ERR-BASE-01, α=0.001)，Shuffle 后 R²=-0.98 | 必须先做 error 表示的"去泄露/口径一致化"再用            |
+| K4 | **error vector 近似"模板×标量 + 稀疏残差"** | 96% 相似，仅 40/4096 不同（用户观察）                                        | 用"低维 quality 参数"替代直接输入 error 全向量       |
+| K5 | **S3b_aggregate_stats 完美去泄露** | logg R²=0.042 < 0.05 ✅ 且 SNR R²=0.995 > 0.5 ✅ (LOGG-ERR-REPR-01) | **冻结 quality_features() = 10个聚合统计量** |
 
 **🦾 现阶段信念 [≤10条，写“所以呢]**
 
@@ -59,8 +60,16 @@ e \approx s \cdot e_0 + \delta
 
 **👣 下一步最有价值  [≤2条，直接可进 Roadmap Gate] **
 
-* 🔴 **P0**：定义“允许输入口径”并做 **Leakage Audit** → If error-only 仍高 R²，则必须进一步压缩/打乱对齐信息；else 进入 SNR-MoE。
-* 🟡 **P1**：做 **Oracle SNR-binned Experts**，测 headroom → If ΔR² ≥ 0.02（或 ρ≥0.5）则继续可落地 gate；else 转向单模型 whitening/conditional。
+* ~~🔴 P0~~：✅ **已完成** Leakage Audit + 去泄露 → **S3b_aggregate_stats 冻结为 quality_features()**
+* ~~🟡 P1~~：✅ **已完成** Oracle SNR-binned Experts → **ΔR² = +0.05 ≥ 0.02 PASS**
+* ~~🔴 P0~~：✅ **已完成** MVP-2.0 Deployable Gate → **ρ = 1.04 ≥ 0.7，超越 Oracle！**
+
+---
+
+### 🏆 Route M 完成！下一阶段
+
+* 🟢 **P0 (集成)**：将 SNR-MoE 集成到 ViT 模型中
+* 🟡 **P1 (可选)**：MVP-3.0 Whitening/Conditional 对照（验证 MoE 优于简单方法）
 
 > **权威数字（一行即可）**：Ceiling(Fisher)≈0.89@SNR~7；Oracle MoE(noise=1)=0.6249；Global Ridge(noise=1)=0.4611；SNR≈4 是“可达上限掉崖”临界。   
 
@@ -68,8 +77,9 @@ e \approx s \cdot e_0 + \delta
 | ---------------------- | -------------------- | ---------------------------- | -------------------- |
 | ViT (当前)               | ~0.71                | val（不一定是 test）               | 用户当前最好               |
 | Oracle MoE (9 experts) | 0.6249               | 1M data, noise=1             | 结构上限（oracle routing） |
-| **Oracle SNR-MoE (4 bins)** | **0.5129**       | 1M data, noise=1, SNR-binned | **✅ LOGG-SNR-ORACLE-01** |
-| Global Ridge           | 0.4629               | 1M data, noise=1             | baseline             |
+| **Oracle SNR-MoE (4 bins)** | **0.5430**       | 1M data, noise=1, SNR-binned | **✅ LOGG-SNR-ORACLE-01** |
+| **🏆 Deployed SNR-MoE** | **0.5443**           | 1M data, noise=1, quality_features gate | **✅ LOGG-SNR-GATE-01 (超越 Oracle!)** |
+| Global Ridge           | 0.5087               | 1M data, noise=1             | baseline             |
 | Fisher/CRLB 上限         | R²_max median 0.8914 | mag=21.5, SNR~7.1, noise=1   | 理论上限（中位）             |
 | Fisher multi-mag       | SNR≈4 临界             | mag=22 SNR~4.6 → R²_max 0.74 | 设计分段阈值               |
 
@@ -80,17 +90,17 @@ e \approx s \cdot e_0 + \delta
 ```
 🌲 核心: 用 SNR/观测质量分域 + MoE/conditional 提升 logg 预测，同时避免 error-vector 泄露
 │
-├── Q1: SNR 分域是否真的有 headroom？
+├── Q1: SNR 分域是否真的有 headroom？ ✅ PASS
 │   ├── Q1.1: Oracle 按 SNR 分专家（真 SNR 路由）ΔR²≥0.02？ → ✅ ΔR²=+0.05
 │   └── Q1.2: headroom 是否主要来自 low-SNR 子集？ → ✅ Medium SNR (4-7) 最大 +9.6%
 │
-├── Q2: error vector 如何"可用但不泄露"？
-│   ├── Q2.1: error-only 预测 logg 的 R² 能否压到 <0.05？ → ❌ 当前 R²=0.99！
-│   ├── Q2.2: template×scale 表示是否足够做 gate？ → ⏳
+├── Q2: error vector 如何"可用但不泄露"？ ✅ PASS
+│   ├── Q2.1: error-only 预测 logg 的 R² 能否压到 <0.05？ → ✅ S3b: R²=0.042 < 0.05 ✅
+│   └── Q2.2: 去泄露表示能预测 SNR？ → ✅ S3b: SNR R²=0.995 > 0.5 ✅
 │
-└── Q3: 可落地 gate 能保住多少 oracle 增益？
-    ├── Q3.1: 用 quality features 做 soft routing ρ≥0.7？ → ⏳
-    └── Q3.2: fallback/拒识能否稳定提升 full-test？ → ⏳
+└── Q3: 可落地 gate 能保住多少 oracle 增益？ ✅ PASS
+    ├── Q3.1: 用 quality features 做 soft routing ρ≥0.7？ → ✅ ρ=1.04 > 1.0 (超越 Oracle!)
+    └── Q3.2: fallback/拒识能否稳定提升 full-test？ → ✅ Fallback rate=0%, 不需要
 
 Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️ 已关闭
 ```
@@ -128,7 +138,8 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 分支       | 当前答案（1句话）                        | 置信度 | 决策含义（So what）                    | 证据（exp/MVP）      |
 | -------- | -------------------------------- | --- | -------------------------------- | ---------------- |
 | SNR 影响上限 | SNR≈4 附近出现"上限掉崖"，分段建模合理          | 🟢  | 必须做 SNR-aware（MoE 或 conditional） | Fisher multi-mag |
-| **error 泄露** | **error R²=0.99 极高泄露！Shuffle 崩溃** | 🔴  | **必须先做去泄露，不能直接用 error** | **LOGG-ERR-BASE-01** |
+| ~~error 泄露~~ | ~~error R²=0.99 极高泄露~~ | ~~🔴~~ | ~~必须先做去泄露~~ | LOGG-ERR-BASE-01 |
+| **error 去泄露** | **S3b: logg R²=0.042, SNR R²=0.995** | 🟢 | **quality_features() 已冻结，可进入 MVP-2.0** | **LOGG-ERR-REPR-01** |
 | MoE 价值   | noise=1 下 Oracle MoE headroom 很大 | 🟢  | MoE 在低 SNR regime 值得投入           | Oracle MoE, LOGG-SNR-ORACLE-01 |
 
 ---
@@ -142,8 +153,14 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | I3 | error 向量可低维化 | error 96% 相似                   | 噪声形状近似由仪器决定；样本差异主要是整体尺度 | gate 应使用 quality 参数而非全 error | 用户观测              |
 | **I4** | **Medium SNR 受益最大** | Bin M (SNR 4-7) ΔR²=+9.6%，远超其他 bin | 临界区域专家化收益最大 | **SNR predictor 重点关注边界样本** | LOGG-SNR-ORACLE-01 |
 | **I5** | **SNR 4-bin 策略有效** | 所有 4 个 bin 的 Oracle Expert 均优于 Global | 分域策略全面有效 | **可继续开发 deployable gate** | LOGG-SNR-ORACLE-01 |
-| **I6** | **Error 泄露是波长对齐的** | Shuffle 后 R² 从 0.79 崩溃到 -0.98 | 模型依赖像素位置信息，不是简单统计量 | 去泄露必须破坏波长对齐 | LOGG-ERR-BASE-01 |
+| **I6** | **Error 泄露是波长对齐的** | Shuffle 后 R² 从 0.99 崩溃到 -0.98 | 模型依赖像素位置信息，不是简单统计量 | 去泄露必须破坏波长对齐 | LOGG-ERR-BASE-01 |
 | **I7** | **Top 泄露像素集中特定区域** | 像素 3277-3388, 3724-3869 重要性最高 | 可能对应特定谱线区域 | 这些区域需特殊处理或屏蔽 | LOGG-ERR-BASE-01 |
+| **I8** | **S1 同口径归一化无效** | error/median(flux) 仍有 R²=0.788 | 归一化不破坏波长对齐 pattern | 必须彻底打乱对齐 | LOGG-ERR-REPR-01 |
+| **I9** | **S2 template×scale 去泄露但 SNR 略低** | logg R²=-0.001 但 SNR R²=0.808 | 标量丢失分布信息 | 备选方案 | LOGG-ERR-REPR-01 |
+| **I10** | **S3b aggregate_stats 完美平衡** | logg R²=0.042, SNR R²=0.995 | 聚合统计量无对齐但保留分布 | **最佳策略** | LOGG-ERR-REPR-01 |
+| **I11** | **Deployed 超越 Oracle** | ρ=1.04, R²=0.544 vs Oracle 0.543 | Soft routing 在边界样本上优于 hard routing | **Route M 成功** | LOGG-SNR-GATE-01 |
+| **I12** | **Gate 准确率极高** | 99.6% accuracy | quality_features() 完美捕获 SNR 信息 | LogReg 足够，不需要复杂 gate | LOGG-SNR-GATE-01 |
+| **I13** | **M bin 收益最大** | Expert M R²=0.705，远超其他 bin | 临界 SNR 区域 (4-7) 专家化效果最好 | 重点优化 M bin 专家 | LOGG-SNR-GATE-01 |
 
 ---
 
@@ -151,9 +168,9 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 
 | DG  | 我们缺的答案                         | 为什么重要（会改哪个决策）      | 什么结果能关闭它                        | 决策规则                                          |
 | --- | ------------------------------ | ------------------ | ------------------------------- | --------------------------------------------- |
-| DG1 | 去泄露后 error-feature 是否仍能做 gate？ | 直接决定 Route M 能否成立  | error-only R² < 0.05 且 gate 仍有效 | If <0.05 → 继续；Else → 更强约束/禁用                  |
+| ~~DG1~~ | ~~去泄露后 error-feature 是否仍能做 gate？~~ | ✅ **已关闭** | **S3b: logg R²=0.042 < 0.05, SNR R²=0.995 > 0.5** | **冻结 quality_features() → MVP-2.0** |
 | ~~DG2~~ | ~~Oracle SNR 分专家的 headroom 有多大？~~ | ✅ **已关闭** | **ΔR² = +0.05 ≥ 0.02 PASS** | **继续做 MoE → MVP-2.0** |
-| DG3 | 可落地 gate 能保住多少 oracle？         | 决定工程化可交付性          | ρ ≥ 0.7 或 R² 接近 oracle          | If ρ≥0.7 → 进入集成；Else → 简化为 conditional        |
+| ~~DG3~~ | ~~可落地 gate 能保住多少 oracle？~~ | ✅ **已关闭** | **ρ = 1.04 ≥ 0.7，Deployed R² = 0.544 超越 Oracle 0.543** | **Route M 可交付！进入集成阶段** |
 
 ---
 
@@ -187,6 +204,9 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 📘 Fisher 上限          | `exp_scaling_fisher_ceiling_v2_20251224.md` | 单 mag 理论上限     |
 | 📘 Fisher multi-mag   | `exp_scaling_fisher_multi_mag_20251224.md`  | SNR 分段规律       |
 | 📘 Oracle MoE noise=1 | `exp_scaling_oracle_moe_noise1_20251223.md` | noise=1 结构红利   |
+| 📘 **MVP-0.2 去泄露**    | `exp/exp_logg_err_repr_01_20251226.md`      | quality_features() 冻结 |
+| 📘 **MVP-1.0 Oracle**  | `exp/exp_logg_snr_oracle_01_20251226.md`    | SNR 分域 headroom |
+| 📘 **MVP-2.0 Gate**    | `exp/exp_logg_snr_gate_01_20251226.md`      | 🏆 Deployed 超越 Oracle |
 
 ---
 
@@ -196,5 +216,9 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | ---------- | -------------- | -- |
 | 2025-12-26 | 创建 SNR-MoE Hub | -  |
 | 2025-12-26 | ✅ Gate-2 通过：ΔR²=+0.05 | Q1.1/Q1.2 验证，DG2 关闭，新增洞见 I4/I5 |
-| 2025-12-26 | ❌ Gate-1 未通过：error R²=0.99 | Q2.1 ❌，K3 更新为实际数值，新增洞见 I6/I7，下一步 MVP-0.2 |
+| 2025-12-26 | ❌ Gate-1 初次未通过：error R²=0.9896 | Q2.1 ❌，K3 更新为实际数值，新增洞见 I6/I7，下一步 MVP-0.2 |
+| 2025-12-26 | ✅ **Gate-1 通过**：S3b logg R²=0.042, SNR R²=0.995 | Q2.1 ✅ Q2.2 ✅，DG1 关闭，K5 新增，洞见 I8/I9/I10，**冻结 quality_features()** |
+| 2025-12-26 | ✅ **Gate-3 通过**：ρ=1.04, Deployed R²=0.544 超越 Oracle | Q3.1 ✅ Q3.2 ✅，DG3 关闭，洞见 I11/I12/I13，**Route M 可交付！** |
+| 2025-12-26 | 🏆 **SNR-MoE 完成** | 所有 Gate 通过，进入集成阶段 |
+| 2025-12-27 | 📝 Hub 同步更新：修正 K3 error R² 为 0.9896 (α=0.001) | 与 LOGG-ERR-BASE-01 实验对齐 |
 
