@@ -408,7 +408,9 @@ SpecViT（R² = 0.698）与 Fisher 5D 上限（R² = 0.874）在 mag=21.5 的差
 *图注：SpecViT 端到端流水线。(1) 输入 4096 维光谱；(2) 训练时异方差噪声注入；(3) Tokenization/Patch Embedding（patch_size=16 → 256 tokens，支持 C1D 或 Sliding Window）；(4) 添加可学习位置编码和 [CLS] token；(5) 6 层 Transformer Encoder（hidden=256, heads=8）；(6) 回归头输出 log(g) 预测。*
 
 ### 图 3：规模化曲线
-*[P1 - 性能 vs 数据集规模（1k→1M）]*
+![ViT Scaling Curve](../../logg/vit/exp/img/vit_scaling_curve.png)
+
+*图注：ViT、LightGBM、Ridge 三种方法在不同数据规模下的测试 R² 对比。X 轴为数据规模（对数坐标），Y 轴为测试 R²。关键发现：(1) ViT 在 100k 数据规模首次超越 LightGBM；(2) ViT 的 scaling 斜率（50k→1M: +0.277）是 LightGBM（+0.126）的 2.2 倍；(3) 500k→1M 提升仅 +0.002，说明当前架构已饱和。*
 
 ### 图 4：Tokenization 消融
 *[P1 - C1D/SW、patch size 消融结果柱状图]*

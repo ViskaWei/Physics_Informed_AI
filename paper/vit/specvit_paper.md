@@ -408,7 +408,9 @@ The gap between SpecViT (R² = 0.698) and Fisher 5D ceiling (R² = 0.874) at mag
 *Caption: End-to-end SpecViT pipeline. (1) Input 4096-dim spectrum; (2) Heteroscedastic noise injection during training; (3) Tokenization/Patch Embedding (patch_size=16 → 256 tokens, supporting C1D or Sliding Window); (4) Add learned positional embedding and [CLS] token; (5) 6-layer Transformer Encoder (hidden=256, heads=8); (6) Regression head outputs log(g) prediction.*
 
 ### Figure 3: Scaling Curve
-*[P1 - Performance vs dataset size (1k→1M)]*
+![ViT Scaling Curve](../../logg/vit/exp/img/vit_scaling_curve.png)
+
+*Caption: Test R² comparison of ViT, LightGBM, and Ridge across different data scales. X-axis: dataset size (log scale), Y-axis: test R². Key findings: (1) ViT first surpasses LightGBM at 100k samples; (2) ViT scaling slope (50k→1M: +0.277) is 2.2× that of LightGBM (+0.126); (3) 500k→1M improvement is only +0.002, indicating current architecture saturation.*
 
 ### Figure 4: Tokenization Ablation
 *[P1 - Bar plot of C1D/SW, patch size ablation results]*
