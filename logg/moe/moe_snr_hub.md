@@ -76,9 +76,10 @@ e \approx s \cdot e_0 + \delta
 
 ### 🏆 Route M 完成！下一阶段
 
-* 🔴 **P0 (双塔融合)**：MVP-4.0 — 9 experts + gate concat [phys, qual] + MSE → 验证双塔叠加增益
-* 🟢 **P1 (集成)**：将 SNR-MoE 集成到 ViT 模型中
-* 🟡 **P2 (可选)**：MVP-3.0 Whitening/Conditional 对照（验证 MoE 优于简单方法）
+* ⚠️ ~~**P0 (MVP-4.0)**~~：双塔融合 → **已完成**: ΔR²=+0.0017 MARGINAL，Fallback to Phys-only
+* 🔴 **P0 (生产化)**：Phys-only Gate (13D) + Soft routing 作为最终 MoE 方案
+* 🟢 **P1 (集成)**：将 MoE 集成到 ViT 模型中
+* 🟡 **P2 (可选)**：条件性融合 — 仅在低 SNR (≤2) 使用 quality gate
 
 > **权威数字（一行即可）**：Ceiling(Fisher)≈0.89@SNR~7；Oracle MoE(noise=1)=0.6249；Global Ridge(noise=1)=0.4611；SNR≈4 是“可达上限掉崖”临界。   
 
@@ -230,5 +231,6 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 2025-12-26 | ✅ **Gate-3 通过**：ρ=1.04, Deployed R²=0.544 超越 Oracle | Q3.1 ✅ Q3.2 ✅，DG3 关闭，洞见 I11/I12/I13，**Route M 可交付！** |
 | 2025-12-26 | 🏆 **SNR-MoE 完成** | 所有 Gate 通过，进入集成阶段 |
 | 2025-12-27 | 📝 Hub 同步更新：修正 K3 error R² 为 0.9896 (α=0.001) | 与 LOGG-ERR-BASE-01 实验对齐 |
-| **2025-12-28** | 🆕 **双塔 MoE 立项**：新增 Gate-5，MVP-4.0/4.1/4.2 | 物理轴+质量轴融合，下一步 P0 |
+| 2025-12-28 | 双塔 MoE 立项：新增 Gate-5，MVP-4.0/4.1/4.2 | 物理轴+质量轴融合 |
+| **2025-12-28** | ⚠️ **MVP-4.0 完成**：ΔR²=+0.0017 MARGINAL | Fallback to Phys-only，MVP-4.1/4.2 关闭 |
 

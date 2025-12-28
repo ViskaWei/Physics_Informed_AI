@@ -10,7 +10,8 @@
 
 | # | 任务 | 对应实验 | 状态 | 备注 |
 |---|------|---------|------|------|
-| 🆕 | **MoE 双塔融合 MVP-4.0** | `VIT-20251228-moe-dual-tower-01` | 🔴 就绪 | 9 experts + gate concat [phys,qual] + MSE |
+| ⚠️ | ~~MoE 双塔融合 MVP-4.0~~ | `LOGG-DUAL-TOWER-01` | ⚠️ 完成 | ΔR²=+0.0017 MARGINAL，Fallback |
+| 🔴 | **MoE Phys-only 生产化** | - | 🔴 P0 | 13D phys_features 作为最终方案 |
 | 1 | 完成 GTA 双塔融合实验 | VIT-20251201-gta-fusion-01 | ⬜ 待做 | Global + Local concat/FiLM |
 | 2 | 提取 BlindSpot Latent 特征给 GTA | BS-20251201-latent-gta-01 | ⬜ 待做 | 增强 noise=1.0 性能 |
 
