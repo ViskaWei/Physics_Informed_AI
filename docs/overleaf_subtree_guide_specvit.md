@@ -1,6 +1,8 @@
-# Overleaf + Git Subtree 工作流指南 (SpecViT)
+# Overleaf + Paper Sync 工作流指南 (SpecViT)
 
-本指南描述如何使用 git subtree 将 `paper/vit/SpecViT/` 同步到独立的 GitHub 仓库，并与 Overleaf 协作。
+本指南描述如何将 `paper/vit/SpecViT/` 同步到独立的 GitHub 仓库，并与 Overleaf 协作。
+
+> **注意**: 由于系统未安装 `git subtree`，我们使用基于 clone/copy 的替代方案，功能等效。
 
 ## 📋 配置变量
 
@@ -42,15 +44,15 @@ git remote add specvit-paper https://github.com/YourUsername/physics_informed_ai
 git remote -v
 ```
 
-### Step 3: 首次 subtree push
+### Step 3: 首次推送
 
 ```bash
 # 确保所有更改已提交
 git add -A
 git commit -m "Prepare SpecViT paper for subtree push"
 
-# 首次推送（这会把 paper/vit/SpecViT/ 的完整历史推送到独立仓库）
-git subtree push --prefix paper/vit/SpecViT specvit-paper main
+# 使用推送脚本（会自动处理）
+./tools/specvit_subtree_push.sh
 ```
 
 ### Step 4: 更新脚本配置

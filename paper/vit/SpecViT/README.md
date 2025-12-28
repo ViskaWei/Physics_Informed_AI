@@ -42,9 +42,11 @@ pdflatex main.tex
 make clean
 ```
 
-## Git Subtree 工作流
+## Paper Sync 工作流
 
-本目录通过 git subtree 同步到独立的论文 GitHub 仓库，供 Overleaf 使用。
+本目录同步到独立的论文 GitHub 仓库，供 Overleaf 使用。
+
+- **GitHub 仓库**: https://github.com/ViskaWei/SpecViT-paper
 
 ### 相关脚本（位于主仓 `tools/`）
 
