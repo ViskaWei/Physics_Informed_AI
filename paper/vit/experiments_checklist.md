@@ -1,191 +1,201 @@
-# 📋 SpecViT Paper: Experiments Checklist
+# 📋 SpecViT 论文：实验检查清单
 
-> **Status:** 📝 Active  
-> **Date:** 2025-12-27  
-> **Purpose:** Track experiments needed for paper + search prompts for existing results
-
----
-
-## Overview
-
-| Priority | Count | Status |
-|----------|-------|--------|
-| 🔴 P0 Must-Have | 5 | 1 running, 4 pending |
-| 🟡 P1 Should-Have | 4 | 1 running, 3 pending |
-| 🟢 P2 Nice-to-Have | 3 | 0 started |
+> **状态:** 📝 进行中  
+> **日期:** 2025-12-28  
+> **目的:** 追踪论文所需实验 + 检索已有结果的搜索词
 
 ---
 
-## 🔴 P0: Must-Have (Paper Submission Blockers)
+## 📊 总览
 
-### P0.1 Finish 1M Run + Report Test Metrics
-
-**Why:** Paper cannot use only validation metrics; need test R²/MAE (overall + per-SNR).
-
-**Current Status:** 🚀 Running (ep112/200, val_r2=0.713)
-
-**Need:**
-- [ ] Wait for 200 epochs to complete
-- [ ] Best checkpoint (by val_r2)
-- [ ] Test R² / MAE (overall)
-- [ ] Test R² / MAE per SNR bin
-- [ ] Learning curves (train/val loss, val R²)
-
-**Search Prompts (舱内检索):**
-```
-"VIT-20251226-vit-1m-large-01 test_r2"
-"vit_1m log_g test 10000"
-"mag205_225_lowT_1M best checkpoint"
-"khgqjngm test"
-```
-
-**Paper Artifact:**
-- Table: Main test metrics
-- Figure: Learning curves
+| 优先级 | 数量 | 状态 |
+|--------|------|------|
+| 🔴 P0 必须完成 | 5 | ✅ 4 已完成, ⚠️ 1 有问题 |
+| 🟡 P1 应该完成 | 4 | 🔆 1 运行中, 3 待开始 |
+| 🟢 P2 可选完成 | 4 | 0 已开始 |
 
 ---
 
-### P0.2 LightGBM Baseline on Same 1M Dataset
+## 🔴 P0：必须完成（投稿阻塞项）
 
-**Why:** "vs baseline 待比较" in report will be challenged by reviewers.
+### P0.1 完成 100 万训练 + 报告测试指标
 
-**Current Status:** ⏳ Pending
+**必要性：** 论文不能只用验证指标；需要测试集 R²/MAE（整体 + 分 SNR）。
 
-**Need:**
-- [ ] Train LightGBM on 1M train (same as ViT)
-- [ ] Evaluate on same val/test splits
-- [ ] Report overall + per-SNR bin R²
+**当前状态：** ✅ **已完成**
 
-**Search Prompts:**
-```
-"LightGBM 1M log_g mag205_225_lowT_1M"
-"lgbm log_g noise_level=1.0 1M"
-"gbdt log_g 7100-8850A 1M"
-```
+**结果：**
+- [x] 200 epochs 完成 (best @ epoch 128)
+- [x] 最佳检查点：`best_epoch=128-val_mae=0.3720-val_r2=0.7182.ckpt`
+- [x] **测试 R² = 0.711**, MAE = 0.372 dex
+- [x] 分 SNR 结果见 `r2_vs_snr_ceiling_test_10k_unified_snr.png`
+- [x] 学习曲线已生成
 
-**Paper Artifact:**
-- Table: ViT vs LightGBM (overall + per-SNR)
-- Figure: Same R²–SNR plot with both models
+**数据来源：** `logg/vit/exp/exp_vit_scaling_curve_20251227.md`, `logg/vit/vit_hub_20251227.md`
 
----
-
-### P0.3 Dataset Scaling Curve (N = 10k → 1M)
-
-**Why:** Core evidence explaining "why ViT failed before" - **Transformer data requirements**.
-
-**Current Status:** ⏳ Pending
-
-**Need:**
-- [ ] Fixed architecture: L6H256 (same as 1M run)
-- [ ] Fixed training: same epochs/steps, early stop
-- [ ] N = 10k, 50k, 100k, 200k, 500k, 1M
-- [ ] Compare ViT vs LightGBM vs CNN
-
-**Search Prompts:**
-```
-"vit scaling log_g 10k 50k 100k 200k"
-"dataset size log_g vit L6 H256"
-"num_samples=10000 vit log_g"
-"vit small data log_g R2"
-```
-
-**Paper Artifact:**
-- Figure: Performance vs dataset size (log scale x-axis)
-- Key finding: ViT needs ~500k+ to match tree models
+**论文产出物：**
+- ✅ 表格：主要测试指标（Table 3）
+- ✅ 图表：R² vs SNR（Figure 1）
 
 ---
 
-### P0.4 SNR Sweep Evaluation Aligned with Fisher/CRLB Ceiling
+### P0.2 LightGBM 基线（相同 100 万数据集）
 
-**Why:** Main figure requires consistent data sources for ceiling and model curves.
+**必要性：** 报告中的"vs 基线待比较"会被审稿人质疑。
 
-**Current Status:** ⏳ Pending (need test results from P0.1)
+**当前状态：** ✅ **已完成**
 
-**Need:**
-- [ ] Test split by SNR (or mag) bins
-- [ ] Per-bin R²
-- [ ] Fisher/CRLB: per-SNR R²_max (median + 10–90% band)
-- [ ] Gap: R²_max − R²_model vs SNR
+**结果：**
+- [x] LightGBM 1M 训练完成
+- [x] 相同测试集评估
+- [x] **测试 R² = 0.614**
+- [x] 分 SNR 结果见主图
 
-**Search Prompts:**
-```
-"Fisher CRLB logg R2_max vs SNR"
-"CRLB_logg Schur complement"
-"Jacobian spectra Fisher information"
-"r2 ceiling logg snr"
-"plot_r2_vs_snr ceiling"
-```
+**ViT vs LightGBM：**
+| 模型 | R² (test) | 差距 |
+|------|-----------|------|
+| **ViT** | **0.711** | - |
+| LightGBM | 0.614 | **-14%** |
 
-**Paper Artifact:**
-- Figure: R² vs SNR with ceiling band (MAIN FIGURE)
-- Figure inset: Gap vs SNR
+**数据来源：** `logg/vit/exp/exp_vit_scaling_curve_20251227.md`
 
----
-
-### P0.5 Tokenization Ablation on 1M or ≥200k
-
-**Why:** Paper claims "physics-informed tokenization is key" - must prove with ablation.
-
-**Current Status:** ⏳ Pending
-
-**Ablations (minimum):**
-- [ ] C1D vs SW
-- [ ] Overlap/stride (SW overlap)
-- [ ] Patch size (8/16/32/64)
-- [ ] Chunk normalization on/off
-
-**Search Prompts:**
-```
-"proj_fn C1D SW log_g"
-"patch_size=16 32 64 log_g vit"
-"stride overlap sliding window tokenization spectra"
-"chunk normalization spectra vit"
-```
-
-**Paper Artifact:**
-- Table: Ablation results
-- Figure: Ablation bar plot (R²)
+**论文产出物：**
+- ✅ 表格：ViT vs LightGBM（Table 3）
+- ✅ 图表：R²–SNR 对比图（Figure 1）
 
 ---
 
-## 🟡 P1: Should-Have (Strengthen Paper)
+### P0.3 数据规模化曲线（N = 50k → 1M）
 
-### P1.1 Loss & Label Normalization Study
+**必要性：** 核心证据，解释"为什么 ViT 之前失败"—— **Transformer 的数据需求**。
 
-**Why:** Already have 2 runs (MSE+standard, L1+minmax). Natural "training robustness" story.
+**当前状态：** ✅ **已完成**
 
-**Current Status:** 🔆 Running (Run1 vs Run2)
+**结果：**
+- [x] 固定架构：p16_h256_L6
+- [x] N = 50k, 100k, 200k, 500k, 1M 全部完成
+- [x] 对比 ViT vs LightGBM vs Ridge
 
-**Need:**
-- [ ] Same data/model, cross comparison:
-  - MSE+standard vs MSE+minmax
-  - L1+standard vs L1+minmax
-  - MSE vs L1 (all else equal)
+**Scaling 数据：**
+| N | ViT R² | LightGBM R² | Ridge R² |
+|---|--------|-------------|----------|
+| 50k | 0.434 | 0.488 | 0.442 |
+| **100k** | **0.596** | 0.553 | 0.475 |
+| 200k | 0.673 | 0.547 | 0.474 |
+| 500k | 0.709 | 0.574 | 0.490 |
+| **1M** | **0.711** | **0.614** | 0.50 |
 
-**Search Prompts:**
-```
-"vit_1m_l1.yaml"
-"loss L1 vs MSE log_g vit 1M"
-"label_norm standard minmax log_g"
-```
+**关键发现：**
+- ✅ ViT 在 **100k 首次超越 LightGBM**
+- ✅ Scaling 斜率：ViT (0.277) 是 LightGBM (0.126) 的 **2.2×**
+- ⚠️ 500k→1M 仅 +0.002，当前架构已饱和
 
-**Paper Artifact:**
-- Figure: Learning curves comparison
-- Table: Final test metrics
+**数据来源：** `logg/vit/exp/exp_vit_scaling_curve_20251227.md`
+
+**论文产出物：**
+- ✅ 图表：`logg/vit/exp/img/vit_scaling_curve.png`（Figure 3）
 
 ---
 
-### P1.2 Positional Embedding Ablation
+### P0.4 SNR 扫描评估与 Fisher/CRLB 上限对齐
 
-**Why:** If PIPE is a selling point, must show gains; otherwise downgrade to "exploration".
+**必要性：** 主图需要一致的数据来源（上限曲线和模型曲线）。
 
-**Current Status:** ⏳ Pending
+**当前状态：** ✅ **已完成**
 
-**Need:**
+**结果：**
+- [x] 按星等区间划分测试集
+- [x] 每个区间的 R² 已计算
+- [x] Fisher/CRLB 5D 上限已计算
+- [x] 差距分析完成
+
+**Per-SNR 数据：**
+| Magnitude | SNR | ViT R² | LightGBM R² | Ceiling R² | Gap |
+|-----------|-----|--------|-------------|------------|-----|
+| 18.0 | 87 | ~0.99 | ~0.84 | 0.999 | ~0.01 |
+| 20.0 | 24 | 0.90 | 0.87 | 0.989 | 0.09 |
+| 21.5 | 7.1 | 0.80 | 0.74 | 0.874 | 0.07 |
+| **22.0** | **4.6** | **0.68** | 0.60 | **0.698** | **0.02** |
+| 22.5 | 3.0 | 0.52 | 0.42 | 0.265 | - |
+
+**关键发现：**
+- ✅ ViT 在 mag=22.0 (SNR≈5) 逼近 ceiling，gap 仅 0.02
+- ✅ 5D ceiling = 0.874 @ mag=21.5
+
+**数据来源：** `logg/vit/vit_hub_20251227.md`, `logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k_unified_snr.png`
+
+**论文产出物：**
+- ✅ 图表：`logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k_unified_snr.png`（**Figure 1 主图**）
+
+---
+
+### P0.5 Tokenization 消融（100 万或 ≥20 万）
+
+**必要性：** 论文声称"物理感知 tokenization 是关键"——必须用消融证明。
+
+**当前状态：** ⚠️ **部分完成（SW 失败需调查）**
+
+**已完成：**
+- [x] C1D: Best Val R² = 0.6308 (79 runs, 23 finished)
+- [x] Patch Size 对比 (C1D only):
+  - patch=16: R² = 0.5823 ± 0.045 ✅ 最优
+  - patch=32: R² = 0.4728 ± 0.128
+  - patch=64: R² = 0.5335
+
+**⚠️ 问题：SW (Sliding Window) 完全失败**
+- 15 runs 全部失败（0/15 完成）
+- 可能原因：实现 bug / 配置问题 / 需要不同优化策略
+
+**下一步选项：**
+- 选项 A：调查并修复 SW 实现
+- 选项 B：论文仅报告 C1D + patch_size 消融，SW 作为 future work
+
+**数据来源：** `logg/vit/exp/exp_tokenization_ablation_20251228.md`
+
+**论文产出物：**
+- ⚠️ 表格：消融结果（C1D + patch_size 部分可用）
+- ⏳ 图表：消融柱状图（需补充 SW 或调整设计）
+
+---
+
+## 🟡 P1：应该完成（增强论文）
+
+### P1.1 损失函数 & 标签归一化研究
+
+**必要性：** 已有 2 个运行（MSE+standard, L1+minmax）。自然的"训练鲁棒性"故事。
+
+**当前状态：** 🔆 运行中
+
+**当前 Runs：**
+| Run | Loss | Label Norm | Tokenization | Status |
+|-----|------|------------|--------------|--------|
+| Run 1 | MSE | standard | C1D | 🚀 ep96+ |
+| Run 2 | L1 | minmax | SW | 🚀 ep0+ |
+
+**所需产出：**
+- [ ] 等待 Run 1 和 Run 2 完成
+- [ ] 对比 MSE vs L1 效果
+- [ ] 对比 standard vs minmax 效果
+
+**数据来源：** `logg/vit/vit_roadmap_20251227.md`
+
+**论文产出物：**
+- ⏳ 图表：学习曲线对比
+- ⏳ 表格：最终测试指标
+
+---
+
+### P1.2 位置编码消融
+
+**必要性：** 如果 PIPE 是卖点，必须展示收益；否则降级为"探索"。
+
+**当前状态：** ⏳ 待开始
+
+**所需产出：**
 - [ ] Learned vs Sinusoidal vs PIPE vs RoPE
-- [ ] Same architecture, same data
+- [ ] 相同架构、相同数据
 
-**Search Prompts:**
+**搜索词：**
 ```
 "PIPE positional embedding spectra"
 "physics-informed positional embedding wavelength"
@@ -193,64 +203,64 @@
 "position embedding ablation log_g"
 ```
 
-**Paper Artifact:**
-- Table: PE ablation
-- (Bonus) Figure: Attention map vs spectral line positions
+**论文产出物：**
+- 表格：PE 消融
+- （加分）图表：注意力图 vs 光谱线位置
 
 ---
 
-### P1.3 Multi-task vs Single-task
+### P1.3 多任务 vs 单任务
 
-**Why:** Astronomical tasks often involve coupled parameters; multi-task is more realistic.
+**必要性：** 天文任务通常涉及耦合参数；多任务更符合实际。
 
-**Current Status:** ⏳ Pending
+**当前状态：** ⏳ 待开始
 
-**Need:**
-- [ ] Predict Teff/logg/[M/H] jointly
-- [ ] Compare single-task vs multi-task per-parameter R²
+**所需产出：**
+- [ ] 联合预测 Teff/logg/[M/H]
+- [ ] 比较单任务 vs 多任务的各参数 R²
 
-**Search Prompts:**
+**搜索词：**
 ```
 "multihead regression Teff logg MH vit"
 "5D labels vit spectra"
 "joint training stellar parameters transformer"
 ```
 
-**Paper Artifact:**
-- Table: Single-task vs multi-task (per-parameter R²)
-- Figure: Correlation of errors / residual covariance
+**论文产出物：**
+- 表格：单任务 vs 多任务（各参数 R²）
+- 图表：误差相关性 / 残差协方差
 
 ---
 
-### P1.4 Robustness: Cross-Noise Generalization
+### P1.4 鲁棒性：跨噪声泛化
 
-**Why:** Prove model generalizes across noise levels, more like real observations.
+**必要性：** 证明模型能跨噪声水平泛化，更接近真实观测。
 
-**Current Status:** ⏳ Pending
+**当前状态：** ⏳ 待开始
 
-**Need:**
-- [ ] Train noise=1.0, test on {0.5, 2.0}
-- [ ] Train noise={0.5, 2.0}, test on noise=1.0
+**所需产出：**
+- [ ] 训练 noise=1.0，测试 {0.5, 2.0}
+- [ ] 训练 noise={0.5, 2.0}，测试 noise=1.0
 
-**Search Prompts:**
+**搜索词：**
 ```
 "noise_level=0.5 log_g vit"
 "noise_level=2.0 log_g vit"
 "cross-noise generalization spectra"
 ```
 
-**Paper Artifact:**
-- Figure: Robustness matrix (train noise × test noise)
+**论文产出物：**
+- 图表：鲁棒性矩阵（训练噪声 × 测试噪声）
 
 ---
 
-## 🟢 P2: Nice-to-Have (Paper Enhancement)
+## 🟢 P2：可选完成（论文增强）
 
-### P2.1 Interpretability: Attention Visualization
+### P2.1 可解释性：注意力可视化
 
-**Why:** Show attention aligns with known spectral lines.
+**必要性：** 展示注意力与已知光谱线对齐。
 
-**Search Prompts:**
+**搜索词：**
 ```
 "attention map spectra vit line"
 "integrated gradients spectra transformer"
@@ -259,11 +269,11 @@
 
 ---
 
-### P2.2 Pretrain on 1M then Finetune on Small-N
+### P2.2 预训练 100 万 + 微调小数据
 
-**Why:** Demonstrate sample efficiency gain from pretraining.
+**必要性：** 展示预训练带来的样本效率提升。
 
-**Search Prompts:**
+**搜索词：**
 ```
 "pretrain 1M finetune 10k log_g"
 "transfer learning spectra vit"
@@ -271,11 +281,11 @@
 
 ---
 
-### P2.3 Synthetic → Real (Domain Shift)
+### P2.3 合成 → 真实（域迁移）
 
-**Why:** Ultimate goal is real data; even preliminary results valuable.
+**必要性：** 最终目标是真实数据；即使初步结果也有价值。
 
-**Search Prompts:**
+**搜索词：**
 ```
 "LAMOST logg vit finetune"
 "APOGEE spectra transformer logg"
@@ -283,36 +293,37 @@
 
 ---
 
-## 📦 Paper-Ready Checklist (Minimum for Submission)
+## 📦 论文就绪检查清单（投稿最小集）
 
-Before submitting, ensure:
+投稿前确保：
 
-| # | Item | Status |
-|---|------|--------|
-| 1 | 1M best checkpoint + test metrics (overall + SNR) | ⏳ |
-| 2 | LightGBM 1M baseline (same data/split) | ⏳ |
-| 3 | Scaling curve (N → performance) | ⏳ |
-| 4 | R²–SNR + Fisher/CRLB ceiling + gap (MAIN FIGURE) | ⏳ |
-| 5 | Tokenization ablation (C1D/SW/patch/overlap/norm) | ⏳ |
-| 6 | Reproducibility info (config, seed, paths, hyperparams) | ✅ |
-
----
-
-## 🎯 Story Line
-
-> **"ViT doesn't fail because it's wrong for spectra—it fails because data scale wasn't there. When N is large enough, the model approaches the information-theoretic limit."**
-
-This is the paper's core narrative. All experiments should support this story.
+| # | 项目 | 状态 | 对应章节 |
+|---|------|------|----------|
+| 1 | 100 万最佳检查点 + 测试指标（整体 + SNR）| ✅ R²=0.711 | §6.2 |
+| 2 | LightGBM 100 万基线（相同数据/划分）| ✅ R²=0.614 | §6.2 |
+| 3 | 规模化曲线（N → 性能）| ✅ 50k-1M | §6.4 |
+| 4 | R²–SNR + Fisher/CRLB 上限 + 差距（**主图**）| ✅ Figure 1 | §5, 图 1 |
+| 5 | Tokenization 消融（C1D/SW/patch/overlap/norm）| ⚠️ C1D✅ SW❌ | §6.6 |
+| 6 | 可复现性信息（config, seed, paths, hyperparams）| ✅ | 附录 |
 
 ---
 
-## 📝 Notes
+## 🎯 论文故事线
 
-- All search prompts are for the experiment log repository (`logg/`)
-- If result not found, need to run the experiment
-- Prioritize P0 experiments for initial submission
-- P1/P2 can be added during revision
+> **"ViT 之前失败不是因为不适合光谱——而是因为数据规模不够。当 N 足够大时，模型能逼近信息论极限。"**
+
+这是论文的核心叙事。所有实验都应支持这个故事。
 
 ---
 
-> **Last Updated:** 2025-12-27
+## 📝 备注
+
+- 所有搜索词用于实验日志仓库检索（`logg/`）
+- 如果结果未找到，需要跑实验
+- 优先完成 P0 实验用于初次投稿
+- P1/P2 可在修稿时添加
+
+---
+
+> **最后更新：** 2025-12-28  
+> **同步来源：** `logg/vit/vit_hub_20251227.md`, `logg/vit/exp/exp_vit_scaling_curve_20251227.md`, `logg/vit/exp/exp_tokenization_ablation_20251228.md`
