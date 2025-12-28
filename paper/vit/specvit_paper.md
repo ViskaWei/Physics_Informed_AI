@@ -413,10 +413,28 @@ The gap between SpecViT (R² = 0.698) and Fisher 5D ceiling (R² = 0.874) at mag
 *Caption: Test R² comparison of ViT, LightGBM, and Ridge across different data scales. X-axis: dataset size (log scale), Y-axis: test R². Key findings: (1) ViT first surpasses LightGBM at 100k samples; (2) ViT scaling slope (50k→1M: +0.277) is 2.2× that of LightGBM (+0.126); (3) 500k→1M improvement is only +0.002, indicating current architecture saturation.*
 
 ### Figure 4: Tokenization Ablation
-*[P1 - Bar plot of C1D/SW, patch size ablation results]*
+
+**Patch Size Comparison (C1D, 50k data, sweep hlshu8vl):**
+
+| Patch Size | Runs | Val R² (mean±std) | Test R² (mean±std) | Conclusion |
+|------------|------|-------------------|---------------------|------------|
+| **p16** | 20 | **0.582±0.045** | **0.554±0.042** | ⭐ Best |
+| p32 | 2 | 0.473±0.128 | 0.449±0.125 | -19% |
+| p64 | 1 | 0.534 | 0.496 | -10% |
+
+**C1D vs SW Comparison:**
+
+| Method | Total | Finished | Success Rate | Best Val R² |
+|--------|-------|----------|--------------|-------------|
+| **C1D** | 79 | 23 | 29% | **0.631** |
+| SW | 15 | 0 | 0% | Failed |
+
+*Note: SW failure traced to training dynamics instability (Transformer gradients 2× larger), not implementation bug. See `exp_tokenization_ablation_20251228.md`.*
 
 ### Figure 5: Residual Analysis
-*[P2 - Residual maps over (Teff, log g) and (SNR, log g)]*
+![ViT 1M Residual Analysis](../../logg/scaling/exp/img/vit_1m_residual_analysis.png)
+
+*Caption: Residual analysis of ViT 1M model on 10k test set. Left: Predicted vs True scatter plot (MAE=0.44, RMSE=0.63, R²=0.71); Middle: Residual distribution histogram (Std=0.63, Median=0.014, near-zero mean); Right: Residual vs True Value (showing heteroscedasticity with larger errors at low/high log(g) regions).*
 
 ---
 

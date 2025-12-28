@@ -413,10 +413,28 @@ SpecViT（R² = 0.698）与 Fisher 5D 上限（R² = 0.874）在 mag=21.5 的差
 *图注：ViT、LightGBM、Ridge 三种方法在不同数据规模下的测试 R² 对比。X 轴为数据规模（对数坐标），Y 轴为测试 R²。关键发现：(1) ViT 在 100k 数据规模首次超越 LightGBM；(2) ViT 的 scaling 斜率（50k→1M: +0.277）是 LightGBM（+0.126）的 2.2 倍；(3) 500k→1M 提升仅 +0.002，说明当前架构已饱和。*
 
 ### 图 4：Tokenization 消融
-*[P1 - C1D/SW、patch size 消融结果柱状图]*
+
+**Patch Size 对比（C1D，50k 数据，sweep hlshu8vl）：**
+
+| Patch Size | Runs | Val R² (mean±std) | Test R² (mean±std) | 结论 |
+|------------|------|-------------------|---------------------|------|
+| **p16** | 20 | **0.582±0.045** | **0.554±0.042** | ⭐ 最佳 |
+| p32 | 2 | 0.473±0.128 | 0.449±0.125 | -19% |
+| p64 | 1 | 0.534 | 0.496 | -10% |
+
+**C1D vs SW 对比：**
+
+| Method | Total | Finished | Success Rate | Best Val R² |
+|--------|-------|----------|--------------|-------------|
+| **C1D** | 79 | 23 | 29% | **0.631** |
+| SW | 15 | 0 | 0% | 失败 |
+
+*注：SW 失败原因经调查为训练动态不稳定（Transformer 梯度 2× larger），非实现 bug。详见 `exp_tokenization_ablation_20251228.md`。*
 
 ### 图 5：残差分析
-*[P2 - (Teff, log g) 和 (SNR, log g) 上的残差图]*
+![ViT 1M Residual Analysis](../../logg/scaling/exp/img/vit_1m_residual_analysis.png)
+
+*图注：ViT 1M 模型在 10k 测试集上的残差分析。左：预测值 vs 真实值散点图（MAE=0.44, RMSE=0.63, R²=0.71）；中：残差分布直方图（Std=0.63, Median=0.014，近似零均值）；右：残差 vs 真实值（显示异方差性，低/高 log(g) 区域误差较大）。*
 
 ---
 
