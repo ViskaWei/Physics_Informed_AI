@@ -403,7 +403,9 @@ SpecViT（R² = 0.698）与 Fisher 5D 上限（R² = 0.874）在 mag=21.5 的差
 *图注：log(g) 预测 R² 作为 SNR（星等）函数的对比。Fisher/CRLB 5D 理论上限（蓝色圆点）代表任何无偏估计器可达到的最大性能。SpecViT（黄色菱形，R²=0.698 整体）在中高 SNR 区间逼近上限，优于 LightGBM（绿色方块，R²=0.614）和模板拟合（红色三角，R²=0.404）。在 mag=22.0（SNR≈5），ViT 几乎触及上限，差距仅为 0.02。*
 
 ### 图 2：SpecViT 流水线
-*[TODO: 展示 tokenization → encoder → 回归头的架构图]*
+![SpecViT Pipeline](specvit_pipeline.jpg)
+
+*图注：SpecViT 端到端流水线。(1) 输入 4096 维光谱；(2) 训练时异方差噪声注入；(3) Tokenization/Patch Embedding（patch_size=16 → 256 tokens，支持 C1D 或 Sliding Window）；(4) 添加可学习位置编码和 [CLS] token；(5) 6 层 Transformer Encoder（hidden=256, heads=8）；(6) 回归头输出 log(g) 预测。*
 
 ### 图 3：规模化曲线
 *[P1 - 性能 vs 数据集规模（1k→1M）]*

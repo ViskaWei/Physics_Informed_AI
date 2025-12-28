@@ -403,7 +403,9 @@ The gap between SpecViT (R² = 0.698) and Fisher 5D ceiling (R² = 0.874) at mag
 *Caption: Comparison of log(g) prediction R² as a function of SNR (magnitude). The Fisher/CRLB 5D theoretical ceiling (blue circles) represents the maximum achievable performance for any unbiased estimator. SpecViT (yellow diamonds, R²=0.698 overall) approaches the ceiling at medium-high SNR, outperforming LightGBM (green squares, R²=0.614) and template fitting (red triangles, R²=0.404). At mag=22.0 (SNR≈5), ViT nearly touches the ceiling with gap=0.02.*
 
 ### Figure 2: SpecViT Pipeline
-*[TODO: Architecture diagram showing tokenization → encoder → regression head]*
+![SpecViT Pipeline](specvit_pipeline.jpg)
+
+*Caption: End-to-end SpecViT pipeline. (1) Input 4096-dim spectrum; (2) Heteroscedastic noise injection during training; (3) Tokenization/Patch Embedding (patch_size=16 → 256 tokens, supporting C1D or Sliding Window); (4) Add learned positional embedding and [CLS] token; (5) 6-layer Transformer Encoder (hidden=256, heads=8); (6) Regression head outputs log(g) prediction.*
 
 ### Figure 3: Scaling Curve
 *[P1 - Performance vs dataset size (1k→1M)]*
