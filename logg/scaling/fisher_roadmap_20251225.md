@@ -92,6 +92,7 @@ Gate：MVP-FU-1 产出可用于论文的 upper bound 图
 | **MVP-F-V3A** | V3-A: 化学丰度 Nuisance | 2 | Gate-3 | ✅ | `SCALING-20251225-fisher-ceiling-03` | [Link](./exp/exp_scaling_fisher_ceiling_v3_chemical_20251225.md) |
 | **MVP-FU-1** | **Upper-Bound Curves (R² & σ vs SNR)** | **2.5** | - | ✅ | `SCALING-20251225-fisher-upperbound-curve-01` | [Link](./exp/exp_scaling_fisher_upperbound_curves_20251225.md) |
 | **MVP-FU-2** | **5D Multi-Mag (精确理论上限)** | **2.6** | - | ✅ | `SCALING-20251226-fisher-5d-multimag` | [Link](./exp/exp_scaling_fisher_5d_multi_mag_20251226.md) |
+| **MVP-FU-3** | **Residual Overlay (图上叠加理论下界)** | **2.7** | - | 🔴 | `SCALING-20251228-fisher-residual-overlay` | [Link](./exp/exp_scaling_fisher_residual_overlay_20251228.md) |
 | **MVP-F-V3B** | V3-B: Redshift/RV Nuisance | 3 | - | ⏳ | - | - |
 | **MVP-F-V3C** | V3-C: Moon/Sky 条件扫描 | 3 | - | ⏳ | - | - |
 | **MVP-F-EFF** | Efficiency 分桶评估 | 4 | Gate-1 | 🔴 | `SCALING-20251225-fisher-efficiency-01` | [Link](./exp/exp_scaling_fisher_efficiency_binned_20251225.md) |
@@ -222,6 +223,43 @@ $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \qu
 
 ---
 
+### MVP-FU-3: Residual Overlay (图上叠加理论下界)（🔴 就绪）
+
+| 项 | 配置 |
+|----|------|
+| **ID** | `SCALING-20251228-fisher-residual-overlay` |
+| **目标** | 在现有模型的 parity/residual 图上叠加 Fisher CRLB 理论下界 |
+| **用途** | Ceiling–Gap–Structure 叙事的 **直观落地**：per-sample 级别可视化 |
+| **输入** | V2 的 `crlb_logg_marg` 数组 + 模型预测结果 |
+| **优先级** | 🔴 P0 |
+
+**核心公式**：
+$$\sigma_{\text{fisher}}(\theta)=\sqrt{\mathrm{CRLB}_{g,\text{marg}}}, \quad \tilde\sigma(x) = \text{median}(\sigma_{\text{fisher}})_{\text{per bin}}$$
+
+**产出（必须）**：
+
+| 图表 | 内容 | 作用 |
+|------|------|------|
+| **Fig-FU3a: Residual vs True with Envelope** | residual ± σ_fisher(logg) 包络 | 直观展示理论下界 vs 实际误差 |
+| **Fig-FU3b: Parity with Band** | y=x ± σ_fisher(logg) 带状区域 | 模型点云厚度 vs 理论最窄厚度 |
+| **Fig-FU3c: Histogram with RMSE_min** | 直方图 + 理论最小 RMSE 竖线 | 数据集级别的理论下界 |
+
+**分箱方法**：
+- 按 true logg 分箱（0.1~0.2 dex 一箱）
+- 每箱取 median(σ_fisher) 更稳定
+- 可选：画两条线（median 和 90%）展示异质性
+
+**验收标准**：
+- ✅ 模型 residual 不应系统性低于理论下界
+- ✅ 包络线清晰展示 logg 依赖的理论误差
+- ✅ 标注为 "Fisher CRLB (marginal) lower bound"
+
+**与 MVP-FU-1 的关系**：
+- MVP-FU-1：全局 R²_max(SNR) 曲线 → 宏观叙事
+- MVP-FU-3：per-sample σ_fisher(logg) 包络 → 微观落地
+
+---
+
 ## Phase 2: Nuisance 参数扩展（✅ 完成 V3-A）
 
 ### MVP-F-V3A: 化学丰度 Nuisance（✅ 完成）
@@ -336,8 +374,9 @@ $$R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}, \qu
 ⏳计划          🔴就绪          🔆进行中          ✅完成
 MVP-F-V3B       MVP-F-EFF                         MVP-F-V2
 MVP-F-V3C       MVP-F-WGT                         MVP-F-MM
-                                                  MVP-F-V3A
+                MVP-FU-3                          MVP-F-V3A
                                                   MVP-FU-1
+                                                  MVP-FU-2
                                                 
 ❌取消
 MVP-F-V1
@@ -375,6 +414,7 @@ MVP-F-V1
 | 2025-12-25 | **MVP-FU-1 立项** | Upper-Bound Curves 规划 |
 | 2025-12-25 | **MVP-FU-1 ✅ 完成** | R²_max(SNR) + σ_min(SNR) 两张论文级图表产出 |
 | 2025-12-26 | **MVP-FU-2 ✅ 完成** | 5D Multi-Mag：高 SNR Δ<2%, 低 SNR Δ=28% |
+| 2025-12-28 | **MVP-FU-3 立项** | Residual Overlay：图上叠加 Fisher 理论下界 |
 
 ---
 

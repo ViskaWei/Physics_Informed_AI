@@ -14,6 +14,7 @@ logg/
 │   ├── exp_*.md                # 子实验报告
 │   ├── card_*.md               # 知识卡片
 │   ├── sessions/               # GPT 会话归档
+│   ├── prompts/                # Coding Prompt 文件
 │   └── img/                    # 图表
 
 status/
@@ -86,7 +87,9 @@ _backend/template/
 9. 📎 附录: 数值结果表、实验流程记录、相关文件
 
 #### 🤖 实验 Coding Prompt
-**模板文件**: `_backend/template/coding_prompt.md`
+**模板文件**: `_backend/template/prompt/prompt_coding.md`
+
+**输出位置**: `logg/[topic]/prompts/coding_prompt_[name]_YYYYMMDD.md`
 
 **必需内容**：
 1. 实验 ID 与元数据
@@ -95,9 +98,12 @@ _backend/template/
 4. 最终交付物: exp.md（按模板）+ 图表文件
 5. 报告抄送位置: roadmap.md、hub.md（如有重要发现）
 
-**代码生成规则**：
-- ❌ 禁止：在 Coding Prompt 中写代码骨架
-- ✅ 推荐：只提供参考代码路径，让 Agent 直接阅读并复用
+**⚠️ 代码生成规则（强制）**：
+- ❌ **绝对禁止**：在 Coding Prompt 中写任何代码块（包括代码骨架、示例代码）
+- ❌ **绝对禁止**：在 Prompt 中内联代码逻辑
+- ✅ **必须**：只提供参考代码路径，让 Agent 自己阅读代码仓已有代码
+- ✅ **必须**：Agent 执行 Prompt 时，先读取参考代码，理解现有逻辑后再修改
+- 💡 **原因**：写代码骨架容易与已有代码不一致，强制阅读确保复用正确逻辑
 
 #### 💬 GPT 会话归档（Session）
 **模板文件**: `_backend/template/session.md`
@@ -397,6 +403,26 @@ EOF
 ### 用途
 在 session 脑暴后，将选中的 MVP 转化为可执行的 Coding Prompt
 
+### 工作流程
+1. **读取模板**: `_backend/template/prompt/prompt_coding.md`
+2. **确定仓库**: 根据 topic 选择 VIT/BlindSpotDenoiser/SpecDiffusion
+3. **填写实验规格**: 数据、模型、训练配置（YAML 格式）
+4. **列出参考代码路径**: 只写路径，不写代码块
+5. **保存到**: `logg/[topic]/prompts/coding_prompt_[name]_YYYYMMDD.md`
+
+### ⚠️ 强制规则
+- ❌ **禁止在 Prompt 中写任何代码**（包括示例、骨架、片段）
+- ✅ **只写参考代码路径**，让执行 Agent 自己读取并理解
+- ✅ **确保参考代码路径存在**，避免 Agent 找不到文件
+
+### 参考代码路径格式
+```
+| 参考脚本 | 可复用 | 需修改 |
+|---------|--------|--------|
+| `~/VIT/scripts/train_cnn.py` | `train_loop()` | 修改 loss |
+| `~/VIT/utils/plotting.py` | `plot_r2_curve()` | 添加新曲线 |
+```
+
 ## 💬 GPT 会话归档
 
 ### 触发词
@@ -483,7 +509,7 @@ GPT 讨论 → session.md
 | `n` | 新建实验计划 | `logg/[topic]/exp_*.md` |
 | `a` | 归档实验结果 | `logg/[topic]/exp_*.md` |
 | `u [exp_id]` | 完整更新：补全exp+同步hub/roadmap+git push | `logg/[topic]/` |
-| `p` | 生成 Coding Prompt | `_backend/template/coding_prompt.md` |
+| `p` | 生成 Coding Prompt | `logg/[topic]/prompts/` |
 | `merge` | 合并相似实验 | `logg/[topic]/exp_[topic]_consolidated_*.md` |
 | `card` | 创建知识卡片 | `logg/[topic]/card/` 或 `logg/card/` |
 | `design` | 提取设计原则 | `design/principles.md` |
@@ -491,6 +517,7 @@ GPT 讨论 → session.md
 | `report` | 生成报告 | `reports/drafts/` |
 | `session` | GPT 会话归档 | `logg/[topic]/sessions/` |
 | `audit` | 矛盾审计 + Hub 重写 | `logg/[topic]/contradiction_audit.md` |
+| `paper [topic]` | 论文检查 + TODO 生成 | `paper/[topic]/experiments_checklist.md` |
 
 ## 🔍 矛盾审计
 
@@ -502,3 +529,41 @@ GPT 讨论 → session.md
 1. **先读取指令**: `_backend/template/prompt/prompt_audit.md`
 2. **按指令执行**: 6 步工作流程
 3. **按模板输出**: `_backend/template/audit.md`
+
+## 📄 论文检查与 TODO 生成
+
+### 触发词
+- `paper` / `论文` / `paper check`
+- `paper [topic]` - 检查指定主题的论文
+
+### 用途
+自动分析论文草稿，检查缺失内容，生成结构化 TODO 列表
+
+### 工作流程
+1. **先读取指令**: `_backend/template/prompt/prompt_paper.md`
+2. **定位文件**:
+   - 论文正文: `paper/[topic]/*.md`
+   - 实验清单: `paper/[topic]/experiments_checklist.md`
+   - 实验日志: `logg/[topic]/`
+3. **扫描论文正文**: 识别 TODO、待完成项、空表格
+4. **检查实验清单**: 提取 P0/P1/P2 状态
+5. **在 logg/ 中检索**: 使用搜索词查找已有结果
+6. **生成 TODO 清单**: 按优先级排序
+
+### 输出内容
+- 📊 完成度概览（论文章节 + P0/P1/P2 实验进度）
+- 🔴 投稿阻塞项（必须解决）
+- 🟡 应该完成（增强质量）
+- 🟢 可选完成
+- 🔍 检索结果（搜索词 + 状态 + 文件位置）
+- 🎯 推荐下一步
+
+### 相关文件
+- **Prompt 指令**: `_backend/template/prompt/prompt_paper.md`
+- **清单模板**: `_backend/template/paper_checklist.md`
+- **示例**: `paper/vit/experiments_checklist.md`
+
+### ⚠️ 特殊情况
+- **清单不存在**: 提示参考模板创建
+- **多个论文文件**: 列出所有文件让用户选择
+- **论文为空**: 输出基础结构建议

@@ -96,7 +96,8 @@
 | C4.2 | (logg, R², 9-bin MoE, noise=0.2, 32k, mask-aligned) | **0.9116** | MVP-1.1 | ✅ | |
 | C4.3 | (logg, R², 回归门控 MoE, noise=0.2, 32k, 覆盖区) | **0.9310** | MVP-Next-A | ✅ | |
 | C4.4 | (logg, R², 回归门控 MoE, noise=0.2, 100k, 覆盖区) | **0.9400** | MVP-12A | ✅ | CI=[0.0045,0.0175] |
-| C4.5 | (logg, R², 全局 Ridge, noise=1.0, 1M) | **0.4611** | moe_hub §附录 | ✅ | |
+| C4.5 | (logg, R², 全局 Ridge, noise=1.0, 1M, test=1k) | **0.4611** | moe_hub §附录 | ✅ | Canonical |
+| C4.5a | (logg, R², 全局 Ridge, noise=1.0, 1M, test=10k) | **0.4957** | card_ridge_1m_optimal | ✅ | 更稳定估计 |
 | C4.6 | (logg, R², Oracle 9-bin MoE, noise=1.0, 1M) | **0.6249** | moe_hub §附录 | ✅ | |
 | C4.7 | (logg, R², 全局 Ridge, noise=1.0, 1M, SNR路由系列) | **0.5087** | LOGG-SNR-GATE-01 | ✅ | ⚠️ 仅前 500 条测试，权威值应为 0.46 (C4.5) |
 | C4.8 | (logg, R², 可部署 SNR-MoE, noise=1.0, 1M) | **0.5443** | LOGG-SNR-GATE-01 | ✅ | |
@@ -139,10 +140,11 @@
 - **C4.5 (0.4611)**: 在 **完整 1k 测试集** 上评估
 
 ### ✅ 解决方案
-**保留 C4.5 的 0.46 作为权威数字**：
-- 0.46 (完整 1k 测试) 是统计更稳定的结果
+**保留 C4.5 的 0.46 作为权威数字（canonical，test=1k）**：
+- 0.46 (完整 1k 测试) 是 canonical 协议
+- 0.4957 (10k 测试) 是更稳定的估计，作为补充
 - 0.5087 因样本量不足可能存在评估偏差
-- 所有 SNR-MoE 系列应使用 **0.46** 作为 baseline
+- 所有 SNR-MoE 系列应使用 **0.46** 作为 baseline（test=1k）
 
 ### 待办操作
 - [x] 确认两实验的测试集大小差异
@@ -351,7 +353,8 @@
 
 | 实验系列 | Baseline Global R² | 配置 | 权威实验 |
 |----------|-------------------|------|----------|
-| **Teff×[M/H] 9-bin @ noise=1** | 0.4611 | α=100k, test_1k_0 | SCALING-20251223-oracle-moe |
+| **Teff×[M/H] 9-bin @ noise=1** | 0.4611 | α=100k, test_1k_0 | SCALING-20251223-oracle-moe (canonical) |
+| **Ridge 1M @ noise=1, test=10k** | 0.4957 | α=100k, test_10k | card_ridge_1m_optimal (补充) |
 | **SNR 4-bin @ noise=1** | 0.5087 | 待确认 α | LOGG-SNR-GATE-01 |
 | **Teff×[M/H] 9-bin @ noise=0.2** | 0.8616 | mask-aligned | MVP-1.1 |
 

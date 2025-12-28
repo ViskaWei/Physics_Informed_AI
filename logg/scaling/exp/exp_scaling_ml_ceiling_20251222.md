@@ -42,13 +42,13 @@
 
 ### 一句话总结
 
-> **Ridge 和 LightGBM 在 1M 数据 + noise=1 下分别达到 R²=0.46 和 R²=0.57，确认传统 ML 存在性能天花板；从 100k→1M 数据增益 <3%，表明大数据无法突破线性/浅层模型的表达能力瓶颈。**
+> **Ridge 和 LightGBM 在 1M 数据 + noise=1 下分别达到 R²=0.50 (test=10k) 和 R²=0.57，确认传统 ML 存在性能天花板；从 100k→1M 数据增益 <3%，表明大数据无法突破线性/浅层模型的表达能力瓶颈。**
 
 ### 对假设的验证
 
 | 验证问题 | 结果 | 结论 |
 |---------|------|------|
-| H1.1.1: Ridge 在 1M 数据 + noise=1 下 R² < 0.6? | ✅ | R²=0.46 < 0.6 |
+| H1.1.1: Ridge 在 1M 数据 + noise=1 下 R² < 0.6? | ✅ | R²=0.50 < 0.6 |
 | H1.2.1: LightGBM 在 1M 数据 + noise=1 下 R² < 0.65? | ✅ | R²=0.5709 < 0.65 |
 | H1.3.1: Ridge 1M vs 100k 的 ΔR² < 0.02? | ❌ | ΔR²=0.0244 > 0.02 (略超) |
 | H1.3.2: LightGBM 1M vs 100k 的 ΔR² < 0.03? | ✅ | ΔR²=0.0176 < 0.03 |
@@ -64,7 +64,7 @@
 
 | 指标 | 值 |
 |------|-----|
-| Ridge 最佳 R² (1M, σ=1) | 0.46 |
+| Ridge 最佳 R² (1M, σ=1) | 0.50 |
 | LightGBM 最佳 R² (1M, σ=1) | 0.5709 |
 | Ridge ΔR² (1M vs 100k) | +0.0244 |
 | LightGBM ΔR² (1M vs 100k) | +0.0176 |
@@ -150,7 +150,7 @@
 **Figure 1. Ridge 和 LightGBM 在 1M 数据、noise=1 下的性能对比**
 
 **关键观察**：
-- LightGBM R²=0.5709 略优于 Ridge R²=0.46
+- LightGBM R²=0.5709 略优于 Ridge R²=0.50 (test=10k) / 0.46 (test=1k canonical)
 - 差距约 7%，表明非线性模型的额外收益有限
 - 两者 MAE 均在 0.58-0.63 区间，误差较大
 
@@ -252,7 +252,7 @@
 
 | 指标 | 值 | 配置/条件 |
 |------|-----|----------|
-| Ridge 最佳 R² | 0.46 | 1M, σ=1, α=5000 |
+| Ridge 最佳 R² | 0.50 (test=10k) / 0.46 (test=1k) | 1M, σ=1, α=5000 |
 | LightGBM 最佳 R² | 0.5709 | 1M, σ=1, lr=0.05, trees=1293 |
 | Ridge ΔR² (1M vs 100k) | +0.0244 | |
 | LightGBM ΔR² (1M vs 100k) | +0.0176 | |
@@ -341,7 +341,7 @@ Noise level: 1.0
   Feature dimension: 4096
 
 [3/6] Running Ridge experiments...
-  Ridge @ 1M, α=5000: R²=0.46, MAE=0.6327, Time=21.1s
+  Ridge @ 1M, α=5000: R²=0.50 (test=10k weighted avg) / 0.46 (test=1k), MAE=0.6327, Time=21.1s
 
 [4/6] Running LightGBM experiments...
   LightGBM @ 1M: R²=0.5709, MAE=0.5845, Trees=1293, Time=1643.2s

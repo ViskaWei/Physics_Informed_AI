@@ -1,0 +1,30 @@
+# LaTeX temporary files
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.dvi
+*.ps
+
+# Latexmk output
+*.pdf
+!figs/*.pdf
+
+# Editor backups
+*~
+*.bak
+*.swp
+.DS_Store
+
+# Overleaf sync artifacts (if any)
+.texpadtmp/

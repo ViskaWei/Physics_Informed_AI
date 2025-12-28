@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+% Figure path
+\graphicspath{{figs/}}
+
+% TODO command for drafts
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+% ============================================================
+% Title and Authors
+% ============================================================
+\title{SpecViT: Vision Transformer for Stellar Parameter Estimation from Spectra}
+
+\author{
+  Author One\thanks{Affiliation One} \and
+  Author Two\thanks{Affiliation Two}
+}
+
+\date{\today}
+
+% ============================================================
+% Document
+% ============================================================
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\todo{Write abstract: Briefly describe the problem (stellar parameter estimation from spectra), the proposed method (SpecViT - Vision Transformer approach), key results (R² improvements, noise robustness), and main contributions.}
+\end{abstract}
+
+% ------------------------------------------------------------
+\input{sections/intro}
+% ------------------------------------------------------------
+\input{sections/method}
+% ------------------------------------------------------------
+\input{sections/experiments}
+% ------------------------------------------------------------
+\input{sections/conclusion}
+% ------------------------------------------------------------
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

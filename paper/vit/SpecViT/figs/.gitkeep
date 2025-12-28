@@ -1,0 +1,11 @@
+# Placeholder - this directory stores publication-ready figures (PDF/PNG)
+# 
+# Usage:
+#   1. Generate figures in assets/figures/specvit/
+#   2. Run: tools/specvit_export_figs.sh
+#   3. Figures will be copied here
+#
+# Important:
+#   - DO NOT use symlinks (Overleaf Git sync incompatible)
+#   - Only store final publication-ready figures
+#   - Do not commit large data files or intermediate products
