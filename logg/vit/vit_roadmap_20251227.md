@@ -81,7 +81,7 @@ Gate：完成 1M 200ep 训练 + LightGBM baseline 对比 + Scaling curve → 论
 |--------|-----|------|------|---------|
 | 🔴 P0.1 | MVP-1.0 (finish 200ep) | Gate-1 | 🚀 | 2025-12-28 |
 | 🔴 P0.2 | MVP-2.0 (LightGBM 1M) | Gate-2 | ⏳ | 2025-12-28 |
-| 🔴 P0.3 | MVP-3.0 (Scaling curve) | Gate-3 | ⏳ | 2025-12-29 |
+| 🔴 P0.3 | MVP-3.0 (Scaling curve) | Gate-3 | 🆕 | 2025-12-29 |
 | 🔴 P0.4 | SNR sweep eval | - | ⏳ | 2025-12-28 |
 | 🔴 P0.5 | MVP-4.0 (Tokenization ablation) | Gate-4 | ⏳ | 2025-12-30 |
 
@@ -96,7 +96,7 @@ Gate：完成 1M 200ep 训练 + LightGBM baseline 对比 + Scaling curve → 论
 | 1.0 | ViT 1M Scaling | 1 | Gate-1 | 🚀 | `VIT-20251226-vit-1m-large-01` | [exp_vit_1m_scaling](./exp_vit_1m_scaling_20251226.md) |
 | 1.1 | ViT Sweep Analysis | 1 | - | ✅ | `VIT-20251227-vit-sweep-01` | [exp_vit_sweep_analysis](./exp_vit_sweep_analysis_20251227.md) |
 | 2.0 | LightGBM 1M Baseline | 1 | Gate-2 | ⏳ | - | - |
-| 3.0 | Scaling Curve (N-sweep) | 1 | Gate-3 | ⏳ | - | - |
+| 3.0 | Scaling Curve (N-sweep) | 1 | Gate-3 | 🆕 | `VIT-20251227-vit-scaling-curve-01` | [exp_vit_scaling_curve](./exp_vit_scaling_curve_20251227.md) |
 | 4.0 | Tokenization Ablation | 1 | Gate-4 | ⏳ | - | - |
 | 5.0 | Loss/Label Norm Study | 1 | - | 🔆 | Run1 vs Run2 | [exp_vit_1m_scaling](./exp_vit_1m_scaling_20251226.md) |
 | 6.0 | PE Ablation | 2 | - | ⏳ | - | - |
@@ -110,7 +110,7 @@ Gate：完成 1M 200ep 训练 + LightGBM baseline 对比 + Scaling curve → 论
 |-----|--------|------|---------|-----|
 | 1.0 | 1M | p16_h256_L6 | MSE/L1, standard/minmax | 4,5 |
 | 2.0 | 1M | LightGBM | raw input | - |
-| 3.0 | 10k~1M | p16_h256_L6 | num_samples | - |
+| 3.0 | 50k~500k | p16_h256_L6_a8 | num_samples | - |
 | 4.0 | 200k+ | 多种 | patch/overlap/proj_fn | - |
 
 ---
@@ -149,19 +149,25 @@ Gate：完成 1M 200ep 训练 + LightGBM baseline 对比 + Scaling curve → 论
 - `"LightGBM 1M log_g mag205_225_lowT_1M"`
 - `"lgbm log_g noise_level=1.0 1M"`
 
-### MVP-3.0: Scaling Curve (⏳ 待启动)
+### MVP-3.0: Scaling Curve (🆕 已立项)
 
 | 项 | 配置 |
 |----|------|
-| 目标 | 证明 Transformer 的数据需求 |
-| 数据 | N = 10k, 50k, 100k, 200k, 500k, 1M |
-| 模型 | **固定** p16_h256_L6 |
-| 训练 | 固定 epochs 或 early stop |
-| 验收 | R² vs N 曲线 (log scale) |
+| 目标 | 证明 Transformer 的数据需求，与传统 ML 对比 |
+| 数据 | **N = 50k, 100k, 200k, 500k**（神经网络 1k 不现实，1M 已有） |
+| 模型 | **固定** p16_h256_L6_a8（当前最佳配置） |
+| 训练 | 固定 200 epochs 或 early stop（patience=20） |
+| 验收 | R² vs N 曲线 (log scale) + **ViT vs Ridge vs LightGBM 对比图** |
+| 报告 | `exp_vit_scaling_curve_20251227.md` |
+
+**关键要求**:
+- ✅ 必须和传统 ML 对比画图（传统 scaling 数据已有）
+- ✅ 使用当前最佳 ViT 结构（p16_h256_L6_a8）
+- ✅ 固定架构，只变数据量
 
 **检索 Prompt**:
-- `"vit scaling log_g 10k 50k 100k 200k"`
-- `"dataset size log_g vit L6 H256"`
+- `"vit scaling log_g 50k 100k 200k 500k"`
+- `"dataset size log_g vit L6 H256 p16"`
 
 ### MVP-4.0: Tokenization Ablation (⏳ 待启动)
 

@@ -112,19 +112,20 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 
 ---
 
-### Gate-5: 🆕 双塔融合 (Phys + Quality Gate)
+### Gate-5: 双塔融合 (Phys + Quality Gate) ⚠️ MARGINAL
 
 | 项   | 内容                                                         |
 | --- | ---------------------------------------------------------- |
 | 验证  | 物理 9-gate 和 SNR/quality gate 双塔融合能否叠加增益                    |
-| MVP | MVP-4.0, MVP-4.1, MVP-4.2                                  |
-| 若A  | ΔR² ≥ +0.01（相对单塔最优）→ 双塔是最终架构                              |
-| 若B  | ΔR² < +0.01 → 选择更简单的单塔方案（Phys-MoE 或 SNR-MoE）              |
-| 状态  | ⏳                                                          |
+| MVP | MVP-4.0 ⚠️ 完成，MVP-4.1/4.2 已关闭                              |
+| 若A  | ΔR² ≥ +0.005（相对单塔最优）→ 双塔是最终架构                              |
+| 若B  | ΔR² < +0.005 → 选择更简单的单塔方案（Phys-MoE）                        |
+| 状态  | ⚠️ **MARGINAL** - ΔR²=+0.0017 < +0.005，**Fallback to Phys-only** |
 
-**设计理念**：物理轴与质量轴正交
-- **物理轴 (Teff×[M/H])**：解释"光谱长什么样"（函数分段）
-- **质量轴 (SNR)**：解释"我们能看清多少"（信息量变化）
+**结论**：
+- 双塔 R²=0.603 vs Phys-only R²=0.601，增益仅 +0.0017
+- 极低 SNR (X bin ≤2) 有效 +0.011，但被其他 bin 抵消
+- **推荐：Fallback to Phys-only Gate，不增加复杂度**
 
 ---
 
@@ -137,9 +138,9 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 | ✅    | MVP-1.0           | Gate-2 | ✅ PASS (ΔR²=+0.05) |
 | ✅    | **MVP-2.0**       | Gate-3 | ✅ **PASS (ρ=1.04, Deployed > Oracle!)** |
 | ⏳    | MVP-3.0 (对照)     | Gate-4 | 可选：Route M 已成功，可跳过 |
-| 🔴 🆕 | **MVP-4.0**       | Gate-5 | 双塔融合：9 experts + gate concat [phys,qual] |
-| ⏳ 🆕 | MVP-4.1           | Gate-5 | 因子分解：logit-add / prob-prod |
-| ⏳ 🆕 | MVP-4.2           | Gate-5 | 温度控制：quality → τ |
+| ⚠️ ✅ | **MVP-4.0**       | Gate-5 | ⚠️ MARGINAL: ΔR²=+0.0017 < +0.005，Fallback |
+| 🗑️ | MVP-4.1           | Gate-5 | 已关闭（MVP-4.0 未达阈值） |
+| 🗑️ | MVP-4.2           | Gate-5 | 已关闭（MVP-4.0 未达阈值） |
 
 ---
 
@@ -155,9 +156,9 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 | 2.0 | Deployable Gate（quality features → SNR bin）+ Soft routing | 2     | Gate-3 | ✅  | `LOGG-SNR-GATE-01`    | `exp/exp_logg_snr_gate_01_20251226.md`  |
 | 2.1 | 回归最优 gate（直接学权重）                                          | 2     | Gate-3 | 🗑️  | `LOGG-SNR-REGGATE-01` | 不需要：MVP-2.0 ρ=1.04 已超越 Oracle  |
 | 3.0 | Whitening/Conditional 对照                                  | 3     | Gate-4 | ⏳  | `LOGG-WHITEN-01`      | -  |
-| **4.0** 🆕 | **双塔最小改动：9 experts + gate concat [phys,qual]** | 4     | Gate-5 | 🔴  | `LOGG-DUAL-TOWER-01`  | `exp/exp_moe_dual_tower_20251228.md` |
-| 4.1 🆕 | 因子分解：logit-add / prob-prod                             | 4     | Gate-5 | ⏳  | `LOGG-DUAL-FACTOR-01` | -  |
-| 4.2 🆕 | 温度控制：quality → τ                                        | 4     | Gate-5 | ⏳  | `LOGG-DUAL-TEMP-01`   | -  |
+| **4.0** | **双塔最小改动：9 experts + gate concat [phys,qual]** | 4     | Gate-5 | ⚠️ ✅ | `LOGG-DUAL-TOWER-01`  | `exp/exp_moe_dual_tower_20251228.md` |
+| 4.1 | 因子分解：logit-add / prob-prod                             | 4     | Gate-5 | 🗑️  | - | 已关闭 |
+| 4.2 | 温度控制：quality → τ                                        | 4     | Gate-5 | 🗑️  | - | 已关闭 |
 
 **状态**: ⏳计划 | 🔴就绪 | 🚀运行 | ✅完成 | ❌取消
 
@@ -284,8 +285,9 @@ Gate：在不引入 error-vector 信息泄露的前提下，用 SNR/观测质量
 MVP-2.1 🗑️ (不需要)
 MVP-3.0 ⏳ (可选)
 ──── Phase 4: 双塔融合 ────
-MVP-4.1 ⏳       MVP-4.0 🔴
-MVP-4.2 ⏳
+                                        MVP-4.0 ⚠️ ✅ (ΔR²=+0.0017 MARGINAL)
+MVP-4.1 🗑️ (已关闭)
+MVP-4.2 🗑️ (已关闭)
 ```
 
 ---
@@ -298,6 +300,7 @@ MVP-4.2 ⏳
 | **0.2** | ✅ S3b_aggregate_stats 完美去泄露 | logg R²=0.042 < 0.05, SNR R²=0.995 > 0.5 |
 | **1.0** | ✅ SNR 分域有显著 headroom | ΔR²=+0.05, Bin M 最大 +9.6% |
 | **2.0** | ✅ **Deployed 超越 Oracle!** | **ρ=1.04 > 1.0, R²=0.544 > Oracle 0.543** |
+| **4.0** | ⚠️ **双塔增益微弱** | **ΔR²=+0.0017 < +0.005, X-bin +0.011** |
 
 ### 🏆 Route M 成功！完整 Pipeline
 
