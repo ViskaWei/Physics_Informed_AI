@@ -1,18 +1,19 @@
 #!/bin/bash
 # ==============================================================================
-# SpecViT Subtree Pull Script
+# SpecViT Paper Pull Script
 # Pull changes from the standalone paper GitHub repository back to main repo
 # Use this to sync Overleaf edits back to the main repository
+# Works without git-subtree
 # ==============================================================================
 
 set -e
 
 # ==============================================================================
-# Configuration (modify these as needed)
+# Configuration
 # ==============================================================================
 PAPER_DIR="paper/vit/SpecViT"
 REMOTE_NAME="specvit-paper"
-REMOTE_URL="<FILL_ME_GITHUB_URL>"
+REMOTE_URL="git@github.com:ViskaWei/SpecViT-paper.git"
 BRANCH="main"
 
 # ==============================================================================
@@ -44,7 +45,7 @@ print_warning() {
 # ==============================================================================
 # Main script
 # ==============================================================================
-print_header "SpecViT Subtree Pull"
+print_header "SpecViT Paper Pull"
 
 # Get the root of the git repository
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
@@ -52,16 +53,13 @@ REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
     exit 1
 }
 
+cd "$REPO_ROOT"
+
 print_info "Repository root: $REPO_ROOT"
 print_info "Paper directory: $PAPER_DIR"
-print_info "Remote name: $REMOTE_NAME"
-print_info "Remote URL: $REMOTE_URL"
+print_info "Remote: $REMOTE_URL"
 print_info "Branch: $BRANCH"
 echo ""
-
-# Change to repo root
-cd "$REPO_ROOT"
-print_info "Working directory: $(pwd)"
 
 # Check if PAPER_DIR exists
 if [ ! -d "$PAPER_DIR" ]; then
@@ -69,75 +67,86 @@ if [ ! -d "$PAPER_DIR" ]; then
     exit 1
 fi
 
-print_info "Paper directory exists: ✓"
-
-# Check if REMOTE_URL is still placeholder
-if [ "$REMOTE_URL" = "<FILL_ME_GITHUB_URL>" ]; then
-    print_error "REMOTE_URL is not configured!"
-    echo ""
-    echo "Please edit this script and replace <FILL_ME_GITHUB_URL> with your actual GitHub repository URL."
-    exit 1
-fi
-
-# Check if remote exists
-if ! git remote get-url "$REMOTE_NAME" &>/dev/null; then
-    print_error "Remote '$REMOTE_NAME' does not exist!"
-    echo ""
-    echo "Please add the remote first by running:"
-    echo ""
-    echo "  git remote add $REMOTE_NAME $REMOTE_URL"
-    echo ""
-    exit 1
-fi
-
-print_info "Remote '$REMOTE_NAME' exists: ✓"
-
-# Show current remote URL
-CURRENT_URL=$(git remote get-url "$REMOTE_NAME")
-print_info "Remote URL: $CURRENT_URL"
-echo ""
-
 # Check for uncommitted changes
-if ! git diff-index --quiet HEAD --; then
-    print_warning "You have uncommitted changes in your working directory."
-    echo "It's recommended to commit or stash changes before pulling."
+if ! git diff --quiet -- "$PAPER_DIR" || ! git diff --cached --quiet -- "$PAPER_DIR"; then
+    print_warning "You have uncommitted changes in $PAPER_DIR"
     echo ""
-    read -p "Continue anyway? (y/N) " -n 1 -r
+    read -p "Continue and overwrite local changes? (y/N) " -n 1 -r
     echo ""
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Aborted."
+        echo "Aborted. Please commit or stash your changes first."
         exit 1
     fi
 fi
 
-# Fetch from remote first
-print_header "Fetching from Remote"
-echo "Command: git fetch $REMOTE_NAME"
-git fetch "$REMOTE_NAME"
-echo ""
+# Create temp directory
+TEMP_DIR=$(mktemp -d)
+print_info "Temp directory: $TEMP_DIR"
 
-# Execute subtree pull with --squash
-print_header "Executing Subtree Pull"
-echo "Command: git subtree pull --prefix $PAPER_DIR $REMOTE_NAME $BRANCH --squash"
-echo ""
-echo "Note: Using --squash to consolidate remote commits into a single merge commit."
-echo ""
+# Cleanup on exit
+cleanup() {
+    rm -rf "$TEMP_DIR"
+}
+trap cleanup EXIT
 
-git subtree pull --prefix "$PAPER_DIR" "$REMOTE_NAME" "$BRANCH" --squash
+print_header "Fetching Paper Repository"
+
+# Clone the paper repo
+cd "$TEMP_DIR"
+git clone "$REMOTE_URL" paper_repo || {
+    print_error "Failed to clone paper repository"
+    echo "Make sure the repository exists and you have access."
+    exit 1
+}
+
+cd paper_repo
+PAPER_COMMIT=$(git rev-parse --short HEAD)
+PAPER_MSG=$(git log -1 --format=%s)
+print_info "Paper repo HEAD: $PAPER_COMMIT - $PAPER_MSG"
+
+print_header "Syncing Changes"
+
+# Remove old paper files (except .git stuff that shouldn't exist)
+cd "$REPO_ROOT"
+rm -rf "$PAPER_DIR"/*
+
+# Copy new paper files
+cp -r "$TEMP_DIR/paper_repo"/* "$PAPER_DIR/"
+
+# Remove .git from copied content if exists
+rm -rf "$PAPER_DIR/.git"
+
+# Stage changes
+git add "$PAPER_DIR"
+
+# Check if there are changes
+if git diff --cached --quiet; then
+    print_info "No changes detected (local is up to date)"
+    print_success "Done - nothing to update"
+    exit 0
+fi
+
+# Show diff summary
+print_header "Changes Summary"
+git diff --cached --stat -- "$PAPER_DIR"
+
+echo ""
+read -p "Commit these changes? (Y/n) " -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Nn]$ ]]; then
+    echo "Changes staged but not committed."
+    echo "Run 'git commit' when ready, or 'git checkout -- $PAPER_DIR' to discard."
+    exit 0
+fi
+
+# Commit
+git commit -m "Pull paper changes from SpecViT-paper ($PAPER_COMMIT)"
 
 print_header "Pull Complete"
-print_success "Successfully pulled changes from $REMOTE_NAME/$BRANCH into $PAPER_DIR"
+print_success "Successfully pulled changes from paper repository"
 echo ""
-echo "What happened:"
-echo "  - Changes from the standalone paper repo have been merged into $PAPER_DIR"
-echo "  - A squash merge commit was created"
+echo "Changes from paper repo ($PAPER_COMMIT) have been committed."
 echo ""
 echo "Next steps:"
-echo "  1. Review the changes: git log --oneline -5"
-echo "  2. Check the diff: git diff HEAD~1"
-echo "  3. Push to main repo if satisfied: git push origin main"
-echo ""
-echo "Conflict handling:"
-echo "  If Overleaf created a new branch due to conflicts, you need to:"
-echo "  1. Merge that branch into main on GitHub"
-echo "  2. Run this script again"
+echo "  1. Review changes: git show --stat"
+echo "  2. Push to main repo: git push origin main"
