@@ -213,7 +213,8 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 🗺️ 参考 MoE Roadmap    | `moe_roadmap_20251203.md`                   | MVP 编排方式       |
 | 📘 Fisher 上限          | `exp_scaling_fisher_ceiling_v2_20251224.md` | 单 mag 理论上限     |
 | 📘 Fisher multi-mag   | `exp_scaling_fisher_multi_mag_20251224.md`  | SNR 分段规律       |
-| 📘 Oracle MoE noise=1 | `exp_scaling_oracle_moe_noise1_20251223.md` | noise=1 结构红利   |
+| 📘 Oracle MoE noise=1 | [`../scaling/exp/exp_scaling_oracle_moe_noise1_20251223.md`](../scaling/exp/exp_scaling_oracle_moe_noise1_20251223.md) | noise=1 结构红利 ΔR²=+0.16 |
+| 📘 MoE Oracle Headroom | [`./exp/exp_moe_1m_oracle_headroom_20251223.md`](./exp/exp_moe_1m_oracle_headroom_20251223.md) | MoE 视角报告 |
 | 📘 **MVP-0.2 去泄露**    | `exp/exp_logg_err_repr_01_20251226.md`      | quality_features() 冻结 |
 | 📘 **MVP-1.0 Oracle**  | `exp/exp_logg_snr_oracle_01_20251226.md`    | SNR 分域 headroom |
 | 📘 **MVP-2.0 Gate**    | `exp/exp_logg_snr_gate_01_20251226.md`      | 🏆 Deployed 超越 Oracle |
@@ -233,4 +234,5 @@ Legend: ✅ 已验证 | ❌ 已否定 | 🔆 进行中 | ⏳ 待验证 | 🗑️
 | 2025-12-27 | 📝 Hub 同步更新：修正 K3 error R² 为 0.9896 (α=0.001) | 与 LOGG-ERR-BASE-01 实验对齐 |
 | 2025-12-28 | 双塔 MoE 立项：新增 Gate-5，MVP-4.0/4.1/4.2 | 物理轴+质量轴融合 |
 | **2025-12-28** | ⚠️ **MVP-4.0 完成**：ΔR²=+0.0017 MARGINAL | Fallback to Phys-only，MVP-4.1/4.2 关闭 |
+| **2025-12-28** | 📘 **文档同步**：更新 Oracle MoE 链接，添加 exp_moe_1m_oracle_headroom 引用 | §7 |
 

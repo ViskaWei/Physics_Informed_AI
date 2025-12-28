@@ -1,10 +1,10 @@
 # 📘 Experiment Report: Oracle MoE Headroom @ noise=1
-> **Name:** TODO | **ID:** `MOE-20251223-oracle-headroom-01`  
+> **Name:** Oracle MoE 结构红利验证 @ noise=1 | **ID:** `MOE-20251223-oracle-headroom-01`  
 > **Topic:** `moe` | **MVP:** MVP-16O | **Project:** `VIT`  
-> **Author:** Viska Wei | **Date:** 2025-12-23 | **Status:** 🔴 Ready
+> **Author:** Viska Wei | **Date:** 2025-12-23 | **Status:** ✅ Done
 ```
 💡 实验目的  
-决定：影响的决策
+决定：MoE 在高噪声(noise=1)下是否仍有结构红利？若 ΔR² ≥ 0.05 则继续 MoE 开发
 ```
 
 ---
@@ -35,34 +35,33 @@
 
 ## ⚡ 核心结论速览（供 main 提取）
 
-> ⏳ **实验完成后填写**
-
 ### 一句话总结
 
-> TODO
+> Oracle MoE 在 noise=1 下展示 **极强结构红利**：ΔR² = +0.1637 远超 0.03 阈值，所有 9 bins 均正向提升。
 
 ### 对假设的验证
 
 | 验证问题 | 结果 | 结论 |
 |---------|------|------|
-| H-16O.1: Oracle MoE R² > 0.55? | ⏳ | TODO |
-| H-16O.2: ΔR² (Oracle - Global) ≥ 0.05? | ⏳ | TODO |
-| H-16O.3: Metal-poor bins 受损更严重? | ⏳ | TODO |
+| H-16O.1: Oracle MoE R² > 0.55? | **0.6249** | ✅ PASS |
+| H-16O.2: ΔR² (Oracle - Global) ≥ 0.05? | **+0.1637** | ✅ PASS (远超阈值!) |
+| H-16O.3: Metal-poor bins 受损更严重? | Bin0/3/6 R² 最低 (0.31-0.54) | ✅ 确认 |
 
 ### 设计启示（1-2 条）
 
 | 启示 | 具体建议 |
 |------|---------|
-| TODO | TODO |
+| **高噪声放大结构红利** | noise=1 下 ΔR²=+0.16 是 noise=0.2 下的 3.3 倍，低 SNR 场景更值得做 MoE |
+| **Metal-poor 区域受益最大** | Bin0/3/6 的 ΔR² 达 +0.17~+0.19，需优先保障这些区域的 gate 准确率 |
 
 ### 关键数字
 
 | 指标 | 值 |
 |------|-----|
-| R²_oracle (9 bin) | TODO |
-| R²_global | TODO |
-| ΔR² (Oracle - Global) | TODO |
-| 最差 bin | TODO |
+| R²_oracle (9 bin) | **0.6249** |
+| R²_global | **0.4611** |
+| ΔR² (Oracle - Global) | **+0.1637** |
+| 最差 bin | Bin3 (Mid×Poor) R²=0.307 |
 
 ---
 
@@ -191,98 +190,138 @@ $$
 
 # 3. 📊 实验图表
 
-> ⏳ **实验完成后填写**
+### 图 1：Oracle MoE Dashboard
 
-### 图 1：Oracle MoE vs Global Ridge
+![moe_oracle_dashboard.png](../../scaling/img/moe_oracle_dashboard.png)
 
-![图片](../img/TODO.png)
-
-**Figure 1. Oracle MoE 与 Global Ridge 的性能对比**
+**Figure 1. Oracle MoE 综合仪表盘**
 
 **关键观察**：
-- TODO
+- 所有 9 bin 的 Oracle Expert 均优于 Global Ridge
+- Metal-rich bins (Bin2/5/8) 表现最好：R² = 0.82-0.87
+- Metal-poor bins (Bin0/3/6) 表现最差但受益最大
 
 ---
 
-### 图 2：Per-bin R² 分布
+### 图 2：ΔR² 结构红利热图
 
-![图片](../img/TODO.png)
+![moe_delta_r2_heatmap.png](../../scaling/img/moe_delta_r2_heatmap.png)
 
-**Figure 2. 各 bin 的 R² 分布（热图或柱状图）**
+**Figure 2. 各 bin 的 ΔR² 结构红利分布**
 
 **关键观察**：
-- TODO
+- Metal-poor 列 (左侧) 红利最大：ΔR² = +0.17~+0.19
+- Metal-rich 列 (右侧) 红利较小但绝对性能最高
 
 ---
 
-### 图 3：noise=0.2 vs noise=1 对比
+### 图 3：Per-bin R² 分组对比
 
-![图片](../img/TODO.png)
+![moe_perbin_r2_grouped.png](../../scaling/img/moe_perbin_r2_grouped.png)
 
-**Figure 3. 高噪声下各 bin 的 R² 衰减**
+**Figure 3. 各 bin 的 Oracle vs Global 对比**
 
 **关键观察**：
-- TODO
+- 所有 9 个 bin 都显示 Oracle Expert 优于 Global Ridge
+- 差距在 Metal-poor bins 最为显著
+
+---
+
+### 图 4：噪声放大效应
+
+![moe_noise_amplification.png](../../scaling/img/moe_noise_amplification.png)
+
+**Figure 4. noise=0.2 vs noise=1 的结构红利对比**
+
+**关键观察**：
+- MoE 结构红利在 noise=1 下放大 3.3 倍
+- noise=0.2: ΔR² ≈ +0.05 → noise=1: ΔR² = +0.16
 
 ---
 
 # 4. 💡 关键洞见
 
-> ⏳ **实验完成后填写**
-
 ## 4.1 宏观层洞见
 
-TODO
+1. **高噪声放大结构红利**：noise=1 下 ΔR²=+0.16 是 noise=0.2 下的 3.3 倍。说明全局模型在高噪声下受损更严重，分域训练的价值更高。
+
+2. **MoE 在低 SNR regime 更有价值**：高噪声 = 低 SNR，此时"按物理参数分专家"带来的边际收益更大，是值得投资的方向。
 
 ## 4.2 模型层洞见
 
-TODO
+1. **Metal-poor 区域是瓶颈也是机会**：
+   - Bin3/6 的 Oracle R² 最低 (0.31, 0.45)，说明这些区域"天花板就低"
+   - 但 ΔR² 最大 (+0.17)，说明分域训练对这些区域帮助最大
+   - 启示：Gate 准确率在 Metal-poor 区域尤为关键
+
+2. **Metal-rich 区域已接近上限**：Bin2/5/8 的 Oracle R² 达 0.82-0.87，接近 Fisher 理论上限，继续提升空间有限。
 
 ## 4.3 实验层细节洞见
 
-TODO
+1. **1M 数据同时提升 Global 和 Oracle**：与 100k 相比，两种模型都有提升，但 ΔR² 保持稳定。
+
+2. **Ridge α=100k 在高噪声下是合适的**：沿用 MVP-1.4 的最优值，在 1M 数据上仍然有效。
+
+3. **测试集 1k 样本足够稳定**：per-bin 样本量 62-126，统计意义充分。
 
 ---
 
 # 5. 📝 结论
 
-> ⏳ **实验完成后填写**
-
 ## 5.1 核心发现
 
-TODO
+**Oracle MoE 在 noise=1、1M 数据下展示极强结构红利**：
+- ΔR² = +0.1637（是 0.03 阈值的 5.5 倍）
+- R² = 0.6249（超过 0.55 目标）
+- 所有 9 个 bin 均有提升
+
+**决策：继续 MoE 开发 (MVP-16G, Gate 验证)**
 
 ## 5.2 关键结论（2-4 条）
 
-TODO
+1. ✅ **结构红利确认**：ΔR² = +0.1637 >> 0.05 阈值，MoE 值得做
+2. ✅ **高噪声放大效应**：noise=1 下 ΔR² 是 noise=0.2 下的 3.3 倍
+3. ✅ **Metal-poor 受益最大**：Bin0/3/6 ΔR² = +0.17~+0.19
+4. ⚠️ **Metal-poor 也是瓶颈**：Bin3 R²=0.31 是最困难区域
 
 ## 5.3 设计启示
 
-TODO
+| 启示 | 具体建议 | 原因 |
+|------|---------|------|
+| 低 SNR 场景优先 MoE | noise=1 投 MoE 的 ROI 更高 | 结构红利 3.3× |
+| Gate 重点优化 Metal-poor 边界 | 这些区域 ΔR² 最大，错误路由损失最大 | ΔR²=+0.17~+0.19 |
+| 高噪声用高 α | Ridge α=100k 在 noise=1 下有效 | 实验验证 |
 
 ## 5.4 物理解释
 
-> 预期 Metal-poor bins 更差的原因：
-> - 低金属丰度时谱线更弱，SNR 更低
-> - 可用的特征更少（金属线稀疏）
-> - 对噪声更敏感
+**Metal-poor bins 更差的原因**（预期得到确认）：
+- 低金属丰度时谱线更弱，SNR 更低
+- 可用的特征更少（金属线稀疏）
+- 对噪声更敏感
+
+**分域训练帮助大的原因**：
+- 不同 [M/H] 区域的特征分布差异大
+- 全局模型被迫学习"平均"映射，在各区域都次优
+- 专家可以学习区域特定的最优权重
 
 ## 5.5 关键数字速查
 
 | 指标 | 值 | 配置/条件 |
 |------|-----|----------|
-| R²_oracle | TODO | noise=1 |
-| R²_global | TODO | noise=1 |
-| ΔR² | TODO | headroom |
-| 最差 bin | TODO | |
+| R²_oracle | **0.6249** | noise=1, 1M train, 1k test |
+| R²_global | **0.4611** | noise=1, 1M train, 1k test |
+| ΔR² | **+0.1637** | 结构 headroom |
+| 最差 bin | Bin3 (Mid×Poor) **R²=0.307** | 需特殊关注 |
+| 最佳 bin | Bin5 (Mid×Rich) **R²=0.874** | |
+| Ridge α | 100000 | 高噪声最优 |
 
 ## 5.6 下一步工作
 
-| 方向 | 具体任务 | 优先级 | 对应 MVP |
-|------|----------|--------|---------|
-| 如果 ΔR² ≥ 0.05 | 验证可落地 Gate | 🔴 | MVP-16G |
-| 如果 ΔR² < 0.02 | 放弃 MoE，直接上 CNN | 🔴 | MVP-16CNN |
-| 对比 noise=0.2 | 量化高噪声衰减 | 🟡 | 分析 |
+| 方向 | 具体任务 | 优先级 | 对应 MVP | 状态 |
+|------|----------|--------|---------|------|
+| ✅ Gate 验证 | 验证 Soft Gate ρ ≥ 0.7 | 🔴 | MVP-16G | **已完成**: ρ=0.805 |
+| ✅ SNR-MoE | 按 SNR 分专家 | 🟡 | moe_snr_hub | **已完成**: ρ=1.04 |
+| 🟡 生产化 | Phys-only Gate 部署 | 🔴 | NEW | 进行中 |
 
 ---
 
@@ -290,47 +329,79 @@ TODO
 
 ## 6.1 数值结果表
 
-> ⏳ **实验完成后填写**
-
 ### Oracle MoE 总体结果
 
 | 配置 | R²_oracle | R²_global | ΔR² |
 |------|-----------|-----------|-----|
-| 100k train, noise=1 | TODO | TODO | TODO |
-| 1M train, noise=1 | TODO | TODO | TODO |
+| **1M train, noise=1** | **0.6249** | **0.4611** | **+0.1637** |
 
 ### Per-bin R² 结果
 
-| Bin | Teff | [M/H] | R²_oracle | noise=0.2 参考 | 衰减 |
-|-----|------|-------|-----------|----------------|------|
-| Bin0 | Cool | Poor | TODO | ~0.90 | TODO |
-| Bin1 | Cool | Solar | TODO | ~0.95 | TODO |
-| Bin2 | Cool | Rich | TODO | ~0.98 | TODO |
-| Bin3 | Mid | Poor | TODO | ~0.85 | TODO |
-| Bin4 | Mid | Solar | TODO | ~0.93 | TODO |
-| Bin5 | Mid | Rich | TODO | ~0.97 | TODO |
-| Bin6 | Hot | Poor | TODO | ~0.80 | TODO |
-| Bin7 | Hot | Solar | TODO | ~0.92 | TODO |
-| Bin8 | Hot | Rich | TODO | ~0.96 | TODO |
+| Bin | Teff | [M/H] | R²_oracle | ΔR² vs Global | 样本数 (train/test) |
+|-----|------|-------|-----------|---------------|-------------------|
+| Bin0 | Cool | Poor | 0.5433 | +0.19 | 62.7k / 62 |
+| Bin1 | Cool | Solar | 0.7956 | +0.15 | 116.7k / 126 |
+| Bin2 | Cool | Rich | 0.8466 | +0.08 | 77.9k / 79 |
+| Bin3 | Mid | Poor | **0.3070** | +0.17 | 62.7k / 62 |
+| Bin4 | Mid | Solar | 0.5833 | +0.04 | 116.7k / 113 |
+| Bin5 | Mid | Rich | **0.8742** | +0.10 | 77.9k / 78 |
+| Bin6 | Hot | Poor | 0.4470 | +0.17 | 63.1k / 66 |
+| Bin7 | Hot | Solar | 0.6006 | +0.05 | 116.4k / 117 |
+| Bin8 | Hot | Rich | 0.8245 | +0.15 | 77.4k / 76 |
+
+**关键发现**：
+1. 所有 9 bin 都优于全局模型 (ΔR² > 0)
+2. Metal-poor bins 受益最大: ΔR² = +0.17~+0.19
+3. Metal-rich bins 表现最好: R² = 0.82~0.87
+4. Bin3 (Mid×Poor) 是最困难区域: R² = 0.307
 
 ---
 
 ## 6.2 实验流程记录
-
-> ⏳ **实验完成后填写**
 
 ### 6.2.1 环境与配置
 
 | 项目 | 值 |
 |------|-----|
 | **仓库** | `~/VIT` |
-| **脚本路径** | `scripts/moe_oracle_headroom.py` |
-| **输出路径** | `results/moe_oracle_headroom/` |
+| **脚本路径** | `scripts/scaling_oracle_moe_noise1.py` |
+| **输出路径** | `results/scaling_oracle_moe/` |
+| **Python** | 3.10 |
+| **主要依赖** | sklearn, numpy, pandas, matplotlib, seaborn, h5py |
 
 ### 6.2.2 执行命令
 
 ```bash
-# TODO: 实验执行命令
+cd ~/VIT
+source init.sh
+
+# 运行实验（1M 数据）
+python scripts/scaling_oracle_moe_noise1.py
+
+# 输出文件
+# - results/scaling_oracle_moe/results.csv
+# - results/scaling_oracle_moe/per_bin_results.csv
+# - results/scaling_oracle_moe/metadata.json
+# - 图表自动保存到知识中心
+```
+
+### 6.2.3 关键配置
+
+```python
+# 数据路径
+DATA_ROOT = "/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M"
+TRAIN_SHARDS = [f"{DATA_ROOT}/train_200k_{i}/dataset.h5" for i in range(5)]
+TEST_FILE = f"{DATA_ROOT}/test_1k_0/dataset.h5"
+
+# 噪声配置
+NOISE_LEVEL = 1.0  # 高噪声场景
+
+# Ridge 配置
+RIDGE_ALPHA = 100000  # 沿用 MVP-1.4 最优值
+
+# 9-bin 划分
+TEFF_BINS = [3750, 4500, 5250, 6000]  # 3 Teff bins
+MH_BINS = [-2.0, -1.0, 0.0, 0.5]      # 3 [M/H] bins
 ```
 
 ---
@@ -357,10 +428,18 @@ TODO
 
 ---
 
-> **模板使用说明**：
-> 
-> - ⏳ 标记的部分在实验完成后填写
-> - 核心结论速览在实验完成后第一时间填写
-> - 同步到 moe_hub.md §3 洞见汇合站（如有重要发现）
+---
+
+## 6.5 与源实验的关系
+
+本报告基于 `logg/scaling/exp/exp_scaling_oracle_moe_noise1_20251223.md` 的实验结果。两份报告视角不同：
+- **源报告 (scaling)**：从 scaling 角度看 1M 数据的效果
+- **本报告 (moe)**：从 MoE 架构角度看结构红利
+
+核心数据一致，均来自同一次实验执行。
+
+---
+
+*Updated: 2025-12-28 (填充实验结果，与 scaling 报告对齐)*
 
 
