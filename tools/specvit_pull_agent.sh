@@ -179,6 +179,8 @@ cp -r "$PAPER_DIR"/* "$LOCAL_TEMP/" 2>/dev/null || true
 DIFF_OUTPUT=$(diff -rq "$LOCAL_TEMP" "$TEMP_DIR/paper_repo" \
     --exclude='.git' \
     --exclude='.gitkeep' \
+    --exclude='.gitignore' \
+    --exclude='Makefile' \
     --exclude='*.aux' \
     --exclude='*.log' \
     --exclude='*.out' \
@@ -226,6 +228,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     diff -r "$LOCAL_TEMP" "$TEMP_DIR/paper_repo" \
         --exclude='.git' \
         --exclude='.gitkeep' \
+        --exclude='.gitignore' \
+        --exclude='Makefile' \
         --exclude='*.aux' \
         --exclude='*.log' \
         --exclude='*.bbl' \

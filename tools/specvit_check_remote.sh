@@ -33,10 +33,12 @@ if ! git clone --depth 1 -q "$REMOTE_URL" "$TEMP_DIR/remote" 2>/dev/null; then
     exit 1
 fi
 
-# Compare
+# Compare (exclude files that differ between local and remote by design)
 DIFF_COUNT=$(diff -rq "$PAPER_DIR" "$TEMP_DIR/remote" \
     --exclude='.git' \
     --exclude='.gitkeep' \
+    --exclude='.gitignore' \
+    --exclude='Makefile' \
     --exclude='*.aux' --exclude='*.log' --exclude='*.out' \
     --exclude='*.bbl' --exclude='*.blg' --exclude='*.synctex.gz' \
     2>/dev/null | wc -l)
