@@ -1,38 +1,155 @@
 \section{Method}
 \label{sec:method}
 
-\todo{Write method section covering:
-\begin{itemize}
-  \item Problem formulation: Input spectrum $\mathbf{x} \in \mathbb{R}^{N_\lambda}$, output parameters $\mathbf{y} = (\log g, T_{\text{eff}}, [\text{Fe/H}])$
-  \item SpecViT architecture overview
-  \item Spectral tokenization: How 1D spectra are converted to patch tokens
-  \item Positional encoding: Wavelength-aware positional embeddings
-  \item Transformer encoder blocks
-  \item Regression head design
-  \item Training objective and loss function
-  \item Data augmentation (noise injection, etc.)
-\end{itemize}
-}
+\subsection{Overview of the Approach}
+\label{subsec:method_overview}
 
-\subsection{Problem Formulation}
-\label{sec:method:problem}
+The goal is to infer the stellar surface gravity, $\log g$, from a medium-resolution, one-dimensional spectrum observed on a fixed detector wavelength grid. Let $\boldsymbol{\lambda}={\lambda_j}_{j=1}^{L}$ denote the wavelength sampling and $\boldsymbol{f}\in\mathbb{R}^{L}$ the corresponding (continuum-normalized) flux vector, with $L\simeq 4\times 10^{3}$ pixels. The target is a continuous scalar $y \equiv \log g$.
 
-\todo{Define the regression task mathematically.}
+SpecViT models the conditional mapping
+\begin{equation}
+\hat{y} = F_{\boldsymbol{\theta}}(\boldsymbol{f}).
+\end{equation}
+where $F_{\boldsymbol{\theta}}$ is a Transformer encoder operating on a sequence of learned ``spectral tokens'' constructed from contiguous wavelength patches. This design reflects two properties of stellar spectra that are central to $\log g$ inference: (i) \emph{local} information encoded in line cores and pressure-broadened wings, and (ii) \emph{global} constraints arising from line blending, the coupling of multiple diagnostics across the bandpass, and the need to down-weight noise-dominated regions. A self-attention encoder provides a statistically flexible mechanism to aggregate information across widely separated wavelength regions while maintaining an explicit wavelength ordering through positional embeddings.
 
-\subsection{SpecViT Architecture}
-\label{sec:method:architecture}
+Traditional forward modeling approaches interpret spectra via a generative function $f(\boldsymbol{\phi})$ evaluated on a grid of stellar parameters $\boldsymbol{\phi}$, often combined with $\chi^2$ minimization under a noise model. In contrast, SpecViT is a discriminative estimator trained to approximate the optimal regression functional under the same observational noise assumptions, while preserving the key physical structure that the input is a \emph{wavelength-ordered} signal with localized spectral features.
 
-\todo{Describe the architecture with a figure reference.}
+\subsection{Spectral Representation and Preprocessing}
+\label{subsec:method_preproc}
 
-% Example figure inclusion (uncomment when figure is ready):
-% \begin{figure}[t]
-%   \centering
-%   \includegraphics[width=\linewidth]{specvit_architecture.pdf}
-%   \caption{Overview of the SpecViT architecture. \todo{Add caption details.}}
-%   \label{fig:architecture}
-% \end{figure}
+Each spectrum is provided on a fixed detector grid as $(\boldsymbol{\lambda}, \boldsymbol{f}, \boldsymbol{\sigma})$, where $\boldsymbol{\sigma}\in\mathbb{R}^{L}$ is the per-pixel $1\sigma$ uncertainty (heteroscedastic across wavelength). The spectra are generated from synthetic stellar atmosphere models and processed to a medium-resolution instrumental configuration, after which they are sampled onto the common wavelength grid.
 
-\subsection{Training}
-\label{sec:method:training}
+\paragraph{Flux normalization.}
+A robust continuum scaling is required because absolute flux levels depend on distance, throughput, and observing conditions, whereas $\log g$ is encoded primarily in the \emph{relative} shapes and depths of spectral features. A per-spectrum median normalization is adopted,
+\begin{equation}
+x_j \equiv \frac{f_j}{\mathrm{median}(\boldsymbol{f})}.
+\end{equation}
+yielding a dimensionless input vector $\boldsymbol{x}\in\mathbb{R}^{L}$. In practice, negative flux excursions can arise from noise in low-SNR regimes; since the physically expected photon flux is non-negative, values are clipped at zero after normalization to avoid introducing unphysical large-magnitude outliers that disproportionately affect the regression loss.
 
-\todo{Describe training procedure, loss function, optimizer, etc.}
+\paragraph{Noise model and uncertainty handling.}
+Observational noise is modeled as independent Gaussian perturbations with known per-pixel variance,
+\begin{equation}
+\tilde{\boldsymbol{x}} = \boldsymbol{x} + \alpha(\boldsymbol{\epsilon}\odot \boldsymbol{\sigma}),
+\qquad \boldsymbol{\epsilon}\sim\mathcal{N}(\boldsymbol{0}, \mathbf{I}).
+\label{eq:noise_model}
+\end{equation}
+where $\odot$ denotes element-wise multiplication and $\alpha$ is a noise-level scaling factor (unity corresponds to the nominal instrument-model uncertainties). This corresponds to a diagonal noise covariance $\boldsymbol{\Sigma}=\mathrm{diag}(\alpha^2\sigma_1^2,\ldots,\alpha^2\sigma_L^2)$. The uncertainty vector $\boldsymbol{\sigma}$ is therefore used to generate physically consistent noise realizations and to expose the model during training to the same heteroscedastic structure expected at inference time.
+
+\subsection{Patch-based Tokenization of 1D Spectra}
+\label{subsec:method_tokenization}
+
+The normalized spectrum $\tilde{\boldsymbol{x}}\in\mathbb{R}^{L}$ is converted into a sequence of tokens by partitioning the wavelength axis into contiguous patches. For a patch length $P$ and stride $S$, the $i$-th patch is
+\begin{equation}
+\tilde{\boldsymbol{x}}^{(i)} =
+\left(\tilde{x}_{(i-1)S+1}, \ldots, \tilde{x}_{(i-1)S+P}\right)\in\mathbb{R}^{P},
+\qquad i=1,\ldots,N.
+\end{equation}
+with $N=\left\lfloor \frac{L-P}{S}\right\rfloor+1$. In the default non-overlapping case $S=P$, and for $L=4096$ and $P=16$, this yields $N=256$ tokens.
+
+\paragraph{Patch embedding.}
+Each patch is mapped into a $D$-dimensional latent space through a learnable projection,
+\begin{equation}
+\boldsymbol{e}_i = \mathcal{E}\left(\tilde{\boldsymbol{x}}^{(i)}\right)\in\mathbb{R}^{D}.
+\end{equation}
+Operationally, $\mathcal{E}$ can be implemented as a one-dimensional convolution with kernel size $P$ and stride $S$, which shares parameters across wavelength and acts as a bank of learned local filters. This imposes a mild locality prior appropriate for spectroscopy: narrow spectral regions carry coherent information (e.g., line profiles and blends) while still allowing the subsequent attention layers to couple distant regions.
+
+\paragraph{Motivation.}
+Tokenizing by wavelength patches balances information retention and computational tractability. Pixel-wise tokenization preserves maximal detail but yields long sequences and encourages the model to spend capacity on high-frequency noise. Conversely, line-list-based or hand-engineered representations can be physically motivated but require strong prior choices about which diagnostics matter for $\log g$ and how blends should be treated. Patch tokens provide a uniform, instrument-agnostic representation that remains aligned with the data acquisition process (detector pixels), while allowing the model to learn which regions are informative under varying SNR.
+
+\subsection{Transformer Encoder Architecture}
+\label{subsec:method_encoder}
+
+\paragraph{Input sequence construction.}
+A learnable global token (analogous to a summary token) is prepended to the patch embeddings and absolute positional embeddings are added to preserve wavelength order:
+\begin{equation}
+\mathbf{Z}_0 =
+\left[
+\boldsymbol{z}_{\mathrm{cls}};
+\boldsymbol{e}_1;
+\ldots;
+\boldsymbol{e}_N
+\right]
++
+\mathbf{P},
+\qquad
+\mathbf{Z}_0\in\mathbb{R}^{(N+1)\times D},
+\label{eq:seq_init}
+\end{equation}
+where $\boldsymbol{z}_{\mathrm{cls}}\in\mathbb{R}^{D}$ is a learned vector and $\mathbf{P}\in\mathbb{R}^{(N+1)\times D}$ encodes the token positions along the wavelength axis. Because spectral features are tied to specific rest-frame wavelengths, absolute positional information is essential; without it, a model with translation symmetry would be poorly matched to spectroscopy.
+
+\paragraph{Self-attention.}
+The sequence is processed by a stack of $L_{\mathrm{enc}}$ Transformer encoder layers. Given an input $\mathbf{Z}\in\mathbb{R}^{(N+1)\times D}$, a single attention head computes
+\begin{equation}
+\mathbf{Q} = \mathbf{Z}\mathbf{W}^{Q},\quad
+\mathbf{K} = \mathbf{Z}\mathbf{W}^{K},\quad
+\mathbf{V} = \mathbf{Z}\mathbf{W}^{V},
+\end{equation}
+followed by
+\begin{equation}
+\mathrm{Attn}(\mathbf{Q},\mathbf{K},\mathbf{V})
+=
+\mathrm{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\mathsf{T}}}{\sqrt{d_k}}\right)\mathbf{V}.
+\label{eq:attn}
+\end{equation}
+where $d_k$ is the per-head key dimension. Multi-head self-attention concatenates the outputs of $H$ heads and applies an output projection:
+\begin{equation}
+\mathrm{MSA}(\mathbf{Z})
+=
+\mathrm{Concat}\left(\mathrm{Attn}_1,\ldots,\mathrm{Attn}_H\right)\mathbf{W}^{O}.
+\end{equation}
+In the context of spectroscopy, Eq.~(\ref{eq:attn}) allows the model to learn data-adaptive couplings between wavelength regions, such as correlations between pressure-sensitive line wings and metallicity-sensitive blends elsewhere in the spectrum, while naturally down-weighting pixels whose information content is suppressed by noise.
+
+\paragraph{Encoder block.}
+Each layer uses residual connections and layer normalization in a pre-normalization form:
+\begin{align}
+\mathbf{Z}'_{\ell} &= \mathbf{Z}_{\ell-1} + \mathrm{MSA}\left(\mathrm{LN}(\mathbf{Z}_{\ell-1})\right),\\
+\mathbf{Z}_{\ell} &= \mathbf{Z}'_{\ell} + \mathrm{MLP}\left(\mathrm{LN}(\mathbf{Z}'_{\ell})\right),
+\qquad \ell=1,\ldots,L_{\mathrm{enc}}.
+\label{eq:encoder_block}
+\end{align}
+where $\mathrm{MLP}$ is a position-wise feed-forward network. The architecture is parameterized by $(D, H, L_{\mathrm{enc}})$; a representative configuration uses $D\sim 256$, $H\sim 8$, and $L_{\mathrm{enc}}\sim 6$, which provides sufficient capacity for medium-resolution spectra while keeping the token sequence length moderate.
+
+\subsection{Regression Head for Stellar Parameter Inference}
+\label{subsec:method_head}
+
+The model prediction is derived from the encoded summary token. Let $\boldsymbol{h}\equiv \mathbf{Z}_{L_{\mathrm{enc}}}[0]\in\mathbb{R}^{D}$ denote the final-layer embedding of the prepended token. A regression head maps $\boldsymbol{h}$ to $\hat{y}$:
+\begin{equation}
+\hat{y} = g(\boldsymbol{h}).
+\end{equation}
+where $g$ is taken to be a low-capacity function (e.g., a linear map or a shallow multilayer perceptron), reflecting the intent that the encoder should learn the physically meaningful representation while the head performs only the final calibration.
+
+\paragraph{Loss function.}
+Training minimizes an empirical risk over noisy inputs. For a dataset $\{(\boldsymbol{x}_n, y_n)\}_{n=1}^{N_{\mathrm{train}}}$ and injected noise realizations $\tilde{\boldsymbol{x}}_n$ from Eq.~(\ref{eq:noise_model}),
+\begin{equation}
+\min_{\boldsymbol{\theta}}
+\frac{1}{N_{\mathrm{train}}}\sum_{n=1}^{N_{\mathrm{train}}}
+\ell\left(F_{\boldsymbol{\theta}}(\tilde{\boldsymbol{x}}_n), y_n\right).
+\label{eq:erm}
+\end{equation}
+with $\ell$ chosen as either the squared error $\ell(\hat{y},y)=(\hat{y}-y)^2$ or the absolute error $\ell(\hat{y},y)=|\hat{y}-y|$. The latter can reduce sensitivity to rare outliers arising from extreme noise fluctuations or model mismatch.
+
+\paragraph{Label normalization.}
+To improve numerical conditioning during optimization, the target label can be linearly transformed using statistics computed on the training set,
+\begin{equation}
+y' = \frac{y-\mu_y}{\sigma_y}.
+\end{equation}
+and the network is trained to predict $y'$, with predictions transformed back to $\log g$ for reporting. Because both the training transform and its inverse are linear, this normalization does not alter the underlying regression problem; it only rescales the optimization landscape.
+
+\paragraph{Uncertainty-aware extensions.}
+The observational model in Eq.~(\ref{eq:noise_model}) enables a simple uncertainty propagation strategy: repeated forward passes over multiple noise realizations of the same $(\boldsymbol{x},\boldsymbol{\sigma})$ approximate the predictive distribution induced by flux uncertainties. This Monte Carlo noise marginalization is a natural extension for reporting heteroscedastic predictive intervals, though the primary focus here is point estimation of $\log g$.
+
+\subsection{Training Procedure}
+\label{subsec:method_training}
+
+Training is performed in a supervised fashion on large synthetic datasets of stellar spectra spanning a broad range of stellar parameters and observational conditions. The training/validation/test partitions are disjoint, and all preprocessing choices (e.g., label normalization constants) are computed exclusively from the training split to avoid information leakage.
+
+A key component of the procedure is \emph{on-the-fly} heteroscedastic noise injection using the per-pixel uncertainties. Specifically, for each presentation of a spectrum during training, a fresh noise draw is generated according to Eq.~(\ref{eq:noise_model}). This approximates the expected-risk objective
+\begin{equation}
+\min_{\boldsymbol{\theta}}
+\mathbb{E}_{(\boldsymbol{x},y)\sim \mathcal{D}}
+\mathbb{E}_{\boldsymbol{\epsilon}\sim \mathcal{N}(\boldsymbol{0},\mathbf{I})}
+\ell\left(F_{\boldsymbol{\theta}}(\boldsymbol{x}+\alpha(\boldsymbol{\epsilon}\odot\boldsymbol{\sigma})), y\right).
+\label{eq:expected_risk}
+\end{equation}
+thereby encouraging an estimator that is stable under realistic, wavelength-dependent noise. Validation and test evaluations are conducted with fixed noise realizations for reproducibility and consistent model comparison.
+

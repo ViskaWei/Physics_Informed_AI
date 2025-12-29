@@ -1,59 +1,86 @@
-\documentclass[11pt,a4paper]{article}
+% SpecViT paper entrypoint (AASTeX v7.0.1)
+\documentclass[twocolumn,linenumbers]{aastex701}
 
 % ============================================================
 % Packages
 % ============================================================
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
+\usepackage{amsmath}
 \usepackage{booktabs}
-\usepackage{hyperref}
-\usepackage{cleveref}
-\usepackage{natbib}
 \usepackage{xcolor}
 \usepackage{microtype}
+\usepackage{hyperref}
 
-% Figure path
+% Figures
 \graphicspath{{figs/}}
 
-% TODO command for drafts
+% Draft helpers
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 
 % ============================================================
-% Title and Authors
+% Front matter
 % ============================================================
-\title{SpecViT: Vision Transformer for Stellar Parameter Estimation from Spectra}
+\shorttitle{SpecViT}
+\submitjournal{ApJ}
+\shortauthors{Wei et al.}
 
-\author{
-  Author One\thanks{Affiliation One} \and
-  Author Two\thanks{Affiliation Two}
-}
-
-\date{\today}
-
-% ============================================================
-% Document
-% ============================================================
 \begin{document}
 
-\maketitle
+
+\title{SpecViT: Vision Transformer for Stellar Parameter Estimation from Spectra}
+
+\author{Viska Wei}
+\affiliation{Department of Physics \& Astronomy, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\affiliation{Department of Computer Science, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\email{viskawei@gmail.com}
+\correspondingauthor{Viska Wei}
+
+\author[0000-0002-8328-1447]{Xiaosheng Zhao}
+\affiliation{Department of Physics \& Astronomy, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\email{}
+
+\author[0000-0002-4013-1799]{Rosemary F.G. Wyse}
+\affiliation{Department of Physics \& Astronomy, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\email{}
+
+\author[0000-0002-4108-3282]{Alexander S. Szalay}
+\affiliation{Department of Physics \& Astronomy, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\affiliation{Department of Computer Science, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\email{}
+
+\author[0000-0001-7679-9478]{L\'aszl\'o Dobos}
+\affiliation{Department of Physics \& Astronomy, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\affiliation{Department of Information Systems, E\"otv\"os Lor\'and University, Budapest 1117, Hungary}
+\email{}
+
+\author[0000-0002-7034-4621]{Tam\'as Budav\'ari}
+\affiliation{Department of Applied Mathematics \& Statistics, Johns Hopkins University, Baltimore, MD 21218, USA}
+\affiliation{Department of Physics \& Astronomy, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\affiliation{Department of Computer Science, The Johns Hopkins University, Baltimore, MD 21218, USA}
+\email{}
+
 
 \begin{abstract}
-\todo{Write abstract: Briefly describe the problem (stellar parameter estimation from spectra), the proposed method (SpecViT - Vision Transformer approach), key results (R² improvements, noise robustness), and main contributions.}
+\todo{Write abstract: problem, SpecViT method, key results, contributions.}
 \end{abstract}
 
-% ------------------------------------------------------------
-\input{sections/intro}
-% ------------------------------------------------------------
-\input{sections/method}
-% ------------------------------------------------------------
-\input{sections/experiments}
-% ------------------------------------------------------------
-\input{sections/conclusion}
-% ------------------------------------------------------------
+% \keywords{Galaxy stellar content (621), Fundamental parameters of stars (555), Astronomy data analysis (1858), Neural networks (1933)}
+\keywords{\uat{Machine learning}{1888} --- \uat{Astronomy data analysis}{1858} --- \uat{Stellar astronomy}{1583} --- \uat{Fundamental parameters of stars}{555} --- \uat{Stellar spectral lines}{1630} --- \uat{Neural networks}{1933} --- \uat{Convolutional neural networks}{1938}}
 
-\bibliographystyle{plainnat}
+\input{sections/intro}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/conclusion}
+
+\nocite{dosovitskiy2020vit}
+\begin{acknowledgments}
+This work is supported by the generosity of Eric and Wendy Schmidt, by recommendation of the Schmidt Futures program. 
+\end{acknowledgments}
+
+\appendix
+\input{sections/appendix}
+
+\bibliographystyle{aasjournalv7}
 \bibliography{refs}
 
 \end{document}

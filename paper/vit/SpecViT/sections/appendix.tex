@@ -1,0 +1,160 @@
+\section{Supplementary tables for baselines, scaling, and SNR bins}
+\label{app:tables}
+
+This Appendix provides expanded numerical results referenced in the main Results section, including additional metrics for \textsc{SpecViT}, the full scaling table, and per-SNR values used in Figure~\ref{fig:snr_ceiling}.
+
+\subsection{Supplementary metrics for the primary \textsc{SpecViT} model}
+\label{app:tables_metrics}
+
+\begin{deluxetable}{lc}
+\tablecaption{Supplementary metrics for \textsc{SpecViT} trained on $10^6$ spectra and evaluated on the 10k-spectrum test set.\label{tab:supp_metrics}}
+\tablehead{
+\colhead{Metric} & \colhead{Value}
+}
+\startdata
+$R^2$ & 0.711 \\
+MAE (dex) & 0.372 \\
+RMSE $\sigma_{\mathrm{ViT}}$ (dex) & 0.64 \\
+Best checkpoint epoch & 128 \\
+\enddata
+\end{deluxetable}
+
+\subsection{Full scaling numbers}
+\label{app:tables_scaling}
+
+\begin{deluxetable}{rccc}
+\tablecaption{Test-set $R^2$ versus training set size $N$.\label{tab:scaling_numbers}}
+\tablehead{
+\colhead{$N$} & \colhead{\textsc{SpecViT}} & \colhead{LightGBM} & \colhead{Ridge}
+}
+\startdata
+$5\times10^4$  & 0.434 & 0.488 & 0.442 \\
+$1\times10^5$  & 0.596 & 0.553 & 0.475 \\
+$2\times10^5$  & 0.673 & 0.547 & 0.474 \\
+$5\times10^5$  & 0.709 & 0.574 & 0.490 \\
+$1\times10^6$  & 0.711 & 0.614 & 0.50 \\
+\enddata
+\tablecomments{All models are evaluated on the same 10k-spectrum test split.}
+\end{deluxetable}
+
+\subsection{Per-SNR values underlying Figure~\ref{fig:snr_ceiling}}
+\label{app:tables_snr}
+
+\begin{deluxetable*}{rccccc}
+\tablecaption{Per-SNR performance and theoretical ceiling values.\label{tab:snr_numbers}}
+\tablehead{
+\colhead{Magnitude} &
+\colhead{SNR} &
+\colhead{$R^2_{\mathrm{ViT}}$} &
+\colhead{$R^2_{\mathrm{LGBM}}$} &
+\colhead{$R^2_{\max}$ (Fisher, 5D)} &
+\colhead{$R^2_{\max}-R^2_{\mathrm{ViT}}$}
+}
+\startdata
+20.0 & 24.0 & 0.90 & 0.87 & 0.989 & 0.09 \\
+21.5 & 7.1  & 0.80 & 0.74 & 0.874 & 0.07 \\
+22.0 & 4.6  & 0.68 & 0.60 & 0.698 & 0.02 \\
+22.5 & 3.0  & 0.52 & 0.42 & 0.265 & \nodata \\
+\enddata
+\tablecomments{The gap is omitted in the lowest-SNR bin because the reported $R^2_{\max}$ corresponds to a median ceiling over the parameter space; Appendix~\ref{app:fisher_extra} discusses this interpretation.}
+\end{deluxetable*}
+
+\section{Tokenization and architectural sensitivity}
+\label{app:ablation}
+
+The main Results focus on performance, scaling, and proximity to the information ceiling. Here we provide supporting ablations that validate key architectural choices used for \textsc{SpecViT} in the main experiments, particularly the use of 16-pixel patches with a convolutional patch tokenizer.
+
+\subsection{Patch size ablation}
+\label{app:ablation_patch}
+
+\begin{deluxetable}{lcc}
+\tablecaption{Patch size sensitivity (Conv1D tokenization; ablation on a 50k-scale training regime).\label{tab:patch_ablation}}
+\tablehead{
+\colhead{Patch size} & \colhead{Validation $R^2$} & \colhead{Test $R^2$}
+}
+\startdata
+16 & $0.582 \pm 0.045$ & $0.554 \pm 0.042$ \\
+32 & $0.473 \pm 0.128$ & $0.449 \pm 0.125$ \\
+64 & $0.534$ & $0.496$ \\
+\enddata
+\tablecomments{Values are reported as mean$\pm$std when multiple runs are available.}
+\end{deluxetable}
+
+\subsection{Tokenization method stability}
+\label{app:ablation_tokenizer}
+
+\begin{deluxetable*}{lcccc}
+\tablecaption{Stability of two tokenization strategies in an architectural sweep.\label{tab:tokenizer_stability}}
+\tablehead{
+\colhead{Tokenizer} &
+\colhead{Runs (total)} &
+\colhead{Runs (finished)} &
+\colhead{Success rate} &
+\colhead{Best validation $R^2$}
+}
+\startdata
+Conv1D (C1D) & 79 & 23 & 29\% & 0.631 \\
+Sliding window (SW) & 15 & 0 & 0\% & \nodata \\
+\enddata
+\tablecomments{The SW configuration did not yield stable completed runs under the sweep settings used here; the main Results therefore adopt C1D tokenization.}
+\end{deluxetable*}
+
+\section{Additional diagnostics relative to the Fisher limit}
+\label{app:fisher_extra}
+
+This Appendix provides supporting details for the Fisher-information ceiling shown in Figure~\ref{fig:snr_ceiling}, and additional diagnostics comparing empirical residual scatter to CRLB envelopes.
+
+\subsection{From Fisher information to an $R^2$ ceiling}
+\label{app:fisher_extra_conversion}
+
+For a spectral forward model with parameters $\theta=(\log g,\eta)$ and heteroscedastic noise covariance $\Sigma$, the Fisher information matrix is $I(\theta)=J^\top \Sigma^{-1}J$, where $J=\partial f/\partial\theta$ is the Jacobian. Marginalizing over nuisance parameters $\eta$ yields the Schur-complement CRLB for $\log g$,
+\begin{equation}
+\mathrm{CRLB}_{g,\mathrm{marg}}=\left(I_{gg}-I_{g\eta}I_{\eta\eta}^{-1}I_{\eta g}\right)^{-1}.
+\end{equation}
+We convert this variance lower bound into an $R^2$ ceiling via
+\begin{equation}
+R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}.
+\end{equation}
+This provides an SNR-conditioned upper bound for any unbiased estimator under the assumed noise model.
+
+\subsection{Residual overlay with CRLB envelopes}
+\label{app:fisher_extra_residual}
+
+\begin{figure*}
+\centering
+\IfFileExists{figs/fisher_residual_overlay_real_dual_mag.png}{%
+  \includegraphics[width=\textwidth]{figs/fisher_residual_overlay_real_dual_mag.png}%
+}{%
+  \fbox{\parbox[c][0.18\textheight][c]{0.95\textwidth}{\centering Missing figure: \texttt{fisher\_residual\_overlay\_real\_dual\_mag.png}}}%
+}
+\caption{
+Residual diagnostics for the \textsc{SpecViT} model trained on $10^6$ spectra, evaluated on the 10k-spectrum test set.
+The plot overlays empirical residual scatter with CRLB envelopes at two representative noise regimes (e.g., corresponding to mag $\approx 21.5$ and mag $\approx 22.5$), illustrating that the measured RMSE $\sigma_{\mathrm{ViT}}=0.64~\mathrm{dex}$ lies between the corresponding Fisher lower bounds ($\sigma_{\mathrm{Fisher}}\approx 0.43$ and $1.11~\mathrm{dex}$).
+}
+\label{fig:fisher_residual_overlay}
+\end{figure*}
+
+\section{Invariance of $R^2$ to linear label normalization}
+\label{app:r2_invariance}
+
+For completeness, we record a short proof that $R^2$ is invariant under linear transformations of the regression target, which justifies direct comparison of $R^2$ values across standard ($z$-score) label normalizations.
+
+Let $y' = a y + b$ be any linear transformation with $a\neq 0$, and let $\hat{y}'=a\hat{y}+b$ be the correspondingly transformed predictions. The residual sum of squares transforms as
+\begin{equation}
+SS_{\mathrm{res}}'=\sum_i (y'_i-\hat{y}'_i)^2
+=\sum_i \big(a(y_i-\hat{y}_i)\big)^2
+=a^2 SS_{\mathrm{res}},
+\end{equation}
+and the total sum of squares transforms as
+\begin{equation}
+SS_{\mathrm{tot}}'=\sum_i (y'_i-\overline{y}')^2
+=\sum_i \big(a(y_i-\overline{y})\big)^2
+=a^2 SS_{\mathrm{tot}}.
+\end{equation}
+Therefore,
+\begin{equation}
+R^2
+=1-\frac{SS_{\mathrm{res}}}{SS_{\mathrm{tot}}}
+=1-\frac{SS_{\mathrm{res}}'}{SS_{\mathrm{tot}}'},
+\end{equation}
+showing that $R^2$ is unchanged by linear target normalization.

@@ -1,28 +1,238 @@
 \section{Introduction}
 \label{sec:intro}
 
-\todo{Write introduction covering:
-\begin{itemize}
-  \item Problem statement: Estimating stellar parameters ($\log g$, $T_{\text{eff}}$, [Fe/H]) from observed spectra
-  \item Motivation: Why this matters for astrophysics (stellar evolution, galactic archaeology)
-  \item Challenges: Noise in observations, high-dimensional spectra, non-linear relationships
-  \item Existing approaches: Traditional template fitting, Ridge regression, CNN/MLP methods
-  \item Our contribution: SpecViT - adapting Vision Transformers for spectral analysis
-  \item Key results preview: Improved $R^2$, noise robustness, interpretability via attention
-\end{itemize}
-}
+Large-scale spectroscopic surveys have made stellar astrophysics a data-rich discipline by delivering
+millions of spectra with well-characterized instrumental responses and selection functions.
+Examples range from optical ground-based surveys such as the Sloan Digital Sky Survey (SDSS; \citealt{york2000sdss})
+and the Large Sky Area Multi-Object Fibre Spectroscopic Telescope (LAMOST; \citealt{cuietal2012lamost}),
+to space-based missions such as \textit{Gaia} \citep{gaia2016mission},
+and next-generation massively-multiplexed facilities such as DESI \citep{desi2016} and Subaru/PFS \citep{tamura2016pfs}.
+From these spectra, a central goal is to infer fundamental stellar parameters---effective temperature
+($T_{\mathrm{eff}}$), surface gravity ($\log g$), and metallicity (e.g., [Fe/H])---which are required for
+stellar population studies, Galactic archaeology, and survey cross-calibration.
 
-% Placeholder structure:
-% 
-% Stellar parameter estimation is fundamental to understanding...
-% 
-% Traditional approaches rely on template fitting...
-% Recent machine learning methods have shown promise...
-% 
-% In this work, we propose SpecViT, a Vision Transformer architecture adapted for...
-% Our main contributions are:
-% \begin{enumerate}
-%   \item ...
-%   \item ...
-%   \item ...
-% \end{enumerate}
+Among these labels, surface gravity $\log g$ is particularly important because it separates dwarfs
+from giants and constrains stellar radii and evolutionary states.
+Yet $\log g$ is notoriously difficult to estimate robustly from spectra across heterogeneous instruments
+and signal-to-noise regimes: it is encoded in subtle pressure-broadened wings and line ratios, and is
+entangled with $T_{\mathrm{eff}}$ and composition in ways that depend on wavelength coverage and resolution.
+Classical pipelines therefore rely on forward modeling and optimization over synthetic libraries, using
+grids of stellar atmospheres/spectra such as ATLAS9 \citep{castelli2004atlas9},
+MARCS \citep{gustafsson2008marcs}, PHOENIX \citep{husser2013phoenix}, and BOSZ \citep{bohlin2017bosz}.
+Survey-grade implementations combine these libraries with robust fitting machinery and extensive
+calibration effort, e.g., the SEGUE Stellar Parameter Pipeline (SSPP; \citealt{lee2008sspp}),
+the APOGEE pipeline ASPCAP \citep{garciaperez2016aspcap}, and LAMOST pipelines such as LASP \citep{wu2014lasp}
+and LSP3 \citep{xiang2015lsp3}.
+While physically interpretable, these approaches can be computationally demanding at scale, sensitive to
+continuum placement and line-spread function mismatch, and limited by modeling systematics when applied to
+spectra outside the regimes covered by the training/calibration sets.
+
+Data-driven and machine-learning approaches have emerged as powerful alternatives.
+Methods such as \textit{The Cannon} \citep{ness2015cannon} learn a generative mapping between spectra and labels,
+enabling label transfer across surveys, while \textit{The Payne} \citep{ting2019payne} uses neural-network emulators
+to accelerate spectral synthesis and inference.
+Discriminative models---including convolutional architectures trained directly on normalized flux sequences---have
+demonstrated competitive precision for stellar labels on large survey datasets, e.g., StarNet \citep{fabbro2018starnet}
+and AstroNN \citep{leung2019astronn}.
+In parallel, non-neural classical learners such as random forests \citep{breiman2001rf} and
+gradient-boosted decision trees (GBDTs; \citealt{friedman2001gbm}) remain strong baselines in practice,
+including modern implementations such as LightGBM \citep{ke2017lightgbm}, and linear regularized models such as
+ridge regression \citep{hoerl1970ridge}.
+Despite these successes, many existing models are tied to fixed wavelength windows or instruments, and may struggle
+to capture long-range interactions among spectral features that are widely separated in wavelength but jointly
+inform $\log g$ (e.g., line blends, pseudo-continuum regions, and correlated metal-line patterns).
+
+Transformers \citep{vaswani2017attention} offer a natural mechanism to model global interactions through self-attention.
+In computer vision, Vision Transformers (ViTs; \citealt{dosovitskiy2021vit}) operate on patch tokens and have become
+high-performing and scalable backbones; later work improved data efficiency and inductive bias
+(e.g., DeiT \citealt{touvron2021deit}, Swin Transformer \citealt{liu2021swin}).
+For 1D spectra, the same paradigm suggests ``patchifying'' a spectrum along wavelength and learning a global
+representation that can attend simultaneously to line cores, wings, and broad-band structure.
+However, adapting transformers to spectroscopy raises domain-specific questions about tokenization and positional
+representation: unlike images, spectral pixels have a \emph{physical coordinate} (wavelength) and non-uniform
+information content. This motivates wavelength-aware or relative position schemes
+\citep{shaw2018relative,su2021roformer,press2021alibi}, and, more broadly, physics-aware model design.
+Recent transformer foundation models for stellar spectroscopy (e.g., SpectraFM; \citealt{koblischke2024spectrafm})
+also highlight the opportunity---and the challenge---of scaling training with synthetic data while bridging the
+synthetic-to-real gap.
+
+In this work, we present \textbf{SpecViT}, a Vision Transformer tailored for \textbf{stellar surface gravity inference}
+from 1D spectra.
+SpecViT treats spectra as sequences of spectral patches and leverages global self-attention to capture
+distributed $\log g$ information across wavelengths.
+We train and evaluate SpecViT on large-scale synthetic spectra derived from modern atmosphere libraries
+(e.g., BOSZ; \citealt{bohlin2017bosz}) with instrument and noise models matched to survey conditions.
+To contextualize performance across signal-to-noise ratios, we additionally derive an information-theoretic
+ceiling based on Fisher information and the Cram\'er--Rao lower bound (CRLB; \citealt{fisher1925,cramer1946,rao1945,kay1993estimation}),
+providing a principled benchmark for ``how close'' a learned model is to the best possible estimator under a
+specified noise model.
+
+Our main contributions are:
+\begin{itemize}
+    \item \textbf{A transformer-based spectral regressor (SpecViT)} that adapts the ViT paradigm to 1D stellar spectra
+    for $\log g$ inference, using patch-based tokenization and transformer blocks optimized for regression.
+    \item \textbf{Scaling analysis on large synthetic datasets} to quantify how model capacity and dataset size translate
+    into $\log g$ accuracy under realistic noise and instrument effects.
+    \item \textbf{A Fisher/CRLB-based performance ceiling} for the $\log g$ inference task under heteroscedastic noise,
+    enabling an interpretable comparison between learned estimators and the theoretical limit.
+\end{itemize}
+
+
+\section{Related Work}
+\label{sec:related_work}
+
+\subsection{Physics-based stellar parameter inference and survey pipelines}
+
+Stellar parameter inference has traditionally relied on forward modeling with synthetic spectra computed from
+stellar atmosphere models and radiative transfer.
+Widely used atmosphere/spectral grids include ATLAS9 \citep{castelli2004atlas9}, MARCS \citep{gustafsson2008marcs},
+PHOENIX \citep{husser2013phoenix}, and BOSZ \citep{bohlin2017bosz}.
+To fit observations with such grids, the community developed robust optimization and synthesis tools such as
+SME \citep{valenti1996sme}, iSpec \citep{blancocuaresma2014ispec}, and FERRE
+\citep{allendeprieto2006ancientmw,ferre2016usersguide}.
+Large surveys operationalized these ideas in automated pipelines, e.g., SSPP for SDSS/SEGUE \citep{lee2008sspp},
+ASPCAP for APOGEE \citep{garciaperez2016aspcap}, and LAMOST pipelines such as LASP \citep{wu2014lasp}
+and LSP3 \citep{xiang2015lsp3}.
+These pipelines achieve strong accuracy and interpretability but often require careful continuum normalization,
+line-spread-function calibration, and extensive post-hoc corrections; they may also be bottlenecked by repeated
+grid evaluation and by model mismatch when physics is incomplete or when instrument systematics are not fully captured.
+
+\subsection{Data-driven models and machine learning on stellar spectra}
+
+Data-driven modeling can reduce reliance on explicit spectral synthesis while retaining physical supervision through labels.
+\textit{The Cannon} \citep{ness2015cannon} learns a generative relationship between flux and labels and has been used for
+label transfer and homogenization across datasets.
+\textit{The Payne} \citep{ting2019payne} accelerates forward modeling by learning a neural approximation to spectral synthesis,
+enabling rapid inference and facilitating large-scale abundance studies.
+Complementary discriminative deep-learning approaches train directly on spectra to regress stellar labels.
+CNN-based models such as StarNet \citep{fabbro2018starnet} and AstroNN \citep{leung2019astronn} have demonstrated
+strong performance on APOGEE-like spectra, especially when trained on large, consistently processed datasets.
+In practical survey settings, ``classical'' machine learning methods remain competitive,
+including random forests \citep{breiman2001rf}, support vector machines \citep{cortes1995svm},
+and gradient boosting \citep{friedman2001gbm} implemented efficiently in LightGBM \citep{ke2017lightgbm}.
+Linear baselines such as ridge regression \citep{hoerl1970ridge} are also attractive when interpretability,
+stability, or calibration is prioritized.
+
+A recurring challenge for data-driven models is generalization beyond the training distribution:
+changes in resolution, wavelength range, line-spread function, or continuum normalization can all produce
+significant performance degradation.
+This motivates architectures that can ingest variable-length inputs and that can represent spectra in a way that is
+less tied to a single instrument.
+
+\subsection{Transformers, ViTs, and positional representations for 1D signals}
+
+Transformers \citep{vaswani2017attention} replaced recurrence with self-attention and have become a general-purpose
+architecture for sequence modeling.
+Vision Transformers \citep{dosovitskiy2021vit} extended this paradigm to images by operating on patch tokens,
+with subsequent refinements that improve data efficiency and inductive bias (e.g., DeiT \citealt{touvron2021deit},
+Swin \citealt{liu2021swin}).
+A key design choice for transformers is how to inject positional information.
+Absolute sinusoidal embeddings were introduced with the original transformer \citep{vaswani2017attention},
+while later work proposed relative-position mechanisms \citep{shaw2018relative} and extrapolation-friendly
+biases such as ALiBi \citep{press2021alibi}.
+Rotary position embeddings (RoPE) provide another effective mechanism that mixes absolute and relative position information
+in attention \citep{su2021roformer}.
+These advances are directly relevant when transferring transformers to spectroscopy, where the physical coordinate
+(wavelength) and the locality of spectral features create structure that is not identical to either text or images.
+
+\subsection{Transformers for spectroscopy and astronomy}
+
+Transformer models are increasingly explored in astronomy for heterogeneous modalities.
+For stellar spectroscopy specifically, recent work has investigated pre-training and transfer learning with transformer
+architectures.
+SpectraFM \citep{koblischke2024spectrafm} proposes a transformer ``foundation model'' for stellar spectra with a
+wavelength encoding scheme and demonstrates synthetic-to-real fine-tuning behavior.
+In extragalactic spectroscopy, SpecPT \citep{pattnaik2025specpt} uses a pre-trained transformer for spectrum
+reconstruction and automated redshift inference on DESI-like data.
+Other studies have explored applying vision transformer pipelines to spectral analysis by representing spectra as images
+and using ViT backbones \citep{moraes2025vit_spectra}, and related transformer applications appear in adjacent problems
+such as stellar classification using SDSS photometric images \citep{yang2024stellarvit}.
+Compared with these efforts, our focus is on high-accuracy regression of \emph{stellar surface gravity} from 1D spectra,
+with an emphasis on scaling behavior and on benchmarking against an information-theoretic limit.
+
+\subsection{Physics-informed learning and information-theoretic limits}
+
+Physics-informed machine learning aims to incorporate physical structure, constraints, or priors to improve sample
+efficiency and generalization.
+Physics-informed neural networks (PINNs) \citep{raissi2019pinn} and broader reviews of physics-informed ML
+\citep{karniadakis2021piml} highlight strategies for integrating known laws or inductive biases into learning systems.
+In stellar spectroscopy, one concrete ``physics'' is the wavelength coordinate itself and the expected locality and
+line-formation structure, motivating wavelength-aware embeddings and tokenization schemes
+(e.g., \citealt{koblischke2024spectrafm}).
+
+Finally, the Fisher information and the Cram\'er--Rao lower bound provide a principled way to quantify the best attainable
+variance of unbiased estimators under a specified likelihood \citep{fisher1925,cramer1946,rao1945,kay1993estimation}.
+Fisher-matrix analyses are widely used in astrophysics to forecast parameter constraints
+(e.g., \citealt{tegmark1997kl}).
+In this paper, we use Fisher/CRLB analysis not as a cosmological forecast tool but as a \emph{task-level performance
+ceiling} for $\log g$ inference under our spectral noise model, enabling an interpretable comparison between SpecViT,
+classical machine-learning baselines, and the theoretical limit.
+\subsection{Dataset}
+\label{sec:dataset}
+We construct a large ensemble of simulated one-dimensional (1D) stellar spectra that are wavelength-calibrated, sky-subtracted, and flux-calibrated. Each sample corresponds to an exposure with a medium-resolution fiber-fed spectrograph covering $7100 \sim 8850\text{\AA}$ at $R\approx5000$. As high-resolution inputs we use the BOSZ synthetic stellar spectrum grid \citep{Bohlin2017} based on ATLAS9 atmospheres \citep{Kurucz1979,Meszaros2012}, starting from $R\approx50{,}000$ to capture narrow features and sub-pixel Doppler shifts. Stellar labels $(T_{\mathrm{eff}}, \log g, [\mathrm{Fe/H}], [\alpha/\mathrm{Fe}])$ are sampled with cubic-spline interpolation to generate diverse sources. Each spectrum is shifted by a line-of-sight velocity $v_{los}$, convolved with a wavelength-dependent LSF to $R\approx5000$, and resampled at $\gtrsim 2.5$ pixels per FWHM to avoid aliasing. We apply a smooth throughput curve and a sky background model, with observing conditions (seeing, airmass, field angle, moon phase) randomly drawn to reproduce realistic aperture losses and sky levels. Object and sky photon counts are combined and corrupted with Poisson and Gaussian read noise, yielding a Poisson–Gaussian noise model. After sky subtraction and flux calibration we obtain the fluxed spectrum with a per-pixel uncertainty vector. Velocity shifts spanning sub-pixel to multi-pixel scales are included to test robustness against misalignments. Each simulated observation therefore consists of the fluxed spectrum, its wavelength grid, and an uncertainty array, with training/validation/test splits generated from independent draws of stellar labels, velocities, noise seeds, and observing conditions. Parameter ranges are summarized in Tables~\ref{tab:obs_params}, \ref{tab:spec_params}, and \ref{tab:stellar_params}, while the resulting noise properties are shown in Figure~\ref{fig:err}.
+
+\begin{table}
+\centering
+\caption{Summary of the observational parameters and their ranges used for the simulated spectra.}
+\begin{tabular}{lcc}
+\hline
+\textbf{Parameter} & \textbf{Range} \\
+\hline
+Seeing                 & 0.5 -- 1.5$^{\prime\prime}$ \\
+Target zenith angle    & 0 -- 45$^\circ$ \\
+Field angle            & 0.0 -- 0.65$^\circ$ \\
+Moon zenith angle      & 30 -- 90$^\circ$ \\
+Moon--target angle     & 60 -- 180$^\circ$ \\
+Moon phase             & 0.0 -- 0.25 \\
+Exposure time          & 15\,min \\
+Exposure count         & 20 \\
+\hline
+\end{tabular}
+\label{tab:obs_params}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Spectrograph parameters for the medium-resolution (MR) mode, similar to the Subaru Prime Focus Spectrograph.}
+\begin{tabular}{lcc}
+\hline
+\textbf{Parameter} & \textbf{MR mode} \\
+\hline
+$\lambda$ coverage     & 710 -- 885\,nm \\
+Wavelength dispersion       & 0.4\,\AA\ per pixel \\
+Spectral resolution    & 1.6\,\AA \\
+Velocity resolution    & 60\,km\,s$^{-1}$ \\
+Resolving power        & 5000 \\
+\hline
+\end{tabular}
+\label{tab:spec_params}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\caption{Fundamental stellar atmospheric parameters and additional simulation inputs.}
+\begin{tabular}{lcc}
+\hline
+\textbf{Parameter} & \textbf{Range} \\
+\hline
+Effective temperature $T_{\mathrm{eff}}$ & $3500 \sim 6000\,K$ \\
+Surface gravity $\log g$                 & $1.0 \sim 5.0$ \\
+Metallicity [M/H]                       & $-1.0 \sim 0.0$\,dex \\
+$\alpha$-element abundance [$\alpha$/H]  & $-0.25 \sim 0.5$ \\
+Radial Velocity [km/s] $rv$                        & $-450 \sim  450$ \\
+Magnitude in the g-band $m$              & $20.5 \sim 22.5$\,mag \\
+Extinction $E(B-V)$                      & $0$ \,mag \\
+\hline
+\end{tabular}
+\label{tab:stellar_params}
+\end{table}
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.8\linewidth]{image/magNoise.png}
+\sloppy
+\caption{Flux errors across different magnitudes over the spectral range. \textbf{Left:} Absolute flux error $\sigma_F$ in $erg\sim s^{-1}$ \text{\AA}$ ^{-1}$, versus wavelength. \textbf{Right:} Relative flux error $\sigma_F/F$. Noise increases for fainter stars and at longer wavelengths, reflecting photon statistics, sky background, atmospheric transmission, and instrumental effects.}
+\label{fig:err}
+\end{figure*}
+
+As shown in Figure~\ref{fig:err}, photon noise dominates at faint magnitudes where detected photons are few, while sky background sets the noise floor. For brighter targets, noise is mainly from object photons, so the relative S/N is sensitive to seeing and fiber coupling. Instrumental noise is negligible compared to photon and sky noise, and atmospheric variations modulate the overall error distribution.
