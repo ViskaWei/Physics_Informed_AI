@@ -257,6 +257,7 @@ This gives the theoretical maximum $R^2$ achievable by any unbiased estimator un
 |--------|-------|-----------|
 | **R² (test, 10k)** | **0.711** | Best checkpoint (epoch 128) |
 | MAE (original space) | 0.372 dex | In log(g) units |
+| RMSE (σ_VIT) | 0.64 dex | Between σ_Fisher@21.5=0.43 and σ@22.5=1.11 |
 | Architecture | p16_h256_L6_a8 | Sweep-optimized |
 | Parameters | ~4.9M | - |
 
@@ -431,10 +432,10 @@ The gap between SpecViT (R² = 0.698) and Fisher 5D ceiling (R² = 0.874) at mag
 
 *Note: SW failure traced to training dynamics instability (Transformer gradients 2× larger), not implementation bug. See `exp_tokenization_ablation_20251228.md`.*
 
-### Figure 5: Residual Analysis
-![ViT 1M Residual Analysis](../../logg/scaling/exp/img/vit_1m_residual_analysis.png)
+### Figure 5: Fisher Residual Overlay (Residuals vs Theoretical Bound)
+![Fisher Residual Overlay](../../logg/vit/exp/img/fisher_residual_overlay_real_dual_mag.png)
 
-*Caption: Residual analysis of ViT 1M model on 10k test set. Left: Predicted vs True scatter plot (MAE=0.44, RMSE=0.63, R²=0.71); Middle: Residual distribution histogram (Std=0.63, Median=0.014, near-zero mean); Right: Residual vs True Value (showing heteroscedasticity with larger errors at low/high log(g) regions).*
+*Caption: Residual analysis of ViT 1M model on 10k test set overlaid with Fisher/CRLB theoretical bounds. Left: Parity plot with dual CRLB envelopes (navy=mag 21.5 σ=0.43, steel blue=mag 22.5 σ=1.11); Middle: Residual vs True Value with CRLB envelope lines (ViT σ=0.64); Right: Residual distribution histogram. Key finding: ViT σ=0.64 falls between the two Fisher bounds, with ~50% headroom relative to the mag=21.5 theoretical limit.*
 
 ---
 
@@ -547,6 +548,6 @@ Therefore: $R^2_{orig} = R^2_{norm}$
 
 ---
 
-> **Last Updated:** 2025-12-27 (v2)  
+> **Last Updated:** 2025-12-28 (v3)  
 > **Corresponding Experiment Logs:** `logg/vit/`, `logg/scaling/`  
 > **Core Figure:** `logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k_unified_snr.png`

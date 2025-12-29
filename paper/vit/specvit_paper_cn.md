@@ -257,6 +257,7 @@ $$R^2_{\max} = 1 - \frac{\text{CRLB}_{g,\text{marg}}}{\text{Var}(\log g)}$$
 |------|-----|------|
 | **R²（测试，10k）** | **0.711** | 最佳检查点 (epoch 128) |
 | MAE（原始空间）| 0.372 dex | log(g) 单位 |
+| RMSE (σ_VIT) | 0.64 dex | 介于 σ_Fisher@21.5=0.43 与 σ@22.5=1.11 之间 |
 | 架构 | p16_h256_L6_a8 | Sweep 优化 |
 | 参数量 | ~4.9M | - |
 
@@ -431,10 +432,10 @@ SpecViT（R² = 0.698）与 Fisher 5D 上限（R² = 0.874）在 mag=21.5 的差
 
 *注：SW 失败原因经调查为训练动态不稳定（Transformer 梯度 2× larger），非实现 bug。详见 `exp_tokenization_ablation_20251228.md`。*
 
-### 图 5：残差分析
-![ViT 1M Residual Analysis](../../logg/scaling/exp/img/vit_1m_residual_analysis.png)
+### 图 5：Fisher Residual Overlay（残差 vs 理论下界）
+![Fisher Residual Overlay](../../logg/vit/exp/img/fisher_residual_overlay_real_dual_mag.png)
 
-*图注：ViT 1M 模型在 10k 测试集上的残差分析。左：预测值 vs 真实值散点图（MAE=0.44, RMSE=0.63, R²=0.71）；中：残差分布直方图（Std=0.63, Median=0.014，近似零均值）；右：残差 vs 真实值（显示异方差性，低/高 log(g) 区域误差较大）。*
+*图注：ViT 1M 模型在 10k 测试集上的残差与 Fisher/CRLB 理论下界对比。左：预测值 vs 真实值散点图叠加双包络（深蓝=mag 21.5 σ=0.43，浅蓝=mag 22.5 σ=1.11）；中：残差 vs 真实值叠加 CRLB 包络线（ViT σ=0.64）；右：残差分布直方图。关键发现：ViT σ=0.64 介于两个 Fisher 下界之间，相对 mag=21.5 理论极限有约 50% 的 headroom。*
 
 ---
 
@@ -547,6 +548,6 @@ $$R^2 = 1 - \frac{SS_{res}}{SS_{tot}} = 1 - \frac{\sum(y - \hat{y})^2}{\sum(y - 
 
 ---
 
-> **最后更新：** 2025-12-27 (v2)  
+> **最后更新：** 2025-12-28 (v3)  
 > **对应实验日志：** `logg/vit/`, `logg/scaling/`  
 > **核心图表：** `logg/scaling/exp/img/r2_vs_snr_ceiling_test_10k_unified_snr.png`
