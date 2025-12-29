@@ -1,0 +1,80 @@
+# ============================================
+# VIT-20251226-vit-1m-l1-01
+# 使用 1M 数据训练 ViT，采用 L1 Loss
+# ============================================
+# 配置: L1 loss + Sliding Window + MinMax norm
+# ============================================
+
+project: 'vit-1m-scaling'  # W&B 项目名称
+
+# ============================================
+# 模型架构配置 - 与 vit_1m_large 相同
+# ============================================
+model:
+  name: vit
+  task_type: reg
+  
+  image_size: 4096
+  patch_size: 16
+  hidden_size: 256
+  num_hidden_layers: 6
+  num_attention_heads: 8
+  stride_size: 16
+  proj_fn: 'SW'  # Sliding Window
+  pos_encoding_type: 'learned'
+  max_position_embeddings: 512
+
+# ============================================
+# 训练配置
+# ============================================
+train:
+  batch_size: 256
+  ep: 200
+  debug: 0
+  save: true
+  num_workers: 8
+  precision: '16-mixed'
+
+# ============================================
+# 损失函数配置 - L1 Loss (MAE)
+# ============================================
+loss:
+  name: 'l1'  # L = |y - y_hat|
+
+# ============================================
+# 优化器配置
+# ============================================
+opt:
+  type: 'AdamW'
+  lr: 0.0003
+  weight_decay: 0.01
+  lr_sch: 'cosine'
+  eta_min: 0.00001
+
+# ============================================
+# 数据配置
+# ============================================
+data:
+  file_path: "/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/train_200k_0/dataset.h5"
+  val_path: "/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/val_1k/dataset.h5"
+  test_path: "/datascope/subaru/user/swei20/data/bosz50000/z0/mag205_225_lowT_1M/test_10k/dataset.h5"
+  num_samples: -1
+  num_test_samples: -1
+  param: log_g
+  label_norm: 'minmax'
+
+# ============================================
+# 噪声配置
+# ============================================
+noise:
+  noise_level: 1.0
+
+# ============================================
+# 可视化配置
+# ============================================
+viz:
+  enable: false
+
+plotting:
+  quick_mode: true
+
