@@ -518,6 +518,10 @@ GPT 讨论 → session.md
 | `session` | GPT 会话归档 | `logg/[topic]/sessions/` |
 | `audit` | 矛盾审计 + Hub 重写 | `logg/[topic]/contradiction_audit.md` |
 | `paper [topic]` | 论文检查 + TODO 生成 | `paper/[topic]/experiments_checklist.md` |
+| `paper push` | 推送论文到 GitHub | `paper/vit/SpecViT/` → GitHub |
+| `paper pull` | 拉取 Overleaf 更新 | GitHub → `paper/vit/SpecViT/` |
+| `paper status` | 检查远程是否有更新 | - |
+| `paper figs` | 导出图片到论文目录 | `assets/figures/` → `paper/vit/SpecViT/figs/` |
 
 ## 🔍 矛盾审计
 
@@ -567,3 +571,70 @@ GPT 讨论 → session.md
 - **清单不存在**: 提示参考模板创建
 - **多个论文文件**: 列出所有文件让用户选择
 - **论文为空**: 输出基础结构建议
+
+## 📤 论文同步 (Overleaf/GitHub)
+
+### 触发词
+- `paper push` / `push paper` / `推送论文` - 推送到论文仓
+- `paper pull` / `pull paper` / `拉取论文` - 从 Overleaf/GitHub 拉取
+- `paper status` / `论文状态` - 检查是否有远程更新
+- `paper figs` / `导出图` - 导出图片到论文目录
+
+### 配置（SpecViT）
+```
+PAPER_DIR = paper/vit/SpecViT
+REMOTE_URL = git@github.com:ViskaWei/SpecViT-paper.git
+```
+
+### 工作流程
+
+#### `paper push` - 推送论文到 GitHub
+1. 检查 `PAPER_DIR` 是否有未提交更改，有则提示先 commit
+2. 克隆远程论文仓到临时目录
+3. 用本地 `PAPER_DIR` 内容覆盖
+4. 提交并推送到远程
+5. 输出：成功提示 + Overleaf Pull 提醒
+
+#### `paper pull` - 拉取 Overleaf/GitHub 更新
+1. 检查本地是否有未提交更改，提供选项：
+   - `c` - 先提交本地更改
+   - `s` - 暂存(stash)本地更改
+   - `d` - 丢弃本地更改
+   - `q` - 退出
+2. 克隆远程论文仓
+3. 显示差异预览（文件列表 + 可选详细 diff）
+4. 确认后覆盖本地 `PAPER_DIR`
+5. 自动提交（可自定义 commit message）
+6. 恢复 stash（如果之前选择了暂存）
+
+#### `paper status` - 快速检查
+1. 克隆远程（shallow clone）
+2. 比较与本地差异
+3. 输出：`✓ Up to date` 或 `⚠ N file(s) differ`
+
+#### `paper figs` - 导出图片
+1. 从 `assets/figures/specvit/` 复制 PDF/PNG/JPG 到 `PAPER_DIR/figs/`
+2. 输出复制清单
+3. 提醒：不要用 symlink
+
+### 底层脚本（自动调用，用户无需直接使用）
+```
+tools/specvit_subtree_push.sh    # paper push
+tools/specvit_pull_agent.sh      # paper pull  
+tools/specvit_check_remote.sh    # paper status
+tools/specvit_export_figs.sh     # paper figs
+```
+
+### 典型工作流
+```
+# 本地修改 → Overleaf
+1. 编辑 paper/vit/SpecViT/
+2. git commit
+3. paper push
+4. Overleaf: Menu → GitHub → Pull
+
+# Overleaf 修改 → 本地
+1. Overleaf: Menu → GitHub → Push
+2. paper pull
+3. git push origin main
+```
