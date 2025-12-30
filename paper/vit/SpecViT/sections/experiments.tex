@@ -4,17 +4,97 @@
 \subsection{Experimental Setup}
 \label{sec:experiments:setup}
 
-\todo{Describe dataset, preprocessing, and training details.}
+\subsubsection{Dataset}
+\label{sec:experiments:dataset}
+
+We construct a dataset of one million simulated stellar spectra designed to match observations from the Subaru Prime Focus Spectrograph (PFS) Medium Resolution (MR) arm. The synthetic spectra are generated using the BOSZ stellar atmosphere grid \citep{bohlin2017bosz}, which is based on ATLAS9 model atmospheres and provides high-resolution templates at $R \approx 50{,}000$. These templates are convolved with a wavelength-dependent line spread function to the instrument resolution ($R \approx 5000$), resampled onto the detector wavelength grid covering $710$--$885$\,nm at $0.4$\,\AA\ per pixel, and degraded with realistic noise.
+
+Stellar atmospheric parameters are drawn uniformly across the label space: effective temperature $T_{\mathrm{eff}} \in [3750, 6000]$\,K, surface gravity $\log g \in [1.0, 5.0]$\,dex, and metallicity $[\mathrm{M/H}] \in [-2.5, +0.75]$\,dex. Intermediate parameter values are obtained via cubic-spline interpolation on the BOSZ grid. Each spectrum is assigned an apparent $i$-band magnitude uniformly sampled from $m_i \in [20.5, 22.5]$\,mag, corresponding to the faint end of PFS science targets.
+
+To produce realistic noise, we simulate the full observational chain. Observing conditions---seeing, target zenith angle, field angle, and moon configuration---are randomly drawn within the ranges specified in Table~\ref{tab:obs_params}. All observations assume new-moon conditions (moon phase $= 0$) to represent typical dark-time science operations. Object and sky photon counts are computed, combined, and corrupted with Poisson shot noise and Gaussian read noise. After sky subtraction and flux calibration, each simulated observation comprises a fluxed spectrum, its wavelength grid, and a per-pixel uncertainty vector. The final dataset is partitioned into training ($10^6$), validation ($10^3$), and test ($10^4$) splits using independent draws of stellar labels, noise seeds, and observing conditions. The parameter ranges and noise characteristics are summarized in Tables~\ref{tab:obs_params}--\ref{tab:stellar_params}, with the resulting signal-to-noise properties illustrated in Figure~\ref{fig:err}.
+
+\begin{table}
+\centering
+\caption{Observational parameters and their ranges used for the simulated spectra.}
+\begin{tabular}{lc}
+\hline
+\textbf{Parameter} & \textbf{Range} \\
+\hline
+Seeing                 & 0.5--1.5$^{\prime\prime}$ \\
+Target zenith angle    & 0--45$^\circ$ \\
+Field angle            & 0.0--0.65$^\circ$ \\
+Moon zenith angle      & 30--90$^\circ$ \\
+Moon--target angle     & 60--180$^\circ$ \\
+Moon phase             & 0.0 (new moon) \\
+Exposure time          & 15\,min \\
+Exposure count         & 12 \\
+\hline
+\end{tabular}
+\label{tab:obs_params}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Spectrograph parameters for the medium-resolution (MR) mode.}
+\begin{tabular}{lc}
+\hline
+\textbf{Parameter} & \textbf{Value} \\
+\hline
+Wavelength coverage    & 710--885\,nm \\
+Dispersion             & 0.4\,\AA\ per pixel \\
+Spectral resolution    & 1.6\,\AA \\
+Velocity resolution    & 60\,km\,s$^{-1}$ \\
+Resolving power $R$    & 5000 \\
+\hline
+\end{tabular}
+\label{tab:spec_params}
+\end{table}
+
+\begin{table}
+\centering
+\caption{Stellar atmospheric parameters and simulation inputs.}
+\begin{tabular}{lc}
+\hline
+\textbf{Parameter} & \textbf{Range} \\
+\hline
+Effective temperature $T_{\mathrm{eff}}$ & 3750--6000\,K \\
+Surface gravity $\log g$                 & 1.0--5.0\,dex \\
+Metallicity [M/H]                        & $-2.5$ to $+0.75$\,dex \\
+$\alpha$-element abundance [$\alpha$/Fe] & 0.0 \\
+Radial velocity $v_{\mathrm{los}}$       & 0\,km\,s$^{-1}$ \\
+Apparent magnitude $m_i$                 & 20.5--22.5\,mag \\
+Extinction $E(B-V)$                      & 0\,mag \\
+\hline
+\end{tabular}
+\label{tab:stellar_params}
+\end{table}
+
+\begin{figure*}
+\centering
+\IfFileExists{figs/magNoise.png}{%
+  \includegraphics[width=0.8\linewidth]{figs/magNoise.png}%
+}{%
+  \fbox{\parbox[c][0.18\textheight][c]{0.75\textwidth}{\centering Missing figure: \texttt{magNoise.png}}}%
+}
+\caption{Flux errors across different magnitudes over the spectral range. \textbf{Left:} Absolute flux error $\sigma_F$ in units of erg\,s$^{-1}$\,cm$^{-2}$\,\AA$^{-1}$ versus wavelength. \textbf{Right:} Relative flux error $\sigma_F/F$. Noise increases for fainter stars and at longer wavelengths, reflecting photon statistics, sky background, atmospheric transmission, and instrumental effects.}
+\label{fig:err}
+\end{figure*}
+
+As shown in Figure~\ref{fig:err}, photon noise dominates at faint magnitudes where detected photons are few, while sky background sets the noise floor. For brighter targets, noise is mainly from object photons, so the relative S/N is sensitive to seeing and fiber coupling. Instrumental noise is negligible compared to photon and sky noise.
+
+%% =============================================================================
+%% RESULTS
+%% =============================================================================
 
 \section{Results}
 \label{sec:results}
 
-We evaluate \textsc{SpecViT} and baseline methods on synthetic 1D stellar spectra with heteroscedastic noise, reporting performance on a held-out test set of 10{,}000 spectra. The primary metric throughout is the coefficient of determination $R^2$ for $\log g$ regression, which is comparable across linear label normalizations (Appendix~\ref{app:r2_invariance}). Unless stated otherwise, the \textsc{SpecViT} configuration used here is the fixed-capacity model with non-overlapping 16-pixel patches and a 6-layer, 256-wide Transformer encoder.
+We evaluate \textsc{SpecViT} and baseline methods on synthetic 1D stellar spectra with heteroscedastic noise, reporting performance on a held-out test set of 10{,}000 spectra. The primary metric throughout is the coefficient of determination $R^2$ for $\log g$ regression, which is comparable across linear label normalizations (Appendix~\ref{app:r2_invariance}). Unless stated otherwise, the \textsc{SpecViT} configuration is the fixed-capacity model with non-overlapping 16-pixel patches and a 6-layer, 256-wide Transformer encoder.
 
-\subsection{Overall performance against classical baselines}
+\subsection{Overall Performance}
 \label{subsec:results_overall}
 
-Table~\ref{tab:main_results} summarizes the main $\log g$ inference results. Trained on $10^6$ spectra, \textsc{SpecViT} achieves $R^2=0.711$ on the 10k-spectrum test set, exceeding both the tree-based baseline (LightGBM; $R^2=0.614$) and the linear baseline (ridge regression; $R^2=0.50$). A physics-based template-fitting baseline achieves $R^2=0.404$ under the same evaluation split. In absolute terms, \textsc{SpecViT} improves by $\Delta R^2=0.097$ over LightGBM and by $\Delta R^2=0.307$ over template fitting, corresponding to relative gains of $\approx 16\%$ and $\approx 76\%$, respectively. For reference, the \textsc{SpecViT} model attains MAE $=0.372~\mathrm{dex}$ and RMSE $\sigma_{\mathrm{ViT}}=0.64~\mathrm{dex}$ on the same test set (Appendix~\ref{app:tables} reports supplementary metrics).
+Table~\ref{tab:main_results} summarizes the main $\log g$ inference results. Trained on $10^6$ spectra, \textsc{SpecViT} achieves $R^2=0.711$ on the 10k-spectrum test set, exceeding both the tree-based baseline (LightGBM; $R^2=0.614$) and the linear baseline (Ridge regression; $R^2=0.50$). A physics-based template-fitting baseline achieves $R^2=0.404$ under the same evaluation split. In absolute terms, \textsc{SpecViT} improves by $\Delta R^2=0.097$ over LightGBM and by $\Delta R^2=0.307$ over template fitting, corresponding to relative gains of $\approx 16\%$ and $\approx 76\%$, respectively. The model attains MAE $=0.372$\,dex and RMSE $=0.64$\,dex on the same test set (Appendix~\ref{app:tables} reports supplementary metrics).
 
 \begin{deluxetable}{lcc}
 \tablecaption{Overall $\log g$ performance on the 10k-spectrum test set.\label{tab:main_results}}
@@ -27,13 +107,13 @@ LightGBM & $10^6$ & 0.614 \\
 Ridge regression & $10^6$ & 0.50 \\
 Template fitting & \nodata & 0.404 \\
 \enddata
-\tablecomments{All methods are evaluated on the same held-out test split. Additional metrics (MAE, RMSE) and extended tables are provided in Appendix~\ref{app:tables}.}
+\tablecomments{All methods are evaluated on the same held-out test split. Additional metrics are provided in Appendix~\ref{app:tables}.}
 \end{deluxetable}
 
-\subsection{Scaling with training set size}
+\subsection{Scaling with Training Set Size}
 \label{subsec:results_scaling}
 
-Figure~\ref{fig:scaling} shows $R^2$ as a function of training set size $N$ for \textsc{SpecViT} (fixed architecture) and the strongest classical baselines. At small scale ($N=5\times10^4$), LightGBM is competitive and marginally outperforms \textsc{SpecViT} ($R^2=0.488$ vs.\ $0.434$). However, \textsc{SpecViT} exhibits a substantially steeper improvement with data and first surpasses LightGBM at $N\sim10^5$ ($R^2=0.596$ vs.\ $0.553$). From $N=5\times10^4$ to $10^6$, \textsc{SpecViT} gains $\Delta R^2=0.277$, compared to $\Delta R^2=0.126$ for LightGBM ($\sim$2.2$\times$ smaller gain). At the largest scales, performance begins to saturate for the present \textsc{SpecViT} capacity (from $5\times10^5$ to $10^6$, $R^2$ increases only from 0.709 to 0.711), while LightGBM continues to improve over the same interval. The full numeric values are listed in Table~\ref{tab:scaling_numbers} (Appendix~\ref{app:tables}).
+Figure~\ref{fig:scaling} shows $R^2$ as a function of training set size $N$ for \textsc{SpecViT} and the strongest classical baselines. At small scale ($N=5\times10^4$), LightGBM is competitive and marginally outperforms \textsc{SpecViT} ($R^2=0.488$ vs.\ $0.434$). However, \textsc{SpecViT} exhibits a substantially steeper improvement with data and first surpasses LightGBM at $N\sim10^5$ ($R^2=0.596$ vs.\ $0.553$). From $N=5\times10^4$ to $10^6$, \textsc{SpecViT} gains $\Delta R^2=0.277$, compared to $\Delta R^2=0.126$ for LightGBM ($\sim$2.2$\times$ smaller gain). At the largest scales, performance begins to saturate for the present \textsc{SpecViT} capacity (from $5\times10^5$ to $10^6$, $R^2$ increases only from 0.709 to 0.711), while LightGBM continues to improve over the same interval. The full numeric values are listed in Table~\ref{tab:scaling_numbers} (Appendix~\ref{app:tables}).
 
 \begin{figure}
 \centering
@@ -50,7 +130,7 @@ With a fixed-capacity architecture, \textsc{SpecViT} improves rapidly with data 
 \label{fig:scaling}
 \end{figure}
 
-\subsection{Robustness across signal-to-noise ratio}
+\subsection{Robustness Across Signal-to-Noise Ratio}
 \label{subsec:results_snr}
 
 To isolate noise sensitivity, we evaluate $R^2$ within magnitude/SNR bins derived from the same forward model and noise prescription. Figure~\ref{fig:snr_ceiling} shows that all methods degrade as SNR decreases, but \textsc{SpecViT} retains an advantage across the full range tested. For representative bins, \textsc{SpecViT} achieves $R^2=0.90$ at ${\rm SNR}\approx 24$, $R^2=0.80$ at ${\rm SNR}\approx 7$, and $R^2=0.68$ at ${\rm SNR}\approx 4.6$, compared to LightGBM values of 0.87, 0.74, and 0.60, respectively. Numerical values for each SNR bin are provided in Table~\ref{tab:snr_numbers} (Appendix~\ref{app:tables}).
@@ -70,7 +150,7 @@ Solid curves show empirical performance for \textsc{SpecViT} and LightGBM; the d
 \label{fig:snr_ceiling}
 \end{figure}
 
-\subsection{Comparison to the Fisher-information ceiling}
+\subsection{Comparison to the Fisher-Information Ceiling}
 \label{subsec:results_fisher}
 
 The Fisher-information analysis provides an SNR-conditioned ceiling for any unbiased $\log g$ estimator under the same noise model, expressed as $R^2_{\max}({\rm SNR})$ by converting the marginalized Cram\'er--Rao lower bound (CRLB) to an $R^2$ upper bound (Appendix~\ref{app:fisher_extra}).
