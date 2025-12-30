@@ -1,7 +1,7 @@
 \section{Supplementary tables for baselines, scaling, and SNR bins}
 \label{app:tables}
 
-This Appendix provides expanded numerical results referenced in the main Results section, including additional metrics for \textsc{SpecViT}, the full scaling table, and per-SNR values used in Figure~\ref{fig:snr_ceiling}.
+This Appendix provides expanded numerical results referenced in the main Results section, including additional metrics for \textsc{SpecViT}, the full scaling table, and per-SNR values used in Figure~\ref{fig:main_results}.
 
 \subsection{Supplementary metrics for the primary \textsc{SpecViT} model}
 \label{app:tables_metrics}
@@ -37,7 +37,7 @@ $1\times10^6$  & 0.711 & 0.614 & 0.50 \\
 \tablecomments{All models are evaluated on the same 10k-spectrum test split.}
 \end{deluxetable}
 
-\subsection{Per-SNR values underlying Figure~\ref{fig:snr_ceiling}}
+\subsection{Per-SNR values underlying Figure~\ref{fig:main_results}}
 \label{app:tables_snr}
 
 \begin{deluxetable*}{rccccc}
@@ -102,7 +102,7 @@ Sliding window (SW) & 15 & 0 & 0\% & \nodata \\
 \section{Additional diagnostics relative to the Fisher limit}
 \label{app:fisher_extra}
 
-This Appendix provides supporting details for the Fisher-information ceiling shown in Figure~\ref{fig:snr_ceiling}, and additional diagnostics comparing empirical residual scatter to CRLB envelopes.
+This Appendix provides supporting details for the Fisher-information ceiling shown in Figure~\ref{fig:main_results}, and additional diagnostics comparing empirical residual scatter to CRLB envelopes.
 
 \subsection{From Fisher information to an $R^2$ ceiling}
 \label{app:fisher_extra_conversion}
@@ -306,7 +306,7 @@ At each grid point, we convert the marginalized CRLB to a theoretical $R^2$ ceil
 \begin{equation}
 R^2_{\max} = 1 - \frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)},
 \end{equation}
-where $\mathrm{Var}(\log g)$ is the label variance over the training distribution. The reported ceiling values in Table~\ref{tab:snr_numbers} are the \emph{median} of $R^2_{\max}$ across all grid points at each magnitude, providing a representative summary. The 10th and 90th percentiles define the shaded confidence bands in Figure~\ref{fig:snr_ceiling}.
+where $\mathrm{Var}(\log g)$ is the label variance over the training distribution. The reported ceiling values in Table~\ref{tab:snr_numbers} are the \emph{median} of $R^2_{\max}$ across all grid points at each magnitude, providing a representative summary. The 10th and 90th percentiles define the shaded confidence bands in Figure~\ref{fig:main_results}.
 
 \subsection{5D vs 3D Ceiling Comparison}
 \label{app:fisher_5d}

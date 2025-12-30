@@ -77,6 +77,32 @@ Our main contributions are:
     enabling an interpretable comparison between learned estimators and the theoretical limit.
 \end{itemize}
 
+\begin{figure*}
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \IfFileExists{figs/vit_scaling_curve.png}{%
+      \includegraphics[width=\linewidth]{figs/vit_scaling_curve.png}%
+    }{%
+      \fbox{\parbox[c][0.18\textheight][c]{0.9\linewidth}{\centering Missing figure: \texttt{vit\_scaling\_curve.png}}}%
+    }
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \IfFileExists{figs/r2_vs_snr_ceiling_test_10k_unified_snr.png}{%
+      \includegraphics[width=\linewidth]{figs/r2_vs_snr_ceiling_test_10k_unified_snr.png}%
+    }{%
+      \fbox{\parbox[c][0.18\textheight][c]{0.9\linewidth}{\centering Missing figure: \texttt{r2\_vs\_snr\_ceiling\_test\_10k\_unified\_snr.png}}}%
+    }
+\end{minipage}
+\caption{
+\textbf{Left:} Scaling of $\log g$ inference performance with training set size $N$. \textsc{SpecViT} improves rapidly with data and overtakes LightGBM at $N\sim10^5$, then saturates beyond $N\gtrsim5\times10^5$.
+\textbf{Right:} Test-set $R^2$ for $\log g$ inference as a function of signal-to-noise ratio (SNR). \textsc{SpecViT} remains the best-performing learned model across SNR and approaches the Fisher-information--based theoretical ceiling (dashed) at low-SNR conditions.
+}
+\label{fig:main_results}
+\end{figure*}
+
 
 \section{Related Work}
 \label{sec:related_work}

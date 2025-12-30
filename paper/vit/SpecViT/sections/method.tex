@@ -4,6 +4,19 @@
 \subsection{Overview of the Approach}
 \label{subsec:method_overview}
 
+\begin{figure*}
+\centering
+\IfFileExists{figs/specvit_pipeline.jpg}{%
+  \includegraphics[width=0.85\textwidth]{figs/specvit_pipeline.jpg}%
+}{%
+  \fbox{\parbox[c][0.2\textheight][c]{0.8\textwidth}{\centering Missing figure: \texttt{specvit\_pipeline.jpg}}}%
+}
+\caption{
+Overview of the \textsc{SpecViT} pipeline. A 1D stellar spectrum is partitioned into contiguous wavelength patches, each embedded into a latent token. The token sequence, augmented with a learnable summary token and positional embeddings, is processed by a Transformer encoder stack. The final summary token representation is passed to a regression head to predict $\log g$.
+}
+\label{fig:pipeline}
+\end{figure*}
+
 The goal is to infer the stellar surface gravity, $\log g$, from a medium-resolution, one-dimensional spectrum observed on a fixed detector wavelength grid. Let $\boldsymbol{\lambda}={\lambda_j}_{j=1}^{L}$ denote the wavelength sampling and $\boldsymbol{f}\in\mathbb{R}^{L}$ the corresponding (continuum-normalized) flux vector, with $L\simeq 4\times 10^{3}$ pixels. The target is a continuous scalar $y \equiv \log g$.
 
 SpecViT models the conditional mapping

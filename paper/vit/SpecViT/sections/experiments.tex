@@ -113,42 +113,12 @@ Template fitting & \nodata & 0.404 \\
 \subsection{Scaling with Training Set Size}
 \label{subsec:results_scaling}
 
-Figure~\ref{fig:scaling} shows $R^2$ as a function of training set size $N$ for \textsc{SpecViT} and the strongest classical baselines. At small scale ($N=5\times10^4$), LightGBM is competitive and marginally outperforms \textsc{SpecViT} ($R^2=0.488$ vs.\ $0.434$). However, \textsc{SpecViT} exhibits a substantially steeper improvement with data and first surpasses LightGBM at $N\sim10^5$ ($R^2=0.596$ vs.\ $0.553$). From $N=5\times10^4$ to $10^6$, \textsc{SpecViT} gains $\Delta R^2=0.277$, compared to $\Delta R^2=0.126$ for LightGBM ($\sim$2.2$\times$ smaller gain). At the largest scales, performance begins to saturate for the present \textsc{SpecViT} capacity (from $5\times10^5$ to $10^6$, $R^2$ increases only from 0.709 to 0.711), while LightGBM continues to improve over the same interval. The full numeric values are listed in Table~\ref{tab:scaling_numbers} (Appendix~\ref{app:tables}).
-
-\begin{figure}
-\centering
-\IfFileExists{figs/vit_scaling_curve.png}{%
-  \includegraphics[width=\columnwidth]{figs/vit_scaling_curve.png}%
-}{%
-  \fbox{\parbox[c][0.2\textheight][c]{0.95\columnwidth}{\centering Missing figure: \texttt{vit\_scaling\_curve.png}}}%
-}
-\caption{
-Scaling of $\log g$ inference performance with training set size $N$.
-The vertical axis shows test-set $R^2$; the horizontal axis shows the number of training spectra.
-With a fixed-capacity architecture, \textsc{SpecViT} improves rapidly with data and overtakes LightGBM at $N\sim10^5$, then saturates beyond $N\gtrsim5\times10^5$.
-}
-\label{fig:scaling}
-\end{figure}
+Figure~\ref{fig:main_results} (left) shows $R^2$ as a function of training set size $N$ for \textsc{SpecViT} and the strongest classical baselines. At small scale ($N=5\times10^4$), LightGBM is competitive and marginally outperforms \textsc{SpecViT} ($R^2=0.488$ vs.\ $0.434$). However, \textsc{SpecViT} exhibits a substantially steeper improvement with data and first surpasses LightGBM at $N\sim10^5$ ($R^2=0.596$ vs.\ $0.553$). From $N=5\times10^4$ to $10^6$, \textsc{SpecViT} gains $\Delta R^2=0.277$, compared to $\Delta R^2=0.126$ for LightGBM ($\sim$2.2$\times$ smaller gain). At the largest scales, performance begins to saturate for the present \textsc{SpecViT} capacity (from $5\times10^5$ to $10^6$, $R^2$ increases only from 0.709 to 0.711), while LightGBM continues to improve over the same interval. The full numeric values are listed in Table~\ref{tab:scaling_numbers} (Appendix~\ref{app:tables}).
 
 \subsection{Robustness Across Signal-to-Noise Ratio}
 \label{subsec:results_snr}
 
-To isolate noise sensitivity, we evaluate $R^2$ within magnitude/SNR bins derived from the same forward model and noise prescription. Figure~\ref{fig:snr_ceiling} shows that all methods degrade as SNR decreases, but \textsc{SpecViT} retains an advantage across the full range tested. For representative bins, \textsc{SpecViT} achieves $R^2=0.90$ at ${\rm SNR}\approx 24$, $R^2=0.80$ at ${\rm SNR}\approx 7$, and $R^2=0.68$ at ${\rm SNR}\approx 4.6$, compared to LightGBM values of 0.87, 0.74, and 0.60, respectively. Numerical values for each SNR bin are provided in Table~\ref{tab:snr_numbers} (Appendix~\ref{app:tables}).
-
-\begin{figure}
-\centering
-\IfFileExists{figs/r2_vs_snr_ceiling_test_10k_unified_snr.png}{%
-  \includegraphics[width=\columnwidth]{figs/r2_vs_snr_ceiling_test_10k_unified_snr.png}%
-}{%
-  \fbox{\parbox[c][0.2\textheight][c]{0.95\columnwidth}{\centering Missing figure: \texttt{r2\_vs\_snr\_ceiling\_test\_10k\_unified\_snr.png}}}%
-}
-\caption{
-Test-set $R^2$ for $\log g$ inference as a function of signal-to-noise ratio (SNR), evaluated in magnitude/SNR bins.
-Solid curves show empirical performance for \textsc{SpecViT} and LightGBM; the dashed curve shows the Fisher-information--based theoretical ceiling $R^2_{\max}({\rm SNR})$ after marginalizing over nuisance parameters (see Appendix~\ref{app:fisher_extra}).
-\textsc{SpecViT} remains the best-performing learned model across SNR and approaches the ceiling at faint, high-noise conditions.
-}
-\label{fig:snr_ceiling}
-\end{figure}
+To isolate noise sensitivity, we evaluate $R^2$ within magnitude/SNR bins derived from the same forward model and noise prescription. Figure~\ref{fig:main_results} (right) shows that all methods degrade as SNR decreases, but \textsc{SpecViT} retains an advantage across the full range tested. For representative bins, \textsc{SpecViT} achieves $R^2=0.90$ at ${\rm SNR}\approx 24$, $R^2=0.80$ at ${\rm SNR}\approx 7$, and $R^2=0.68$ at ${\rm SNR}\approx 4.6$, compared to LightGBM values of 0.87, 0.74, and 0.60, respectively. Numerical values for each SNR bin are provided in Table~\ref{tab:snr_numbers} (Appendix~\ref{app:tables}).
 
 \subsection{Comparison to the Fisher-Information Ceiling}
 \label{subsec:results_fisher}
