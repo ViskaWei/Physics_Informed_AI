@@ -101,7 +101,7 @@ Our main contributions are:
     }
 \end{minipage}
 \caption{
-\textbf{Left:} Scaling of $\log g$ inference performance with training set size $N$. \textsc{SpecViT} improves rapidly with data and overtakes LightGBM at $N\sim10^5$, then saturates beyond $N\gtrsim5\times10^5$.
+\textbf{Left:} Scaling of $\log g$ inference performance with training set size $N$. \textsc{SpecViT} improves rapidly with data and overtakes LightGBM at $N\sim10^5$, then saturates beyond $N\gtrsim5\times10^5$, suggesting a transition to a model-limited regime for the fixed-capacity configuration (motivating scalable-capacity variants such as mixture-of-experts).
 \textbf{Right:} Test-set $R^2$ for $\log g$ inference as a function of signal-to-noise ratio (SNR). \textsc{SpecViT} remains the best-performing learned model across SNR and approaches the Fisher-information--based theoretical ceiling (dashed) at low-SNR conditions.
 }
 \label{fig:main_results}

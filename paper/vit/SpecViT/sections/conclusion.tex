@@ -1,31 +1,12 @@
 \section{Conclusion}
 \label{sec:conclusion}
+We introduce \textsc{SpecViT}, a Vision Transformer (ViT) regressor for estimating stellar surface gravity $\log g$ from medium-resolution, one-dimensional spectra with heteroscedastic per-pixel uncertainties, and benchmark it on one million simulated Subaru Prime Focus Spectrograph (PFS) MR spectra against classical baselines and a Fisher/CRLB ceiling. Trained on $10^{6}$ spectra and evaluated on a 10,000-spectrum test set, \textsc{SpecViT} reaches $R^2=0.711$ (MAE $=0.372$~dex; RMSE $=0.64$~dex), exceeding LightGBM ($R^2=0.614$), ridge regression ($R^2=0.50$), and template fitting ($R^2=0.404$). \textsc{SpecViT} scales favorably with data (overtaking LightGBM at $N\sim10^{5}$) but saturates at the largest scales (0.709 $\rightarrow$ 0.711 from $5\times10^{5}$ to $10^{6}$), indicating a transition from data-limited to model-limited performance and motivating scalable-capacity architectures such as mixture-of-experts Transformers. Across magnitude/SNR bins, \textsc{SpecViT} remains robust and approaches the information-theoretic ceiling most closely in the lowest-SNR regime; ablations further support patch-based tokenization (16-pixel patches with a convolutional tokenizer) and on-the-fly heteroscedastic noise injection as practical design choices.
 
-% \todo{Write conclusion covering:
-% \begin{itemize}
-%   \item Summary of contributions
-%   \item Key findings: SpecViT achieves state-of-the-art performance on stellar parameter estimation
-%   \item Insights: What the attention patterns reveal about spectral features
-%   \item Limitations: Current limitations of the approach
-%   \item Future work: Extensions to real observed data, other stellar parameters, transfer learning
-% \end{itemize}
-% }
+\paragraph{Key findings \& design insights.}
+Test-set performance and baselines: with $10^{6}$ training spectra and a 10{,}000-spectrum test set, \textsc{SpecViT} attains $R^2=0.711$, MAE $=0.372$~dex, RMSE $=0.64$~dex, outperforming LightGBM ($R^2=0.614$), ridge ($R^2=0.50$), and template fitting ($R^2=0.404$) under the same split. Scaling with data: at $N=5\times10^{4}$, \textsc{SpecViT} ($R^2=0.434$) trails LightGBM ($0.488$) but surpasses it by $N\sim10^{5}$ ($0.596$ vs.\ $0.553$); the overall gain from $5\times10^{4}$ to $10^{6}$ is $\Delta R^2=0.277$ (vs.\ $0.126$ for LightGBM; $\sim$2.2$\times$ steeper), while the improvement from $5\times10^{5}$ to $10^{6}$ is only $+0.002$ (0.709 $\rightarrow$ 0.711), indicating a shift to a \emph{model-limited} regime that motivates scalable-capacity upgrades (e.g., mixture-of-experts ViT). Noise robustness and Fisher ceiling: in SNR bins, \textsc{SpecViT} reaches $R^2\approx0.90$ at ${\rm SNR}\approx24$, $0.80$ at $\approx7.1$, and $0.68$ at $\approx4.6$ (LightGBM: 0.87/0.74/0.60), approaching the 5D Fisher/CRLB ceiling with gaps $\approx0.07$ at ${\rm SNR}\approx7.1$ ($R^2_{\max}=0.874$) and $\approx0.02$ at ${\rm SNR}\approx4.6$ ($R^2_{\max}=0.698$); residual RMSE $=0.64$~dex lies between $\sigma_{\mathrm{Fisher}}\approx0.43$ (mag~21.5) and $\approx1.11$ (mag~22.5). Architecture/tokenization: 16-pixel Conv1D patch embeddings are consistently strongest in ablations (e.g., at 50k scale, test $R^2=0.554\pm0.042$), larger patches degrade performance, and the sliding-window tokenizer was unstable under sweep settings.
 
-We introduced SpecViT, a Vision Transformer (ViT) model for estimating stellar surface gravity (log g) from medium-resolution, one-dimensional spectra. Using one million simulated Subaru Prime Focus Spectrograph (PFS) medium-resolution (MR) spectra with heteroscedastic per-pixel uncertainties, we benchmarked SpecViT against classical baselines, quantified its scaling with training-set size, and compared its noise-dependent performance to a Fisher-information Cram\'er--Rao lower bound (CRLB) ceiling.
-
-\begin{itemize}
-\item \textbf{Test-set performance and baseline comparison.} Trained on $10^{6}$ spectra and evaluated on a 10,000-spectrum test set, SpecViT achieves R2=0.711 with MAE=0.372~dex and RMSE=0.64~dex, exceeding LightGBM (R2=0.614), ridge regression (R2=0.50), and template fitting (R2=0.404) under identical splits.
-
-\item \textbf{Scaling with training-set size.} SpecViT is less competitive at small scale ($N=5\times10^{4}$; R2=0.434 vs.\ 0.488 for LightGBM) but improves more rapidly with data, first surpassing LightGBM at $N\sim10^{5}$ (R2=0.596 vs.\ 0.553). From $5\times10^{4}$ to $10^{6}$ spectra, SpecViT gains $\Delta$R2=0.277 compared to $\Delta$R2=0.126 for LightGBM, while the fixed-capacity SpecViT configuration saturates at the largest scales (R2=0.709 at $5\times10^{5}$ to 0.711 at $10^{6}$).
-
-\item \textbf{Robustness across noise regimes.} In magnitude/SNR bins, SpecViT retains an advantage across the range tested, reaching R2=0.90 at SNR$\approx24$, R2=0.80 at SNR$\approx7.1$, and R2=0.68 at SNR$\approx4.6$ (LightGBM: 0.87, 0.74, and 0.60, respectively).
-
-\item \textbf{Closeness to an information-theoretic ceiling.} The Fisher/CRLB analysis provides an SNR-conditioned ceiling for any unbiased log g estimator under the adopted noise model. SpecViT reaches R2=0.80 versus a 5D ceiling of $R2_{\max}=0.874$ at SNR$\approx7.1$ (gap$\approx0.07$) and R2=0.68 versus $R2_{\max}=0.698$ at SNR$\approx4.6$ (gap$\approx0.02$). Residual diagnostics give RMSE=0.64~dex, between $\sigma_{\mathrm{Fisher}}\approx0.43$~dex (mag$\approx21.5$) and $\approx1.11$~dex (mag$\approx22.5$).
-
-\item \textbf{Sensitivity to tokenization.} In a 50k-scale ablation using Conv1D tokenization, 16-pixel patches yield the best results (test R2=$0.554\pm0.042$), while larger patches reduce performance. Under the sweep settings used here, the sliding-window tokenizer did not produce stable completed runs, motivating the Conv1D patch embedding adopted for the main experiments.
-\end{itemize}
-
-These benchmarks—and the corresponding Fisher ceilings—are conditioned on the assumed forward model and heteroscedastic noise prescription. The observed saturation with training-set size and the remaining gap to the ceiling at moderate-to-higher SNR indicate that further gains for higher-SNR spectra will require changes in model capacity and/or tokenization rather than additional training spectra within the same setup.
+\paragraph{Limitations \& future work.}
+Conclusions are conditioned on a synthetic forward model, label distribution, and noise prescription; real surveys introduce systematics (continuum placement, tellurics, sky residuals, LSF/wavelength calibration mismatch) not modeled here, and we focus on a single label and instrument configuration. Future work will (i) pursue synthetic-to-real transfer with robust domain adaptation, (ii) extend to multi-task inference of $T_{\mathrm{eff}}$, $\log g$, and $[\mathrm{M/H}]$ with calibrated uncertainties, (iii) scale capacity with mixture-of-experts Transformers to overcome the observed plateau beyond $N\gtrsim5\times10^{5}$, and (iv) develop diffusion-based generative models for spectra (denoising/likelihood surrogates and physics-informed priors) alongside improved tokenization and positional encoding to target remaining headroom at moderate-to-high SNR.
 
 \begin{acknowledgments}
 This work is supported by the generosity of Eric and Wendy Schmidt, by recommendation of the Schmidt Futures program.
