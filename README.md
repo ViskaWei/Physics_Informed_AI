@@ -11,6 +11,12 @@
 
 <p align="center"><i>Figure: ViT achieves R²=0.70 on 1M spectra at SNR=5, approaching the Fisher/CRLB theoretical optimum (R²=0.87) and significantly outperforming LightGBM (R²=0.61) and template fitting (R²=0.40).</i></p>
 
+<p align="center">
+  <img src="paper/vit/specvit_pipeline.jpg" alt="SpecViT Pipeline (1D Spectra)" width="900">
+</p>
+
+<p align="center"><i>Figure: SpecViT architecture for 1D stellar spectra — (1) Input 4096-dim spectrum → (2) Noise injection → (3) Tokenization/Patch embedding → (4) Positional encoding + [CLS] → (5) Transformer Encoder ×6 → (6) Regression head → log(g)</i></p>
+
 ---
 
 ## Abstract
