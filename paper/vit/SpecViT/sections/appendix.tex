@@ -99,10 +99,10 @@ Sliding window (SW) & 15 & 0 & 0\% & \nodata \\
 \tablecomments{The SW configuration did not yield stable completed runs under the sweep settings used here; the main Results therefore adopt C1D tokenization.}
 \end{deluxetable*}
 
-\section{Additional diagnostics relative to the Fisher limit}
+\section{Fisher-Information Ceiling: Derivation and Interpretation}
 \label{app:fisher_extra}
 
-This Appendix provides supporting details for the Fisher-information ceiling shown in Figure~\ref{fig:main_results}, and additional diagnostics comparing empirical residual scatter to CRLB envelopes.
+This Appendix provides the mathematical derivation for converting Fisher information to an $R^2$ ceiling, as referenced in Section~\ref{subsec:results_fisher}.
 
 \subsection{From Fisher information to an $R^2$ ceiling}
 \label{app:fisher_extra_conversion}
@@ -116,23 +116,6 @@ We convert this variance lower bound into an $R^2$ ceiling via
 R^2_{\max}=1-\frac{\mathrm{CRLB}_{g,\mathrm{marg}}}{\mathrm{Var}(\log g)}.
 \end{equation}
 This provides an SNR-conditioned upper bound for any unbiased estimator under the assumed noise model.
-
-\subsection{Residual overlay with CRLB envelopes}
-\label{app:fisher_extra_residual}
-
-\begin{figure*}
-\centering
-\IfFileExists{figs/fisher_residual_overlay_real_dual_mag.png}{%
-  \includegraphics[width=\textwidth]{figs/fisher_residual_overlay_real_dual_mag.png}%
-}{%
-  \fbox{\parbox[c][0.18\textheight][c]{0.95\textwidth}{\centering Missing figure: \texttt{fisher\_residual\_overlay\_real\_dual\_mag.png}}}%
-}
-\caption{
-Residual diagnostics for the \textsc{SpecViT} model trained on $10^6$ spectra, evaluated on the 10k-spectrum test set.
-The plot overlays empirical residual scatter with CRLB envelopes at two representative noise regimes (e.g., corresponding to mag $\approx 21.5$ and mag $\approx 22.5$), illustrating that the measured RMSE $\sigma_{\mathrm{ViT}}=0.64~\mathrm{dex}$ lies between the corresponding Fisher lower bounds ($\sigma_{\mathrm{Fisher}}\approx 0.43$ and $1.11~\mathrm{dex}$).
-}
-\label{fig:fisher_residual_overlay}
-\end{figure*}
 
 \section{Invariance of $R^2$ to linear label normalization}
 \label{app:r2_invariance}

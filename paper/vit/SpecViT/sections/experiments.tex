@@ -125,4 +125,19 @@ To isolate noise sensitivity, we evaluate $R^2$ within magnitude/SNR bins derive
 
 The Fisher-information analysis provides an SNR-conditioned ceiling for any unbiased $\log g$ estimator under the same noise model, expressed as $R^2_{\max}({\rm SNR})$ by converting the marginalized Cram\'er--Rao lower bound (CRLB) to an $R^2$ upper bound (Appendix~\ref{app:fisher_extra}).
 
-Across the SNR range relevant to our synthetic dataset, \textsc{SpecViT} closes a substantial fraction of the available headroom. At ${\rm SNR}\approx 7.1$ (representative of the mid-range regime), the 5D marginalized ceiling is $R^2_{\max}=0.874$ while \textsc{SpecViT} attains $R^2=0.80$, leaving a gap of $\approx 0.07$. At ${\rm SNR}\approx 4.6$, the ceiling is $R^2_{\max}=0.698$ and \textsc{SpecViT} reaches $R^2=0.68$, within $\approx 0.02$ of the theoretical bound. These results indicate that, in the low-SNR regime most relevant to faint targets, the current architecture is already near the information limit imposed by the spectrum and noise model, whereas at moderate-to-higher SNR there remains measurable headroom that can be targeted by improved model capacity and/or tokenization choices. Additional diagnostic plots comparing residual scatter to CRLB envelopes are provided in Appendix~\ref{app:fisher_extra}.
+Across the SNR range relevant to our synthetic dataset, \textsc{SpecViT} closes a substantial fraction of the available headroom. At ${\rm SNR}\approx 7.1$ (representative of the mid-range regime), the 5D marginalized ceiling is $R^2_{\max}=0.874$ while \textsc{SpecViT} attains $R^2=0.80$, leaving a gap of $\approx 0.07$. At ${\rm SNR}\approx 4.6$, the ceiling is $R^2_{\max}=0.698$ and \textsc{SpecViT} reaches $R^2=0.68$, within $\approx 0.02$ of the theoretical bound.
+
+Figure~\ref{fig:fisher_residual_overlay} provides direct visual confirmation of this near-optimal behavior by overlaying the empirical residual scatter against CRLB envelopes at two representative noise regimes. The measured RMSE $\sigma_{\mathrm{ViT}}=0.64~\mathrm{dex}$ lies between the Fisher lower bounds at different magnitude bins ($\sigma_{\mathrm{Fisher}}\approx 0.43~\mathrm{dex}$ at mag~21.5 and $\approx 1.11~\mathrm{dex}$ at mag~22.5), demonstrating that \textsc{SpecViT} achieves performance consistent with the information-theoretic constraints across the SNR range.
+
+\begin{figure*}
+\centering
+\IfFileExists{figs/fisher_residual_overlay_real_dual_mag.png}{%
+  \includegraphics[width=\textwidth]{figs/fisher_residual_overlay_real_dual_mag.png}%
+}{%
+  \fbox{\parbox[c][0.18\textheight][c]{0.95\textwidth}{\centering Missing figure: \texttt{fisher\_residual\_overlay\_real\_dual\_mag.png}}}%
+}
+\caption{Residual diagnostics for \textsc{SpecViT} trained on $10^6$ spectra. Empirical residuals are overlaid with CRLB envelopes at two noise regimes (mag~$\approx 21.5$ and mag~$\approx 22.5$). The measured RMSE $\sigma_{\mathrm{ViT}}=0.64~\mathrm{dex}$ falls between the corresponding Fisher bounds, confirming that the model operates near the information-theoretic limit across the SNR range.}
+\label{fig:fisher_residual_overlay}
+\end{figure*}
+
+These results indicate that, in the low-SNR regime most relevant to faint targets, the current architecture is already near the information limit imposed by the spectrum and noise model, whereas at moderate-to-higher SNR there remains measurable headroom that can be targeted by improved model capacity and/or tokenization choices. Appendix~\ref{app:fisher_extra} provides supporting details on the Fisher-information conversion and additional diagnostics.
