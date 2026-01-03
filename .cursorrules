@@ -522,6 +522,45 @@ GPT 讨论 → session.md
 | `paper pull` | 拉取 Overleaf 更新 | GitHub → `paper/vit/SpecViT/` |
 | `paper status` | 检查远程是否有更新 | - |
 | `paper figs` | 导出图片到论文目录 | `assets/figures/` → `paper/vit/SpecViT/figs/` |
+| `study [DATE]` | 错题整理 + 进度更新 | `ML/{DATE}.md`, `ML/progress.md` |
+
+## 📚 机考错题整理
+
+### 触发词
+- `study` / `学习` / `错题`
+- `study [YYYYMMDD]` - 整理指定日期的错题
+- `study [YYYYMMDD.md]` - 支持带 .md 后缀
+
+### 用途
+把某一天的机考选择题记录（含多轮追问）整理成结构化错题本，并更新 progress.md
+
+### 工作流程
+1. **读取指令**: `_backend/template/prompt/prompt_study.md`
+2. **定位文件**: `ML/{DATE}.md`
+3. **建立题目索引**: 抽取 20 道题的题号、题干、选项
+4. **定位错题区**: 第 20 题之后的错题与追问
+5. **错题结构化整理**: 同题合并、格式规范化
+6. **写入整理结果**: 在 {DATE}.md 末尾追加 `## ✅ 错题整理（结构化）`
+7. **更新 progress.md**: 
+   - 1刷用时
+   - ML 知识点掌握度（按分类统计）
+   - 薄弱环节 Top-3
+
+### 输出内容
+- 📝 结构化错题（含原题、错误点、正确答案、核心公式、一眼记住）
+- 📊 知识点统计表
+- 🔥 薄弱环节 Top-3
+
+### 相关文件
+- **Prompt 指令**: `_backend/template/prompt/prompt_study.md`
+- **日期文件**: `ML/{YYYYMMDD}.md`
+- **进度面板**: `ML/progress.md`
+
+### ⚠️ 硬约束
+- ❌ 禁止脑补：题干、选项必须逐字来自原文件
+- ✅ 同题合并：多轮解释归并到同一题
+- ✅ 规范化格式：数学用 LaTeX，代码用 ```language
+- ✅ 最小改动：除新增整理章节外，不大改原文
 
 ## 🔍 矛盾审计
 
