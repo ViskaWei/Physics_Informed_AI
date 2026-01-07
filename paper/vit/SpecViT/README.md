@@ -1,5 +1,13 @@
 # SpecViT Paper - LaTeX Project
 
+## Key Results
+
+![Fisher Residual Overlay - Real Dual Mag](figs/fisher_residual_overlay_real_dual_mag.png)
+
+**Figure**: Fisher information residual analysis showing ViT's attention alignment with physically significant spectral features. The dual-magnitude visualization demonstrates how the model learns to focus on wavelength regions that carry the most information for stellar parameter estimation.
+
+---
+
 ## 设计原则
 
 1. **自洽可编译**：`main.tex` + `sections/` + `refs.bib` + `figs/` 完整齐全，可独立编译

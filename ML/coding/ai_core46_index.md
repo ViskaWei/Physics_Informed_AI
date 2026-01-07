@@ -1,4 +1,4 @@
-# AI 核心 46 题（按日期与类别映射｜简化类别）
+# AI 核心 48 题（按日期与类别映射｜简化类别）
 
 - 说明
   - 来源：`ML/AI_编程题_Python解答_核心46题.md`
@@ -6,25 +6,91 @@
   - 简化类别（tag）：reg, cluster, tree, feature, conv, att, quant, prune, rnn, tokenizer, moe, dp, graph, window
   - 状态：未整合/已整合（链接到 main 文件）
 
+## 🎯 进度追踪表
+
+### 总体进度
+
+| 指标 | 数值 | 进度条 |
+|------|------|--------|
+| **总题数** | 48 | - |
+| **已完成** | 11 | █████░░░░░░░░░░░░░░░ 22.9% |
+| **待完成** | 37 | - |
+| **完成率** | 22.9% | - |
+
+> 🎉 **太棒了！** 你已经完成了 11 题，达成 **🥉 青铜里程碑**！继续保持这个势头！
+
+### 按优先级进度
+
+| 优先级 | Tag | 题数 | 已完成 | 进度 | 状态 |
+|--------|-----|------|--------|------|------|
+| 🔴 **P0** | window | 2 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| 🔴 **P0** | tokenizer | 1 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| 🔴 **P0** | moe | 1 | 1 | ██████████ 100% | ✅ 已完成 |
+| **P0 小计** | - | **4** | **1** | **██░░░░░░░░ 25%** | - |
+| 🟡 **P1** | rnn | 2 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| 🟡 **P1** | graph | 2 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| 🟡 **P1** | dp | 2 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| **P1 小计** | - | **6** | **0** | **░░░░░░░░░░ 0%** | - |
+| 🟢 **P2** | tree | 5 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| 🟢 **P2** | feature | 6 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| **P2 小计** | - | **11** | **0** | **░░░░░░░░░░ 0%** | - |
+| ⚪ **P3** | conv | 5 | 4 | ████████░░ 80% | 进行中 |
+| ⚪ **P3** | att | 7 | 7 | ██████████ 100% | ✅ 已完成 |
+| ⚪ **P3** | cluster | 7 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| ⚪ **P3** | reg | 6 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| ⚪ **P3** | quant | 2 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| ⚪ **P3** | prune | 1 | 0 | ░░░░░░░░░░ 0% | 待开始 |
+| **P3 小计** | - | **27** | **10** | **███████░░░ 37.0%** | - |
+
+> 🎯 **策略建议**：优先完成 P0（4题）和 P1（7题），这 11 题是 1/8 考试的高概率考点！
+
+### 按复习计划进度（6天冲刺）
+
+| 天数 | 日期 | 复习Tag | 题数 | 已完成 | 进度 | 状态 |
+|------|------|---------|------|--------|------|------|
+| D-6 | 1/2 | **window** | 2 | 0 | ░░░░░░░░░░ 0% | ⏳ 进行中 |
+| D-5 | 1/3 | **tokenizer** + **moe** | 2 | 1 | █████░░░░░ 50% | ⏳ 进行中 |
+| D-4 | 1/4 | **rnn** | 2 | 0 | ░░░░░░░░░░ 0% | ⏸️ 待开始 |
+| D-3 | 1/5 | **graph** + **dp** | 5 | 0 | ░░░░░░░░░░ 0% | ⏸️ 待开始 |
+| D-2 | 1/6 | **tree** + **feature** | 10 | 0 | ░░░░░░░░░░ 0% | ⏸️ 待开始 |
+| D-1 | 1/7 | 模板回顾 | - | - | - | ⏸️ 待开始 |
+| **总计** | - | - | **21** | **1** | **░░░░░░░░░░ 5%** | - |
+
+> 📅 **时间管理**：每天完成 3-5 题，6 天可以完成 P0+P1+P2 的 21 题。相信自己，你可以的！
+
+### 里程碑激励
+
+| 里程碑 | 题数 | 完成率 | 奖励 |
+|--------|------|--------|------|
+| 🥉 青铜 | 10 | 21.7% | 完成基础题集 |
+| 🥈 白银 | 20 | 43.5% | 完成 P0+P1 |
+| 🥇 黄金 | 30 | 65.2% | 完成 P0+P1+P2 |
+| 💎 钻石 | 40 | 87.0% | 接近完美 |
+| 👑 王者 | 46 | 100% | 全部完成！ |
+
+> 🏆 **恭喜达成青铜里程碑！** 下一个目标：完成 20 题（🥈 白银里程碑），还差 9 题！
+
+---
+
 ## 📊 分类进度总览
 
 | Tag | 题数 | 完成 | Main 文件 |
 |-----|------|------|-----------|
 | reg | 6 | 0 | [reg_main.md](./reg/reg_main.md) |
 | cluster | 7 | 0 | [cluster_main.md](./cluster/cluster_main.md) |
-| att | 6 | 0 | [att_main.md](./att/att_main.md) |
+| att | 7 | 7 | [att_main.md](./att/att_main.md) ✅ |
 | feature | 6 | 0 | [feature_main.md](./feature/feature_main.md) |
-| conv | 4 | 4 | [conv_main.md](./conv/conv_main.md) ✅ |
-| tree | 4 | 0 | [tree_main.md](./tree/tree_main.md) |
-| dp | 3 | 0 | [dp_main.md](./dp/dp_main.md) |
+| conv | 5 | 4 | [conv_main.md](./conv/conv_main.md) |
+| tree | 5 | 0 | [tree_main.md](./tree/tree_main.md) |
+| dp | 2 | 0 | [dp_main.md](./dp/dp_main.md) |
 | quant | 2 | 0 | [quant_main.md](./quant/quant_main.md) |
 | graph | 2 | 0 | [graph_main.md](./graph/graph_main.md) |
 | rnn | 2 | 0 | [rnn_main.md](./rnn/rnn_main.md) |
 | window | 2 | 0 | [window_main.md](./window/window_main.md) |
 | prune | 1 | 0 | [prune_main.md](./prune/prune_main.md) |
 | tokenizer | 1 | 0 | [tokenizer_main.md](./tokenizer/tokenizer_main.md) |
-| moe | 1 | 0 | [moe_main.md](./moe/moe_main.md) |
-| **总计** | **46** | **4** | - |
+| moe | 1 | 1 | [moe_main.md](./moe/moe_main.md) ✅ |
+| **总计** | **48** | **11** | - |
 
 ---
 
@@ -35,31 +101,88 @@
 
 ### 历史出题时间线
 
-| 日期 | Tag 1 | Tag 2 |
-|------|-------|-------|
-| 12-17 | reg | quant |
-| 12-03 | prune | cluster |
-| 11-20 | att | conv |
-| 11-19 | cluster | graph |
-| 11-12 | quant | tree |
-| 11-06 | reg | conv |
-| 11-05 | feature | dp |
-| 10-29 | feature | reg |
-| 10-23 | feature | conv |
-| 10-22 | conv | att |
-| 10-17 | cluster | rnn |
-| 10-15 | att | cluster |
-| 10-10 | cluster | rnn |
-| 09-28 | cluster | att |
-| 09-24 | cluster | tree |
-| 09-18 | conv | dp |
-| 09-17 | att | tokenizer |
-| 09-12 | graph | att |
-| 09-10 | window | window |
-| 09-05 | tree | dp |
-| 09-04 | feature | reg |
-| 09-03 | moe | reg |
-| 08-27 | feature | tree |
+| 日期 | Tag 1 | Tag 2 | 方向 |
+|------|-------|-------|------|
+| 12-17 | reg | quant | CN |
+| 12-03 | prune | cluster | CN |
+| 11-20 | att | conv | US |
+| 11-19 | cluster | graph | CN |
+| 11-12 | quant | tree | CN |
+| 11-06 | reg | conv | US |
+| 11-05 | feature | dp | CN |
+| 10-29 | feature | reg | CN |
+| 10-23 | feature | conv | US |
+| 10-22 | conv | att | CN |
+| 10-17 | cluster | rnn | CN |
+| 10-15 | att | cluster | CN |
+| 10-10 | cluster | rnn | CN |
+| 10-10 | feature | reg | US |
+| 09-28 | cluster | att | CN |
+| 09-24 | cluster | tree | CN |
+| 09-18 | conv | dp | US |
+| 09-17 | att | tokenizer | CN |
+| 09-12 | graph | att | CN |
+| 09-10 | window | window | CN |
+| 09-05 | tree | dp | CN |
+| 09-04 | feature | att | US |
+| 09-03 | moe | reg | CN |
+| 08-27 | feature | tree | CN |
+
+### 🇺🇸 US 留学生场规律分析
+
+> **数据来源**: 6 场留学生场考试 (09-04 ~ 11-20)，共 12 题
+
+#### 题目明细
+
+| 日期 | P编号 | 题目 | Tag | 难度 |
+|------|-------|------|-----|------|
+| 11-20 | P4481 | ViT Patch Embedding层实现 | att | 简单 |
+| 11-20 | P4482 | 带Padding的卷积计算 | conv | 中等 |
+| 11-06 | P4447 | 医疗诊断模型的训练与更新 | reg | 中等 |
+| 11-06 | P4448 | 卷积操作 | conv | 中等 |
+| 10-23 | P4277 | 人脸关键点对齐 | feature | 简单 |
+| 10-23 | P4278 | 卷积结构实现 | conv | 中等 |
+| 10-10 | P3871 | 磁盘故障检测的特征工程 | feature | 困难 |
+| 10-10 | P3872 | 基于逻辑回归的意图分类器 | reg | 中等 |
+| 09-18 | P3718 | 最大能量路径 | conv | 中等 |
+| 09-18 | P3719 | 数据中心水温调节档位决策 | reg | 中等 |
+| 09-04 | P3561 | 大模型训练数据均衡分配算法 | feature | 中等 |
+| 09-04 | P3562 | 传感器数据分析 | att | 中等 |
+
+#### Tag 频次统计
+
+| Tag | 出现次数 | 场次占比 | 说明 |
+|-----|---------|---------|------|
+| **conv** | 4 | 66.7% (4/6) | 🔥 高频必考 |
+| **feature** | 3 | 50% (3/6) | 特征工程类 |
+| **reg** | 3 | 50% (3/6) | 回归/分类基础 |
+| **att** | 2 | 33.3% (2/6) | Attention 基础 |
+
+#### ❌ 从未在 US 场出现的 Tag
+
+`cluster` `tree` `dp` `quant` `graph` `rnn` `window` `prune` `tokenizer` `moe`
+
+#### 📐 规律总结
+
+1. **conv 是留学生场的绝对核心** - 6场中4场都考，必须熟练掌握：
+   - 基础多通道卷积、带 Padding 卷积、卷积结构实现、能量路径（卷积+DP）
+2. **feature + reg 是基础组合** - 各出现3次，常见搭配：
+   - 特征工程（关键点、故障检测、数据分配）+ 回归/分类
+3. **题目难度偏简单** - 以「基础实现」为主，少有复杂算法
+4. **没有 cluster/tree/dp** - 这些复杂算法在留学生场从未出现
+
+#### 🎯 US 场考试预测（下次）
+
+| 优先级 | Tag | 预测概率 | 理由 |
+|--------|-----|---------|------|
+| 🔴 **P0** | conv | 70% | 历史高频，可能出变形（Group Conv、Depthwise） |
+| 🔴 **P0** | feature | 60% | 特征工程类，留学生场常考 |
+| 🟡 **P1** | reg | 50% | 回归/分类基础，11-06 刚考 |
+| 🟡 **P1** | att | 40% | Attention 基础实现 |
+| 🟢 **P2** | quant | 20% | 量化是新热点，可能首次出现 |
+| ⚪ **P3** | cluster/tree/dp | <10% | 历史从未出现 |
+
+---
 
 ### 🔴 P0 - 必刷（3-4个月没考，极高概率）
 
@@ -75,7 +198,7 @@
 |-----|---------|------|------|------|
 | **rnn** | 10-17 | ~2.5个月 | 2题 | LSTM/反向传播必考经典 |
 | **graph** | 11-19 | ~1.5个月 | 2题 | 树/图题频率低但稳定出 |
-| **dp** | 11-05 | ~2个月 | 3题 | 路径/决策类dp常考 |
+| **dp** | 11-05 | ~2个月 | 2题 | 路径/决策类dp常考 |
 
 ### 🟢 P2 - 巩固（1个月左右，可能出）
 
@@ -154,7 +277,7 @@
 | 2025-09-24 | P3791 | 无线网络优化中的基站聚类分析 | cluster | base_station_clustering | 已整合 | [cluster_main](./cluster/cluster_main.md) |
 | 2025-09-24 | P3792 | 基于决策树的无线状态预测 | tree | wireless_state_decision_tree | 已整合 | [tree_main](./tree/tree_main.md) |
 | 2025-09-18 | P3718 | 最大能量路径 | conv | max_energy_path | 已整合 | [conv_main](./conv/conv_main.md) |
-| 2025-09-18 | P3719 | 数据中心水温调节档位决策 | dp | water_temp_gear_decision | 已整合 | [dp_main](./dp/dp_main.md) |
+| 2025-09-18 | P3719 | 数据中心水温调节档位决策 | reg | water_temp_gear_decision | 已整合 | [reg_main](./reg/reg_main.md) |
 | 2025-09-17 | P3712 | 大模型Attention模块开发 | att | llm_attention_module | 已整合 | [att_main](./att/att_main.md) |
 | 2025-09-17 | P3713 | 大模型分词 | tokenizer | llm_tokenizer | 已整合 | [tokenizer_main](./tokenizer/tokenizer_main.md) |
 | 2025-09-12 | P3657 | 二叉树中序遍历的第k个祖先节点 | graph | kth_ancestor | 已整合 | [graph_main](./graph/graph_main.md) |
@@ -164,9 +287,11 @@
 | 2025-09-05 | P3528 | 阈值最优的决策树 | tree | decision_tree_threshold_f1_opt | 已整合 | [tree_main](./tree/tree_main.md) |
 | 2025-09-05 | P3529 | 随机游走问题 | dp | random_walk_problem | 已整合 | [dp_main](./dp/dp_main.md) |
 | 2025-09-04 | P3561 | 大模型训练数据均衡分配算法 | feature | balanced_data_allocation | 已整合 | [feature_main](./feature/feature_main.md) |
-| 2025-09-04 | P3562 | 传感器数据分析 | reg | sensor_data_analysis | 已整合 | [reg_main](./reg/reg_main.md) |
+| 2025-09-04 | P3562 | 传感器数据分析 | att | sensor_data_analysis | 已整合 | [att_main](./att/att_main.md) |
 | 2025-09-03 | P3553 | 大模型训练MOE场景路由优化算法 | moe | moe_routing_optimization | 已整合 | [moe_main](./moe/moe_main.md) |
 | 2025-09-03 | P3552 | 云存储设备故障预测 | reg | cloud_storage_failure_prediction | 已整合 | [reg_main](./reg/reg_main.md) |
+| 2025-08-28 | P3492 | 基于决策树预判资源调配优先级 | tree | decision_tree_inference | 已整合 | [tree_main](./tree/tree_main.md) |
+| 2025-08-28 | P3493 | Group卷积实现 | conv | group_convolution | 已整合 | [conv_main](./conv/conv_main.md) |
 | 2025-08-27 | P3479 | 标签样本数量 | feature | label_sample_count | 已整合 | [feature_main](./feature/feature_main.md) |
 | 2025-08-27 | P3480 | F1值最优的决策树剪枝 | tree | decision_tree_pruning_f1 | 已整合 | [tree_main](./tree/tree_main.md) |
 

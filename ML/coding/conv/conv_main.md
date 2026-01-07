@@ -1,14 +1,121 @@
-# Conv 类题目汇总 [4/4 完成]
+# Conv 类题目汇总 [4/5 完成]
 
-> 📊 **进度**: 4/4 完成 (100%)  
-> 🔄 **最后更新**: 2026-01-02  
-> 📁 **分类**: conv (卷积操作、零填充、多通道、空洞卷积、能量路径)
+> 📊 **进度**: 4/5 完成 (80%)  
+> 🔄 **最后更新**: 2026-01-07  
+> 📁 **分类**: conv (卷积操作、零填充、多通道、空洞卷积、能量路径、Group卷积)
+
+---
+
+## 🇺🇸 US 留学生场 Conv 预测
+
+### 已考过的 Conv 类型（4/6 场出现）
+
+| 日期 | 题目 | 类型 | 核心考点 |
+|------|------|------|---------|
+| 11-20 | P4482 | 基础 Padding | 零填充 + 输出尺寸 |
+| 11-06 | P4448 | 多通道 | stride + padding + 通道累加 |
+| 10-23 | P4278 | **Dilation** ⭐ | 空洞卷积 + 有效核尺寸 |
+| 09-18 | P3718 | Conv + DP | 卷积能量图 + 动态规划 |
+
+### 📊 预测：下次 US 场可能出的 Conv 变形
+
+| 优先级 | 题型 | 预测概率 | 理由 |
+|--------|------|---------|------|
+| 🔴 P0 | **Depthwise Conv** | 60% | MobileNet 热点，Group Conv 的特例 |
+| 🔴 P0 | **Group Conv** | 50% | CN 场考过(P3493)，US 场还没考 |
+| 🟡 P1 | **Transposed Conv** | 30% | 上采样场景，语义分割必备 |
+| 🟡 P1 | **1×1 Conv** | 25% | 通道混合，简单但重要 |
+
+### 🔥 预测1: Depthwise Separable Conv
+
+**题目描述**：实现 Depthwise Separable Convolution（MobileNet 核心）
+- **Depthwise Conv**：每个通道独立卷积（groups = C）
+- **Pointwise Conv**：1×1 卷积混合通道
+
+```python
+import sys, numpy as np
+lines = [l for l in sys.stdin.buffer.read().splitlines()]
+C, H, W = np.fromstring(lines[0], int, sep=' ')
+Img = np.fromstring(lines[1], float, sep=' ').reshape((C, H, W))
+K = int(np.fromstring(lines[2], int, sep=' ')[0])
+Ker = np.fromstring(lines[3], float, sep=' ').reshape((C, K, K))  # 每通道一个核
+S, P = np.fromstring(lines[4], int, sep=' ')
+
+X = np.pad(Img, ((0,0),(P,P),(P,P)))
+win = np.lib.stride_tricks.sliding_window_view(X, (K,K), axis=(1,2))[:,::S,::S]
+# win: (C, Ho, Wo, K, K) → 每通道独立卷积
+out = np.einsum('ckw,chokw->cho', Ker, win)
+print(" ".join(f"{v:.4f}" for v in out.ravel()))
+```
+
+### 🔥 预测2: Group Conv（简化版）
+
+**核心**：`groups=G` 时，每组输入通道 `C//G`，每组输出通道 `OC//G`
+
+```python
+import sys, numpy as np
+lines = [l for l in sys.stdin.buffer.read().splitlines()]
+C, H, W = np.fromstring(lines[0], int, sep=' ')
+Img = np.fromstring(lines[1], float, sep=' ').reshape((C, H, W))
+OC, KC, K, _ = np.fromstring(lines[2], int, sep=' ')
+Ker = np.fromstring(lines[3], float, sep=' ').reshape((OC, KC, K, K))
+G, S, P = np.fromstring(lines[4], int, sep=' ')
+
+X = np.pad(Img, ((0,0),(P,P),(P,P)))
+Ho = (H + 2*P - K) // S + 1; Wo = (W + 2*P - K) // S + 1
+out = np.zeros((OC, Ho, Wo))
+Cg = C // G; OCg = OC // G  # 每组通道数
+
+for g in range(G):
+    Xg = X[g*Cg : (g+1)*Cg]
+    Kg = Ker[g*OCg : (g+1)*OCg]
+    win = np.lib.stride_tricks.sliding_window_view(Xg, (K,K), axis=(1,2))[:,::S,::S]
+    out[g*OCg:(g+1)*OCg] = np.tensordot(Kg, win, axes=([1,2,3], [0,3,4]))
+
+print(" ".join(f"{v:.4f}" for v in out.ravel()))
+```
+
+### 🟡 预测3: Transposed Conv (Deconv)
+
+**核心**：上采样，输出尺寸 = `(H-1)*S - 2P + K`
+
+```python
+import sys, numpy as np
+lines = [l for l in sys.stdin.buffer.read().splitlines()]
+C, H, W = np.fromstring(lines[0], int, sep=' ')
+Img = np.fromstring(lines[1], float, sep=' ').reshape((C, H, W))
+OC, IC, K, _ = np.fromstring(lines[2], int, sep=' ')
+Ker = np.fromstring(lines[3], float, sep=' ').reshape((OC, IC, K, K))
+S, P = np.fromstring(lines[4], int, sep=' ')
+
+# 插入零（stride间隔）
+X_dilated = np.zeros((C, (H-1)*S+1, (W-1)*S+1))
+X_dilated[:, ::S, ::S] = Img
+# 翻转核 + 常规卷积
+Ker_flip = Ker[:, :, ::-1, ::-1]
+X_pad = np.pad(X_dilated, ((0,0),(K-1-P,K-1-P),(K-1-P,K-1-P)))
+win = np.lib.stride_tricks.sliding_window_view(X_pad, (K,K), axis=(1,2))
+out = np.tensordot(Ker_flip, win, axes=([1,2,3], [0,3,4]))
+
+print(" ".join(f"{v:.4f}" for v in out.ravel()))
+```
+
+### 📋 备考 Checklist
+
+| 题型 | 核心变化 | 模版调整 |
+|------|---------|---------|
+| 基础 Conv | P = K//2 | `np.pad(..., P)` |
+| Dilation | Keff = D*(K-1)+1 | `win[..., ::D, ::D]` |
+| Stride | 输出尺寸变化 | `win[:, ::S, ::S]` |
+| **Depthwise** | groups = C | `einsum('ckw,chokw->cho')` |
+| **Group** | 分组计算 | 循环 G 组 |
+| **Transposed** | 先插零再卷 | 翻转核 + 大 padding |
 
 ---
 
 ## 📋 题目总览
 
-> 🔥 **重刷优先级**: 4 > 1 > 3 > 2（最重要的是带 dilation 的卷积）
+> 🔥 **重刷优先级**: 5 > 4 > 1 > 3 > 2（Group卷积和带 dilation 的卷积最重要）
 
 | 出题日期 | # | P编号 | 题目 | 难度 | 状态 | 完成日期 |
 |----------|---|-------|------|------|------|----------|
@@ -16,10 +123,21 @@
 | 2025-10-22 | 1 | P4274/P3718 | 最大能量路径 | 中等 | ✅ | 2026-01-02 |
 | 2025-11-06 | 3 | P4448 | 卷积操作（多通道） | 中等 | ✅ | 2026-01-02 |
 | 2025-11-20 | 2 | P4482 | 带Padding的卷积计算 | 中等 | ✅ | 2026-01-02 |
+| 2025-08-28 | 5 | P3493 | Group卷积实现（分组/深度卷积）⭐ | 困难 | ❌ | - |
 
 ---
 
 ## 🔧 通用模板
+### 最重要的cov
+```python
+X = np.pad(Img, ((0,0),(P,P),(P,P))); Kh=Kw=D*(K-1)+1
+win=np.lib.stride_tricks.sliding_window_view(X, (Kh,Kw), axis=(1,2))[:,::S,::S,::D,::D]
+a = np.tensordot(Ker, win, axes=([1,2,3], [0,3,4])) 
+
+win = np.lib.stride_tricks.sliding_window_view(Pad, (K, K))  # (H, W, K, K)
+a = np.tensordot(Ker, win)
+```
+
 
 ### I/O 模板
 ```python
@@ -33,6 +151,25 @@ Img = [[ int(next(it)) for _ in range(C)] for _ in range(R)]
 sys.stdout.write("\n".join(" ".join(map(str, row)) for row in E))
 ```
 
+### Cov numpy
+```python
+import sys
+import numpy as np
+d = sys.stdin.read().strip().split(); H,W,K,K2=map(int,d[:4]);Img=np.array(d[4:4+H*W],float);Ker=np.array(d[4+H*W:],float);
+Img = Img.reshape((H,W));Ker=Ker.reshape((K,K));
+P = K//2; Img_pad = np.zeros((H+2*P,W+2*P)); Img_pad[P:P+H, P:P+W]=Img
+E = sum(
+        Ker[i, j] * Img_pad[i:i+H, j:j+W]
+        for i in range(K) for j in range(K)
+    )
+R=H;C=W
+dp = np.full((R + 2, C), -1e300); dp[1:R+1, 0] = E[:, 0]
+for c in range(1, C):
+    dp[1:R+1, c] = np.maximum.reduce([
+        dp[0:R, c-1], dp[1:R+1, c-1], dp[2:R+2, c-1]
+        ]) + E[:, c]
+print(f"{dp[1:R+1, C-1].max():.1f}")
+```
 ### 基础 Conv 模板（零填充）
 ```python
 k2 = K // 2;
@@ -134,7 +271,24 @@ for r in range(OR):
 - 时间：$O(Out \times In \times H_{out} \times W_{out} \times K^2)$
 - 空间：$O(C \times H \times W + Out \times In \times K^2)$
 
-### 我的代码 ✅
+### 我的代码 ✅ (numpy)
+```python
+import sys,numpy as np 
+lines = [l for l in sys.stdin.buffer.read().splitlines()]
+CH, R, C = np.fromstring(lines[0], int, sep=' ')
+Img = np.fromstring(lines[1], float, sep=' ').reshape((CH,R,C))
+O, I, K, K2 = np.fromstring(lines[2], int, sep=' ')
+Ker = np.fromstring(lines[3], float, sep=' ').reshape((O,I,K,K2))
+B1, S, P, D = np.fromstring(lines[4], int, sep=' ')
+B = np.fromstring(lines[5], float, sep=' ') if B1 == 1 else np.zeros(1)
+
+X = np.pad(Img, ((0,0),(P,P),(P,P))); Kh=Kw=D*(K-1)+1
+win=np.lib.stride_tricks.sliding_window_view(X, (Kh,Kw), axis=(1,2))[:,::S,::S,::D,::D]
+a = np.tensordot(Ker, win, axes=([1,2,3], [0,3,4])) 
+if B1 == 1: a+= B[:,None,None]
+print(" ".join(f"{ii:.4f}" for ii in a.ravel()))
+```
+### 我的代码 ✅ (不用numpy)
 ```python
 import sys
 d = iter(sys.stdin.read().strip().split())
@@ -193,6 +347,20 @@ print(" ".join([f"{v:.4f}" for v in res]))
 
 ### 我的代码 ✅
 ```python
+import sys
+import numpy as np
+d = sys.stdin.buffer.read().split(); H,W,K,K2=map(int, d[:4]); Img = np.array(d[4:4+H*W],float); Ker = np.array(d[4+H*W:],float);
+Img = Img.reshape((H,W)); Ker=Ker.reshape((K,K)); P=K//2;
+Pad = np.pad(Img,((P,P),(P,P)));
+# E = sum(Ker[i][j] * Pad[i:i+K,j:j+K]  for i in range(K) for j in range (K))
+win = np.lib.stride_tricks.sliding_window_view(Pad, (K, K))  # (H, W, K, K)
+E = (win * Ker).sum(axis=(-1, -2))
+dp=np.ones((H+2,W)) * -1e100; dp[1:H+1,0] = E[:,0];
+for c in range(1,W):
+    dp[1:1+H, c] = np.maximum.reduce([dp[0:H, c-1],dp[1:H+1, c-1],dp[2:(H+2), c-1]]) + E[:,c]
+out=dp[1:1+H,-1].max()
+print(out)
+
 import sys
 data = sys.stdin.read().strip().split()
 it = iter(data)
@@ -397,6 +565,75 @@ sys.stdout.write("\n".join(" ".join(map(str, row)) for row in E))
 
 ---
 
+## 题目5: Group卷积实现（P3493）⭐
+
+- **难度**: 困难
+- **标签**: conv, group convolution, depthwise convolution
+- **源**: [0828coding.md](../../../0828coding.md)
+
+### 题目描述
+
+实现分组卷积（Group Convolution）和深度卷积（Depthwise Convolution）的前向传播。分组卷积将输入张量和卷积核分组后，分别执行卷积计算，然后拼接输出。
+
+**参数**：
+- input: 输入数据 (N, C, H, W)
+- kernel: 卷积核权重 (OC, KC, KH, KW)
+- groups: 分组数
+
+**约束条件**：
+- `in_channels % groups == 0`
+- `out_channels % groups == 0`
+- `k_channels == in_channels // groups`
+
+**输出尺寸**（stride=1, padding=0, dilation=1）：
+- $H_{out} = H - K_h + 1$
+- $W_{out} = W - K_w + 1$
+
+### 输入输出
+- **输入**：
+  - 第1行：in_data（展开后的输入张量）
+  - 第2行：in_shape（N C H W）
+  - 第3行：kernel_data（展开后的卷积核）
+  - 第4行：kernel_shape（OC KC KH KW）
+  - 第5行：groups
+- **输出**：
+  - 第1行：out_data（展开后的输出张量）
+  - 第2行：out_shape（N OC Ho Wo）
+- **错误情况**：若形状与 groups 不合法，输出 `-1`
+
+### 样例
+```
+输入：
+1 2 3 4 5 6 7 8
+1 2 2 2
+1 0 0 1 -1 0 0 -1
+2 1 2 2
+2
+
+输出：
+5 -13
+1 2 1 1
+```
+
+### 思路
+1. **校验合法性**：检查 C%G==0, OC%G==0, KC==C//G, Ho>0, Wo>0
+2. **分组计算**：
+   - 每组输入通道数 `KC_g = C // G`
+   - 每组输出通道数 `OC_g = OC // G`
+   - 对每个 (n, g, oc, oh, ow)，累加该组对应输入通道与核窗口的乘积和
+3. **按 N→C→H→W 展开输出**
+
+### 复杂度
+- 时间：$O(N \cdot OC \cdot H_o \cdot W_o \cdot (C/G) \cdot K_h \cdot K_w)$
+- 空间：$O(N \cdot OC \cdot H_o \cdot W_o)$
+
+### 我的代码
+```python
+# TODO: 填写你的代码
+```
+
+---
+
 ## 📌 易错点总结
 
 1. **零填充索引**：`Img_pad[r+k2]` 别忘 +k2
@@ -405,6 +642,127 @@ sys.stdout.write("\n".join(" ".join(map(str, row)) for row in E))
 4. **Dilation 公式**：有效核尺寸 = dilation × (K-1) + 1
 5. **输出格式**：注意小数位数要求（1位/4位）
 6. **多通道求和**：所有通道的结果要累加
+7. **Group 卷积约束**：`KC == C // G`，不是 `KC == C`
+8. **Group 卷积分组**：每组只处理对应的通道，不是全部通道
+
+---
+
+## 📝 代码答案
+
+### 题目5: P3493 Group卷积实现
+```python
+import sys
+
+def parse_line_to_ints(s: str):
+    s = s.strip()
+    if not s:
+        return []
+    return [int(x) for x in s.split() if x]
+
+def main():
+    lines = sys.stdin.read().splitlines()
+    if len(lines) < 5:
+        print("-1")
+        print("-1")
+        return
+
+    line1, line2, line3, line4, line5 = lines[:5]
+    in_data = parse_line_to_ints(line1)
+    in_shape = parse_line_to_ints(line2)
+    ker_data = parse_line_to_ints(line3)
+    ker_shape = parse_line_to_ints(line4)
+    groups_list = parse_line_to_ints(line5)
+
+    if len(in_shape) != 4 or len(ker_shape) != 4 or len(groups_list) != 1:
+        print("-1")
+        print("-1")
+        return
+
+    N, C, H, W = in_shape
+    OC, KC, KH, KW = ker_shape
+    G = groups_list[0]
+
+    # 基本合法性
+    if N <= 0 or C <= 0 or H <= 0 or W <= 0 or OC <= 0 or KC <= 0 or KH <= 0 or KW <= 0 or G <= 0:
+        print("-1")
+        print("-1")
+        return
+
+    in_need = N * C * H * W
+    ker_need = OC * KC * KH * KW
+    if len(in_data) != in_need or len(ker_data) != ker_need:
+        print("-1")
+        print("-1")
+        return
+
+    if C % G != 0 or OC % G != 0:
+        print("-1")
+        print("-1")
+        return
+
+    if KC != C // G:
+        print("-1")
+        print("-1")
+        return
+
+    Ho = H - KH + 1
+    Wo = W - KW + 1
+    if Ho <= 0 or Wo <= 0:
+        print("-1")
+        print("-1")
+        return
+
+    # 预计算步长
+    HW = H * W
+    CHW = C * HW
+    out_stride_n = OC * Ho * Wo
+    out_stride_c = Ho * Wo
+    ker_stride_oc = KC * KH * KW
+    ker_stride_kc = KH * KW
+
+    OCg = OC // G  # 每组输出通道数
+    KCg = KC       # 每组输入通道数（核的通道数）
+
+    y = [0] * (N * OC * Ho * Wo)
+
+    for n in range(N):
+        base_n_in = n * CHW
+        base_n_out = n * out_stride_n
+
+        for g in range(G):
+            ic_start = g * KCg
+            oc_start = g * OCg
+
+            for ocg in range(OCg):
+                oc = oc_start + ocg
+                base_oc_out = base_n_out + oc * out_stride_c
+                base_oc_ker = oc * ker_stride_oc
+
+                for oh in range(Ho):
+                    for ow in range(Wo):
+                        acc = 0
+
+                        for kc in range(KCg):
+                            ic = ic_start + kc
+                            base_ic_in = base_n_in + ic * HW
+                            base_kc_ker = base_oc_ker + kc * ker_stride_kc
+
+                            for kh in range(KH):
+                                ih = oh + kh
+                                row_in = base_ic_in + ih * W + ow
+                                row_ker = base_kc_ker + kh * KW
+
+                                for kw in range(KW):
+                                    acc += in_data[row_in + kw] * ker_data[row_ker + kw]
+
+                        y[base_oc_out + oh * Wo + ow] = acc
+
+    print(" ".join(str(v) for v in y))
+    print(N, OC, Ho, Wo)
+
+if __name__ == "__main__":
+    main()
+```
 
 ---
 
