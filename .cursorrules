@@ -523,6 +523,7 @@ GPT 讨论 → session.md
 | `paper status` | 检查远程是否有更新 | - |
 | `paper figs` | 导出图片到论文目录 | `assets/figures/` → `paper/vit/SpecViT/figs/` |
 | `study [DATE]` | 错题整理 + 进度更新 | `ML/{DATE}.md`, `ML/progress.md` |
+| `view <path>` | Markdown 预览 | 详见 `_backend/template/prompt/prompt_view.md` |
 
 ## 📚 机考错题整理
 
