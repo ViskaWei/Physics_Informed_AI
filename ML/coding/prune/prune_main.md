@@ -19,6 +19,8 @@
 ## 🔧 通用模板
 
 ```python
+keep[np.argpartition(np.abs(W).sum(1), k - 1)[:k]] = False
+
 # 剪枝基础
 import numpy as np
 
@@ -54,7 +56,21 @@ TODO
 
 ### 我的代码
 ```python
-# TODO: 填写你的代码
+import sys, numpy as np
+
+def read():
+    a = np.fromstring(sys.stdin.buffer.read().decode(), sep=' ')
+    if a.size == 0: return
+    n, d, c = map(int, a[:3]); p = 3
+    X = a[p:p+n*d].reshape(n, d); p += n*d
+    W = a[p:p+d*c].reshape(d, c); p += d*c
+    return X, W, float(a[p])
+
+r = read(); X, W, ratio = r; d = W.shape[0]
+k = max(int(ratio * d), int(ratio > 0))
+keep = np.ones(d, bool); keep[np.argpartition(np.abs(W).sum(1), k - 1)[:k]] = False
+X, W = X[:, keep], W[keep]
+print(*((X @ W).argmax(1)))
 ```
 
 ---

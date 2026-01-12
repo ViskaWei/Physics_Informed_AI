@@ -26,6 +26,21 @@
 
 ### KMeans 基础模板
 ```python
+def kmeans(X, K, iters=100):
+    N, D = X.shape
+    C = X[np.random.choice(N, K, replace=False)]   # 初始化中心
+
+    for _ in range(iters):
+        # E-step：分配簇（广播算距离）
+        dist = ((X[:, None, :] - C[None, :, :])**2).sum(axis=2)
+        labels = dist.argmin(axis=1)
+
+        # M-step：更新中心
+        C = np.array([X[labels == k].mean(axis=0) for k in range(K)])
+
+    return C, labels
+```
+```python
 import math
 step_E = lambda C0: [min(range(K), key=lambda k: dist(XY[n],C0[k])) for n in range(N)]
 def step_M(root):

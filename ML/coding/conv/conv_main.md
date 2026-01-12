@@ -70,7 +70,8 @@ for g in range(G):
     Xg = X[g*Cg : (g+1)*Cg]
     Kg = Ker[g*OCg : (g+1)*OCg]
     win = np.lib.stride_tricks.sliding_window_view(Xg, (K,K), axis=(1,2))[:,::S,::S]
-    out[g*OCg:(g+1)*OCg] = np.tensordot(Kg, win, axes=([1,2,3], [0,3,4]))
+    # Kg:(OCg,KC,K,K), win:(Cg,Ho,Wo,K,K) → out:(OCg,Ho,Wo)
+    out[g*OCg:(g+1)*OCg] = np.einsum('oikl,ihwkl->ohw', Kg, win)
 
 print(" ".join(f"{v:.4f}" for v in out.ravel()))
 ```
@@ -95,7 +96,8 @@ X_dilated[:, ::S, ::S] = Img
 Ker_flip = Ker[:, :, ::-1, ::-1]
 X_pad = np.pad(X_dilated, ((0,0),(K-1-P,K-1-P),(K-1-P,K-1-P)))
 win = np.lib.stride_tricks.sliding_window_view(X_pad, (K,K), axis=(1,2))
-out = np.tensordot(Ker_flip, win, axes=([1,2,3], [0,3,4]))
+# Ker_flip:(OC,IC,K,K), win:(C,Ho,Wo,K,K) → out:(OC,Ho,Wo)
+out = np.einsum('oikl,ihwkl->ohw', Ker_flip, win)
 
 print(" ".join(f"{v:.4f}" for v in out.ravel()))
 ```
@@ -132,10 +134,12 @@ print(" ".join(f"{v:.4f}" for v in out.ravel()))
 ```python
 X = np.pad(Img, ((0,0),(P,P),(P,P))); Kh=Kw=D*(K-1)+1
 win=np.lib.stride_tricks.sliding_window_view(X, (Kh,Kw), axis=(1,2))[:,::S,::S,::D,::D]
-a = np.tensordot(Ker, win, axes=([1,2,3], [0,3,4])) 
+# Ker:(O,I,K,K), win:(I,Ho,Wo,K,K) → a:(O,Ho,Wo)
+a = np.einsum('oikl,ihwkl->ohw', Ker, win)
 
 win = np.lib.stride_tricks.sliding_window_view(Pad, (K, K))  # (H, W, K, K)
-a = np.tensordot(Ker, win)
+# Ker:(K,K), win:(H,W,K,K) → a:(H,W)
+a = np.einsum('kl,hwkl->hw', Ker, win)
 ```
 
 
@@ -284,7 +288,8 @@ B = np.fromstring(lines[5], float, sep=' ') if B1 == 1 else np.zeros(1)
 
 X = np.pad(Img, ((0,0),(P,P),(P,P))); Kh=Kw=D*(K-1)+1
 win=np.lib.stride_tricks.sliding_window_view(X, (Kh,Kw), axis=(1,2))[:,::S,::S,::D,::D]
-a = np.tensordot(Ker, win, axes=([1,2,3], [0,3,4])) 
+# Ker:(O,I,K,K), win:(I,Ho,Wo,K,K) → a:(O,Ho,Wo)
+a = np.einsum('oikl,ihwkl->ohw', Ker, win)
 if B1 == 1: a+= B[:,None,None]
 print(" ".join(f"{ii:.4f}" for ii in a.ravel()))
 ```
@@ -543,6 +548,16 @@ sys.stdout.write("\n".join(" ".join(map(str, row)) for row in Out))
 
 ### 我的代码 ✅
 ```python
+import sys, numpy as np
+it = iter(sys.stdin.read().strip().split()); K = int(next(it)); C = R = int(next(it));
+Ker = np.array([[ int(next(it)) for _ in range(K)] for _ in range(K)])
+Img = np.array([[ int(next(it)) for _ in range(C)] for _ in range(R)])
+K2 = K // 2; Pad = np.pad(Img,((K2,K2),(K2,K2)))
+win = np.lib.stride_tricks.sliding_window_view(Pad, (K,K))
+E = np.einsum('abcd,cd->ab',win,Ker)
+for a in E: print(" ".join(str(x) for x in a))
+
+
 import sys
 it = iter(sys.stdin.read().strip().split())
 K = int(next(it)); C = R = int(next(it));
